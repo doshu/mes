@@ -1,0 +1,9 @@
+.submenu .btn ~ .btn {
+	margin-left:10px;
+}
+
+.graphLink {
+	display:inline-block;
+	*display:inline;
+	zoom:1;
+}

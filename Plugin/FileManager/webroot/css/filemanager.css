@@ -1,0 +1,23 @@
+html, body {
+	min-width:0;
+}
+
+#content {
+	min-width:0;
+	border-radius:0;
+	-moz-border-radius:0;
+	-o-border-radius:0;
+	-webkit-border-radius:0;
+	-ms-border-radius:0;
+	margin-left:0;
+	width:100%;
+}
+
+#header {
+	min-width:0;
+}
+
+.u-hide {
+	position:absolute;
+	left:-99999px;
+}

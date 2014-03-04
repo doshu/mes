@@ -1,0 +1,12 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^(.*)$ index.php [QSA,L]
+</IfModule>
+
+<IfModule mod_headers.c>
+	Header edit Content-Type ^\s*text/html.*$ "text/html; charset=UTF-8"
+	Header edit Content-Type ^\s*application/json.*$ "application/json; charset=UTF-8"
+</IfModule>
+

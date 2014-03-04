@@ -1,0 +1,15 @@
+2013-05-17 16:40:06 Notice: Notice (8): Undefined variable: _FILE in [/var/www/mes/Controller/AttachmentsController.php, line 58]
+Trace:
+AttachmentsController::upload() - APP/Controller/AttachmentsController.php, line 58
+ReflectionMethod::invokeArgs() - [internal], line ??
+Controller::invokeAction() - CORE/Cake/Controller/Controller.php, line 486
+Dispatcher::_invoke() - CORE/Cake/Routing/Dispatcher.php, line 187
+Dispatcher::dispatch() - CORE/Cake/Routing/Dispatcher.php, line 162
+[main] - APP/webroot/index.php, line 109
+
+2013-09-02 13:21:51 Notice: Undefined property: GarbageShell::$Attachment in [/var/www/cake238/lib/Cake/Console/Shell.php, line 444]
+2013-09-03 08:11:35 Notice: Notice (8): Undefined index: authtype in [/var/www/mes/View/Smtps/view.ctp, line 108]
+2013-09-03 08:12:26 Notice: Notice (8): Undefined index: authtype in [/var/www/mes/View/Smtps/view.ctp, line 108]
+2013-10-30 09:33:20 Notice: Notice (8): Undefined index: id in [/var/www/mes/Model/Sending.php, line 347]
+2014-02-25 10:55:57 Notice: Notice (8): Array to string conversion in [/var/www/mes/Lib/Error/ProductionExceptionRenderer.php, line 19]
+2014-02-25 10:56:43 Notice: Notice (8): Array to string conversion in [/var/www/mes/Lib/Error/ProductionExceptionRenderer.php, line 56]
