@@ -173,7 +173,10 @@ class AppController extends Controller {
 								}
 								
 								if(isset($options['type']) && ($options['type'] == 'date' || $options['type'] == 'datetime')) {
-									$outputFormat = $options['type'] == 'date'?'Y-m-d':'Y-m-d H:i:s';
+									$outputFormat = (
+											$options['type'] == 'date' && 
+											(!isset($options['time']) || !$options['time'])
+										)?'Y-m-d':'Y-m-d H:i:s';
 									$format = (isset($options['format']) && !empty($options['format']))?$options['format']:'d/m/Y';
 									$toConvert = (isset($options['convert']) && $options['convert']);
 									if(isset($value[0])) {
@@ -183,6 +186,9 @@ class AppController extends Controller {
 											new DateTimeZone($toConvert?AuthComponent::user('timezone'):date_default_timezone_get())
 										);
 										if($tmpDate instanceof DateTime) {
+											if(isset($options['time']) && $options['time']) {
+												$tmpDate->setTime(0, 0, 0);
+											}
 											$tmpDate->setTimezone(new DateTimeZone('UTC'));
 											$value[0] = $tmpDate->format($outputFormat);
 										}
@@ -193,13 +199,17 @@ class AppController extends Controller {
 											$value[1], 
 											new DateTimeZone($toConvert?AuthComponent::user('timezone'):date_default_timezone_get())
 										);
+										
 										if($tmpDate instanceof DateTime) {
+											if(isset($options['time']) && $options['time']) {
+												$tmpDate->setTime(23, 59, 59);
+											}
 											$tmpDate->setTimezone(new DateTimeZone('UTC'));
+											
 											$value[1] = $tmpDate->format($outputFormat);
 										}
 									} 
 								}
-								
 								if(isset($value[0]) && $value[0] !== '') {
 									$container[$model.'.'.$field.' >='] = $value[0];
 								}
@@ -221,7 +231,7 @@ class AppController extends Controller {
 									}
 								}
 								else {
-									if(strtoupper($info[$field]) != '=') {
+									if(strtoupper($operator) != '=') {
 										$container[$model.'.'.$field.' '.$operator] = $value;
 									}
 									else {

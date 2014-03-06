@@ -27,7 +27,7 @@ class MembersController extends AppController {
 		
 		$this->autoPaginateOp = array(
 			'email' => 'LIKE',
-			'created' => array('BETWEEN', array('type' => 'date', 'convert' => 1))
+			'created' => array('BETWEEN', array('type' => 'date', 'convert' => true, 'time' => true))
 		);
 		
 		foreach($memberAdditionalFields as $additionalField) {
@@ -264,8 +264,21 @@ class MembersController extends AppController {
 		$this->Member->recursive = -1;
 		$this->autoPaginate = true;
 		$this->autoPaginateOp = array(
-			'email' => 'LIKE'
+			'email' => 'LIKE',
+			'created' => array('BETWEEN', array('type' => 'date', 'convert' => true, 'time' => true))
 		);
+		
+		$memberAdditionalFields = $this->Member->getModelFields();
+		$this->set('memberAdditionalFields', $memberAdditionalFields);
+		
+		foreach($memberAdditionalFields as $additionalField) {
+			if(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'date') {
+				$this->autoPaginateOp[$additionalField['Memberfield']['code']] = array('BETWEEN', array('type' => 'date'));
+			}
+			else {
+				$this->autoPaginateOp[$additionalField['Memberfield']['code']] = 'LIKE';
+			}
+		}
 		
 		if (!$this->Member->Mailinglist->exists()) {
 			throw new NotFoundException(__('Invalid mailinglist'));
@@ -325,9 +338,6 @@ class MembersController extends AppController {
 				)
 			)	
 		);
-		
-		
-		$this->set('memberAdditionalFields', $this->Member->getModelFields());
 		
 	}
 	

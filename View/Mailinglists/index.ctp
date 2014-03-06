@@ -75,141 +75,142 @@
 					</span>
 				</div>
 				<div class="panel-body nopadding">
-					<div class="grid-toolbar">
-						<?php echo $this->element('pager'); ?>
-					</div>
-					<div class="grid-toolbar grid-helper clearfix" data-table="MailinglistGrid">
-						<?php echo $this->element('selector_helper'); ?>
-						<?php 
-						
-							echo $this->Form->create(
-								'Member', 
-								array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'MailinglistIndexActionForm')
-							); 
-						?>
-						<div class="action-container">
-							<span><?=__('Azioni');?> </span>
-							<?php 
-								echo $this->Form->input(
-									'action', 
-									array(
-										'options' => array(
-											'prova'
-										),
-										'label' => false,
-										'div' => false,
-										'empty' => true,
-										'class' => 'action',
-										'id' => false
-									)
-								);
-								echo $this->Form->button(
-									__('Esegui'), 
-									array(
-										'label' => false, 
-										'div' => false, 
-										'class' => 'btn btn-primary btn-xs',
-										'type' => 'submit',
-									)
-								);
-							?>
+					
+					<?php if(!empty($mailinglists)) : ?>
+						<div class="grid-toolbar">
+							<?php echo $this->element('pager'); ?>
 						</div>
+						<div class="grid-toolbar grid-helper clearfix" data-table="MailinglistGrid">
+							<?php echo $this->element('selector_helper'); ?>
+							<?php 
 						
-						<?php echo $this->Form->end(); ?>
-					</div>
+								echo $this->Form->create(
+									'Member', 
+									array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'MailinglistIndexActionForm')
+								); 
+							?>
+							<div class="action-container">
+								<span><?=__('Azioni');?> </span>
+								<?php 
+									echo $this->Form->input(
+										'action', 
+										array(
+											'options' => array(
+												'prova'
+											),
+											'label' => false,
+											'div' => false,
+											'empty' => true,
+											'class' => 'action',
+											'id' => false
+										)
+									);
+									echo $this->Form->button(
+										__('Esegui'), 
+										array(
+											'label' => false, 
+											'div' => false, 
+											'class' => 'btn btn-primary btn-xs',
+											'type' => 'submit',
+										)
+									);
+								?>
+							</div>
+						
+							<?php echo $this->Form->end(); ?>
+						</div>
+					<?php endif; ?>
 					<?php echo $this->Form->create('Mailinglist', array('class' => 'form-inline')); ?>
 					<table id="MailinglistGrid" class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($mailinglists)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessuna Lista trovata'); ?></h4></td>
+						<thead>
+							<tr class="search">
+								<th></th>
+								<th>
+									<?php echo $this->Form->input(
+										'name', 
+										array(
+											'label' => false, 
+											'div' => false,
+											'type' => 'text',
+											'placeholder' => __('Cerca per nome'),
+											'class' => 'form-control input-sm',
+											'required' => false
+										)
+									); ?>
+								</th>
+								<th>
+									<?php echo $this->Form->input(
+										'description', 
+										array(
+											'label' => false, 
+											'div' => false,
+											'type' => 'text',
+											'placeholder' => __('Cerca per descrizione'),
+											'class' => 'form-control input-sm',
+											'required' => false
+										)
+									); ?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Mailinglist.created.from', 
+											array(
+												'label' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per data creazione (da)'),
+												'class' => 'form-control input-sm datepicker',
+												'required' => false
+											)
+										);
+										echo $this->Form->input(
+											'Mailinglist.created.to', 
+											array(
+												'label' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per data creazione (a)'),
+												'class' => 'form-control input-sm datepicker',
+												'required' => false
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Mailinglist.members_count.from', 
+											array(
+												'label' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per n° membri (da)'),
+												'class' => 'form-control input-sm',
+												'required' => false
+											)
+										);
+										echo $this->Form->input(
+											'Mailinglist.members_count.to', 
+											array(
+												'label' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per n° membri (a)'),
+												'class' => 'form-control input-sm',
+												'required' => false
+											)
+										);
+									?>
+								</th>
 							</tr>
-						<?php else : ?>
-							<thead>
-								<tr class="search">
-									<th></th>
-									<th>
-										<?php echo $this->Form->input(
-											'name', 
-											array(
-												'label' => false, 
-												'div' => false,
-												'type' => 'text',
-												'placeholder' => __('Cerca per nome'),
-												'class' => 'form-control input-sm',
-												'required' => false
-											)
-										); ?>
-									</th>
-									<th>
-										<?php echo $this->Form->input(
-											'description', 
-											array(
-												'label' => false, 
-												'div' => false,
-												'type' => 'text',
-												'placeholder' => __('Cerca per descrizione'),
-												'class' => 'form-control input-sm',
-												'required' => false
-											)
-										); ?>
-									</th>
-									<th>
-										<?php
-											echo $this->Form->input(
-												'Mailinglist.created.from', 
-												array(
-													'label' => false, 
-													'type' => 'text',
-													'placeholder' => __('Cerca per data creazione (da)'),
-													'class' => 'form-control input-sm datepicker',
-													'required' => false
-												)
-											);
-											echo $this->Form->input(
-												'Mailinglist.created.to', 
-												array(
-													'label' => false, 
-													'type' => 'text',
-													'placeholder' => __('Cerca per data creazione (a)'),
-													'class' => 'form-control input-sm datepicker',
-													'required' => false
-												)
-											);
-										?>
-									</th>
-									<th>
-										<?php
-											echo $this->Form->input(
-												'Mailinglist.members_count.from', 
-												array(
-													'label' => false, 
-													'type' => 'text',
-													'placeholder' => __('Cerca per n° membri (da)'),
-													'class' => 'form-control input-sm',
-													'required' => false
-												)
-											);
-											echo $this->Form->input(
-												'Mailinglist.members_count.to', 
-												array(
-													'label' => false, 
-													'type' => 'text',
-													'placeholder' => __('Cerca per n° membri (a)'),
-													'class' => 'form-control input-sm',
-													'required' => false
-												)
-											);
-										?>
-									</th>
-								</tr>
-								<tr>
-									<th></th>
-									<th><?php echo $this->Paginator->sort('name', __('Nome')); ?></th>
-									<th><?php echo $this->Paginator->sort('description', __('Descrizione')); ?></th>
-									<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
-									<th><?php echo $this->Paginator->sort('members_count', __('Numero Membri')); ?></th>
-								</tr>
-							</thead>
+							<?php if(!empty($mailinglists)) : ?>
+							<tr>
+								<th></th>
+								<th><?php echo $this->Paginator->sort('name', __('Nome')); ?></th>
+								<th><?php echo $this->Paginator->sort('description', __('Descrizione')); ?></th>
+								<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
+								<th><?php echo $this->Paginator->sort('members_count', __('Numero Membri')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($mailinglists)) : ?>
 							<tbody>
 							<?php foreach ($mailinglists as $mailinglist): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $mailinglist['Mailinglist']['id']));?>">
@@ -224,7 +225,8 @@
 													'label' => false,
 													'div' => false,
 													'class' => 'grid-el-select',
-													'id' => false
+													'id' => false,
+													'value' => $mailinglist['Mailinglist']['id']
 												)
 											);
 											
@@ -245,7 +247,11 @@
 						<?php endif; ?>
 					</table>
 					<?php echo $this->Form->end(); ?>
-					<?php echo $this->element('pagination'); ?>
+					<?php if(empty($mailinglists)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna lista trovata'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

@@ -36,18 +36,6 @@
 					<?php echo __('Email con errori'); ?>
 				</div>
 				<div class="panel-body" style="">
-					<?php 
-						echo $this->Form->create('Recipient', array('class' => 'form-inline'));
-						echo $this->Form->input(
-							'member_email', 
-							array(
-								'label' => false, 
-								'div' => false, 
-								'placeholder' => __('Cerca per email', true),
-								'class' => 'form-control'
-							)
-						);
-					?>
 					<span class="pull-right">
 						<div class="btn-group">
 							<?php
@@ -57,7 +45,8 @@
 										'label' => false, 
 										'div' => false, 
 										'class' => 'btn btn-primary btn-sm',
-										'type' => 'submit'
+										'type' => 'button',
+										'onclick' => "$('#RecipientShowOpenedForm').submit()"
 									)
 								);
 							?>
@@ -75,27 +64,64 @@
 							?>
 						</div>
 					</span>
-					<?php
-						echo $this->Form->end();
-					?>
 				</div>
 				<div class="panel-body nopadding">
+					<?php if(!empty($opened)) : ?>
+						<div class="grid-toolbar">
+							<?php echo $this->element('pager'); ?>
+						</div>
+					<?php endif; ?>
+					<?php echo $this->Form->create('Recipient', array('class' => 'form-inline')); ?>
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($opened)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessuna Email letta'); ?></h4></td>
+						<thead>
+							<tr class="search">
+								<th>
+									<?php
+										echo $this->Form->input(
+											'member_email', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per email'),
+												'class' => 'form-control input-sm'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Recipient.opened_time.from', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per data apertura (da)'),
+												'class' => 'form-control input-sm datetimepicker'
+											)
+										);
+										echo $this->Form->input(
+											'Recipient.opened_time.to', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per data apertura (a)'),
+												'class' => 'form-control input-sm datetimepicker'
+											)
+										);
+									?>
+								</th>
+								<th></th>
 							</tr>
-						<?php else : ?>
-							<thead>
-								<tr>
-									<th><?php echo $this->Paginator->sort('member_email', __('Email')); ?></th>
-									<th><?php echo $this->Paginator->sort('opened_time', __('Letta il')); ?></th>
-									<th><?php echo __('Link seguiti'); ?></th>
-								</tr>
-							</thead>
+							<?php if(!empty($opened)) : ?>
+							<tr>
+								<th><?php echo $this->Paginator->sort('member_email', __('Email')); ?></th>
+								<th><?php echo $this->Paginator->sort('opened_time', __('Letta il')); ?></th>
+								<th><?php echo __('Link seguiti'); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($opened)) : ?>
 							<tbody>
 							<?php foreach ($opened as $recipient): ?>
-								<tr data-url="<?=$this->Html->url(array('action' => 'view', $recipient['Recipient']['id'], 'sending' => $sending['Sending']['id'], 'from' => 'opened'));?>">
+								<tr data-url="<?=$this->Html->url(array('action' => 'view', $recipient['Recipient']['id'], 'sending' =>$sending['Sending']['id'], 'from' => 'sended'));?>">
 									<td><?php echo h($recipient['Recipient']['member_email']); ?></td>
 									<td>
 										<?php 
@@ -111,7 +137,12 @@
 							</tbody>
 						<?php endif; ?>
 					</table>
-					<?php echo $this->element('pagination'); ?>
+					<?php echo $this->Form->end(); ?>
+					<?php if(empty($opened)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna email letta'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

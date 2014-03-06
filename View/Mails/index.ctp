@@ -72,116 +72,116 @@
 							?>
 						</div>
 					</span>
-					
 				</div>
 				<div class="panel-body nopadding">
-					<div class="grid-toolbar">
-						<?php echo $this->element('pager'); ?>
-					</div>
-					<div class="grid-toolbar grid-helper clearfix" data-table="MailGrid">
-						<?php echo $this->element('selector_helper'); ?>
-						<?php 
-						
-							echo $this->Form->create(
-								'Member', 
-								array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'MailIndexActionForm')
-							); 
-						?>
-						<div class="action-container">
-							<span><?=__('Azioni');?> </span>
-							<?php 
-								echo $this->Form->input(
-									'action', 
-									array(
-										'options' => array(
-											'prova'
-										),
-										'label' => false,
-										'div' => false,
-										'empty' => true,
-										'class' => 'action',
-										'id' => false
-									)
-								);
-								echo $this->Form->button(
-									__('Esegui'), 
-									array(
-										'label' => false, 
-										'div' => false, 
-										'class' => 'btn btn-primary btn-xs',
-										'type' => 'submit',
-									)
-								);
-							?>
+					
+					<?php if(!empty($mails)) : ?>
+						<div class="grid-toolbar">
+							<?php echo $this->element('pager'); ?>
 						</div>
+						<div class="grid-toolbar grid-helper clearfix" data-table="MailGrid">
+							<?php echo $this->element('selector_helper'); ?>
+							<?php 
 						
-						<?php echo $this->Form->end(); ?>
-					</div>
+								echo $this->Form->create(
+									'Mail', 
+									array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'MailIndexActionForm')
+								); 
+							?>
+							<div class="action-container">
+								<span><?=__('Azioni');?> </span>
+								<?php 
+									echo $this->Form->input(
+										'action', 
+										array(
+											'options' => array(
+												'prova'
+											),
+											'label' => false,
+											'div' => false,
+											'empty' => true,
+											'class' => 'action',
+											'id' => false
+										)
+									);
+									echo $this->Form->button(
+										__('Esegui'), 
+										array(
+											'label' => false, 
+											'div' => false, 
+											'class' => 'btn btn-primary btn-xs',
+											'type' => 'submit',
+										)
+									);
+								?>
+							</div>
+						
+							<?php echo $this->Form->end(); ?>
+						</div>
+					<?php endif; ?>
 					<?php echo $this->Form->create('Mail', array('class' => 'form-inline')); ?>
 					<table id="MailGrid" class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($mails)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessuna Email trovata'); ?></h4></td>
+						<thead>
+							<tr class="search">
+								<th></th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'name', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per nome'),
+												'class' => 'form-control input-sm'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'description', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per descrizione'),
+												'class' => 'form-control input-sm',
+												'type' => 'text'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Mail.created.from', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per data crazione (da)'),
+												'class' => 'form-control input-sm datepicker'
+											)
+										);
+										echo $this->Form->input(
+											'Mail.created.to', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per data crazione (a)'),
+												'class' => 'form-control input-sm datepicker'
+											)
+										);
+									?>
+								</th>
 							</tr>
-						<?php else : ?>
-							<thead>
-								<tr class="search">
-									<th></th>
-									<th>
-										<?php
-											echo $this->Form->input(
-												'name', 
-												array(
-													'label' => false, 
-													'div' => false, 
-													'placeholder' => __('Cerca per nome'),
-													'class' => 'form-control input-sm'
-												)
-											);
-										?>
-									</th>
-									<th>
-										<?php
-											echo $this->Form->input(
-												'description', 
-												array(
-													'label' => false, 
-													'div' => false, 
-													'placeholder' => __('Cerca per descrizione'),
-													'class' => 'form-control input-sm',
-													'type' => 'text'
-												)
-											);
-										?>
-									</th>
-									<th>
-										<?php
-											echo $this->Form->input(
-												'created.from', 
-												array(
-													'label' => false, 
-													'placeholder' => __('Cerca per data crazione (da)'),
-													'class' => 'form-control input-sm datepicker'
-												)
-											);
-											echo $this->Form->input(
-												'created.to', 
-												array(
-													'label' => false, 
-													'placeholder' => __('Cerca per data crazione (a)'),
-													'class' => 'form-control input-sm datepicker'
-												)
-											);
-										?>
-									</th>
-								</tr>
-								<tr>
-									<th></th>
-									<th><?php echo $this->Paginator->sort('name', __('Nome')); ?></th>
-									<th><?php echo $this->Paginator->sort('description', __('Descrizione')); ?></th>
-									<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
-								</tr>
-							</thead>
+							<?php if(!empty($mails)) : ?>
+							<tr>
+								<th></th>
+								<th><?php echo $this->Paginator->sort('name', __('Nome')); ?></th>
+								<th><?php echo $this->Paginator->sort('description', __('Descrizione')); ?></th>
+								<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($mails)) : ?>
 							<tbody>
 							<?php foreach ($mails as $mail): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $mail['Mail']['id']));?>">
@@ -216,7 +216,11 @@
 						<?php endif; ?>
 					</table>
 					<?php echo $this->Form->end(); ?>
-					<?php echo $this->element('pagination'); ?>
+					<?php if(empty($mails)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna email in archivio'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

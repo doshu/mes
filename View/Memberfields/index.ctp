@@ -28,32 +28,6 @@
 					<?php echo __('Campi Membri'); ?>
 				</div>
 				<div class="panel-body" style="">
-					<?php 
-						echo $this->Form->create('Memberfield', array('class' => 'form-inline'));
-						echo $this->Form->input(
-							'name', 
-							array(
-								'label' => false, 
-								'div' => false,
-								'type' => 'text',
-								'required' => false,
-								'placeholder' => __('Cerca per nome', true),
-								'class' => 'form-control'
-							)
-						);
-						echo '&nbsp';
-						echo $this->Form->input(
-							'code', 
-							array(
-								'label' => false, 
-								'div' => false,
-								'type' => 'text',
-								'required' => false,
-								'placeholder' => __('Cerca per codice', true),
-								'class' => 'form-control'
-							)
-						);
-					?>
 					<span class="pull-right">
 						<div class="btn-group">
 							<?php
@@ -63,6 +37,7 @@
 										'label' => false, 
 										'div' => false, 
 										'class' => 'btn btn-primary btn-sm',
+										'onclick' => "$('#MemberfieldIndexForm').submit();"
 									)
 								);
 							?>
@@ -80,24 +55,66 @@
 							?>
 						</div>
 					</span>
-					<?php
-						echo $this->Form->end();
-					?>
 				</div>
 				<div class="widget-content nopadding">
+					<?php echo $this->Form->create('Memberfield', array('class' => 'form-inline')); ?>
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($memberfields)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessun Campo Membro trovato'); ?></h4></td>
+						<thead>
+							<tr class="search">
+								<th>
+									<?php echo $this->Form->input(
+										'email', 
+										array(
+											'label' => false, 
+											'div' => false,
+											'type' => 'text',
+											'placeholder' => __('Cerca per email'),
+											'class' => 'form-control input-sm',
+											'required' => false
+										)
+									); ?>
+								</th>
+								<th>
+									<?php echo $this->Form->input(
+										'code', 
+										array(
+											'label' => false, 
+											'div' => false,
+											'type' => 'text',
+											'placeholder' => __('Cerca per codice'),
+											'class' => 'form-control input-sm',
+											'required' => false
+										)
+									); ?>
+								</th>
+								<th>
+									<?php echo $this->Form->input(
+										'type', 
+										array(
+											'label' => false, 
+											'div' => false,
+											'class' => 'form-control input-sm',
+											'required' => false,
+											'options' => array(
+												'0' => __('Campo testo'),
+												'1' => __('Area di testo'),
+												'2' => __('Sì/No'),
+												'3' => __('Data'),
+											),
+											'empty' => __('Cerca per tipo')
+										)
+									); ?>
+								</th>
 							</tr>
-						<?php else: ?>
-							<thead>
-								<tr>
-									<th><?php echo $this->Paginator->sort('name', __('Nome')); ?></th>
-									<th><?php echo $this->Paginator->sort('code', __('Codice')); ?></th>
-									<th><?php echo $this->Paginator->sort('type', __('Tipo')); ?></th>
-								</tr>
-							</thead>
+							<?php if(!empty($memberfields)) : ?>
+							<tr>
+								<th><?php echo $this->Paginator->sort('name', __('Nome')); ?></th>
+								<th><?php echo $this->Paginator->sort('code', __('Codice')); ?></th>
+								<th><?php echo $this->Paginator->sort('type', __('Tipo')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($memberfields)) : ?>
 							<tbody>
 							<?php foreach ($memberfields as $memberfield): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $memberfield['Memberfield']['id']));?>">
@@ -129,8 +146,12 @@
 							</tbody>
 						<?php endif; ?>
 					</table>
-			
-					<?php echo $this->element('pagination'); ?>
+					<?php echo $this->Form->end(); ?>
+					<?php if(empty($memberfields)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna Campo Membro trovato'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

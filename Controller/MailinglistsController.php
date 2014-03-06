@@ -12,7 +12,7 @@ class MailinglistsController extends AppController {
 		$this->autoPaginateOp = array(
 			'name' => 'LIKE',
 			'description' => 'LIKE',
-			'created' => array('BETWEEN', array('convert' => true, 'type' => 'date')),
+			'created' => array('BETWEEN', array('convert' => true, 'type' => 'date', 'time' => true)),
 			'members_count' => array('BETWEEN', array('having' => true))
 		);
 		

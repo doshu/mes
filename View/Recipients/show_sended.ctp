@@ -47,21 +47,9 @@
 		<divl class="col-lg-12">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<?php echo __('Email con errori'); ?>
+					<?php echo __('Email inviate'); ?>
 				</div>
 				<div class="panel-body" style="">
-					<?php 
-						echo $this->Form->create('Recipient', array('class' => 'form-inline'));
-						echo $this->Form->input(
-							'member_email', 
-							array(
-								'label' => false, 
-								'div' => false, 
-								'placeholder' => __('Cerca per email', true),
-								'class' => 'form-control'
-							)
-						);
-					?>
 					<span class="pull-right">
 						<div class="btn-group">
 							<?php
@@ -71,7 +59,8 @@
 										'label' => false, 
 										'div' => false, 
 										'class' => 'btn btn-primary btn-sm',
-										'type' => 'submit'
+										'type' => 'button',
+										'onclick' => "$('#RecipientShowSendedForm').submit()"
 									)
 								);
 							?>
@@ -89,23 +78,56 @@
 							?>
 						</div>
 					</span>
-					<?php
-						echo $this->Form->end();
-					?>
 				</div>
 				<div class="panel-body nopadding">
+					<?php if(!empty($sended)) : ?>
+						<div class="grid-toolbar">
+							<?php echo $this->element('pager'); ?>
+						</div>
+					<?php endif; ?>
+					<?php echo $this->Form->create('Recipient', array('class' => 'form-inline')); ?>
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($sended)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessuna Email inviata'); ?></h4></td>
+						<thead>
+							<tr class="search">
+								<th>
+									<?php
+										echo $this->Form->input(
+											'member_email', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per email'),
+												'class' => 'form-control input-sm'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'opened', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'class' => 'form-control input-sm',
+												'options' => array(
+													'1' => __('Sì'),
+													'0' => __('No'), 
+												),
+												'empty' => __('Cerca per apertura')
+											)
+										);
+									?>
+								</th>
 							</tr>
-						<?php else : ?>
-							<thead>
-								<tr>
-									<th><?php echo $this->Paginator->sort('member_email', __('Email')); ?></th>
-									<th><?php echo $this->Paginator->sort('opened', __('Letta')); ?></th>
-								</tr>
-							</thead>
+							<?php if(!empty($sended)) : ?>
+							<tr>
+								<th><?php echo $this->Paginator->sort('member_email', __('Email')); ?></th>
+								<th><?php echo $this->Paginator->sort('opened', __('Letta')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($sended)) : ?>
 							<tbody>
 							<?php foreach ($sended as $recipient): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $recipient['Recipient']['id'], 'sending' =>$sending['Sending']['id'], 'from' => 'sended'));?>">
@@ -116,7 +138,12 @@
 							</tbody>
 						<?php endif; ?>
 					</table>
-					<?php echo $this->element('pagination'); ?>
+					<?php echo $this->Form->end(); ?>
+					<?php if(empty($sended)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna email inviata'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

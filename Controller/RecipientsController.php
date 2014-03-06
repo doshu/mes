@@ -8,7 +8,8 @@ class RecipientsController extends AppController {
 		
 		$this->autoPaginate = true;
 		$this->autoPaginateOp = array(
-			'member_email' => 'LIKE'
+			'member_email' => 'LIKE',
+			'opened' => '='
 		);
 		
 		$this->paginate = array('Recipient' => array('order' => array('Recipient.member_email' =>  'desc')));
@@ -60,7 +61,8 @@ class RecipientsController extends AppController {
 		
 		$this->autoPaginate = true;
 		$this->autoPaginateOp = array(
-			'member_email' => 'LIKE'
+			'member_email' => 'LIKE',
+			'opened_time' => array('BETWEEN', array('type' => 'datetime', 'convert' => true, 'format' => 'd/m/Y H:i:s'))
 		);
 		
 		$this->paginate = array('Recipient' => array('order' => array('Recipient.opened_time' =>  'desc')));

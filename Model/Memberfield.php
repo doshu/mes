@@ -7,7 +7,7 @@ class Memberfield extends AppModel {
 	public static $dataType = array(
 		0 => 'varchar',
 		1 => 'text',
-		2 => 'bool',
+		2 => 'boolean',
 		3 => 'date'
 	);
  

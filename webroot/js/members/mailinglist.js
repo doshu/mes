@@ -2,7 +2,7 @@ $(function() {
 	
 	$.linkize('.table.interactive tbody tr');
 	
-	$('#MemberMailinglistForm').ajaxForm(
+	$('#MemberAddQuickForm').ajaxForm(
 		function(data) {
 			data = JSON.parse(data);
 			if(data.result.status) {

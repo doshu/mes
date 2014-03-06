@@ -63,18 +63,6 @@
 					<?php echo __('Email con errori'); ?>
 				</div>
 				<div class="panel-body" style="">
-					<?php 
-						echo $this->Form->create('Recipient', array('class' => 'form-inline'));
-						echo $this->Form->input(
-							'member_email', 
-							array(
-								'label' => false, 
-								'div' => false, 
-								'placeholder' => __('Cerca per email', true),
-								'class' => 'form-control'
-							)
-						);
-					?>
 					<span class="pull-right">
 						<div class="btn-group">
 							<?php
@@ -84,7 +72,8 @@
 										'label' => false, 
 										'div' => false, 
 										'class' => 'btn btn-primary btn-sm',
-										'type' => 'submit'
+										'type' => 'button',
+										'onclick' => "$('#RecipientShowErrorsForm').submit()"
 									)
 								);
 							?>
@@ -102,32 +91,53 @@
 							?>
 						</div>
 					</span>
-					<?php
-						echo $this->Form->end();
-					?>
 				</div>
 				<div class="panel-body nopadding">
+					<?php if(!empty($sendedError)) : ?>
+						<div class="grid-toolbar">
+							<?php echo $this->element('pager'); ?>
+						</div>
+					<?php endif; ?>
+					<?php echo $this->Form->create('Recipient', array('class' => 'form-inline')); ?>
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($sendedError)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessuna Email con errori'); ?></h4></td>
+						<thead>
+							<tr class="search">
+								<th>
+									<?php
+										echo $this->Form->input(
+											'member_email', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per email'),
+												'class' => 'form-control input-sm'
+											)
+										);
+									?>
+								</th>
 							</tr>
-						<?php else : ?>
-							<thead>
-								<tr>
-									<th><?php echo $this->Paginator->sort('member_email', __('Email')); ?></th>
-								</tr>
-							</thead>
+							<?php if(!empty($sendedError)) : ?>
+							<tr>
+								<th><?php echo $this->Paginator->sort('member_email', __('Email')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($sendedError)) : ?>
 							<tbody>
 							<?php foreach ($sendedError as $recipient): ?>
-								<tr data-url="<?=$this->Html->url(array('action' => 'view', $recipient['Recipient']['id'], 'sending' =>$sending['Sending']['id'], 'from' => 'errors'));?>">
+								<tr data-url="<?=$this->Html->url(array('action' => 'view', $recipient['Recipient']['id'], 'sending' =>$sending['Sending']['id'], 'from' => 'sended'));?>">
 									<td><?php echo h($recipient['Recipient']['member_email']); ?></td>
 								</tr>
 							<?php endforeach; ?>
 							</tbody>
 						<?php endif; ?>
 					</table>
-					<?php echo $this->element('pagination'); ?>
+					<?php echo $this->Form->end(); ?>
+					<?php if(empty($sended)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna email con errori'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

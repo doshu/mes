@@ -86,6 +86,9 @@
 											$date = DateTime::createFromFormat('Y-m-d', $member['Member'][$additionalField['Memberfield']['code']]);
 											echo $this->SafeDate->dateForUser($date, 'd/m/Y');
 										}
+										elseif(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'boolean') {
+											echo $member['Member'][$additionalField['Memberfield']['code']]?__('Sì'):('No');
+										}
 										else {
 											echo h($member['Member'][$additionalField['Memberfield']['code']]);
 										}

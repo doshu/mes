@@ -34,7 +34,10 @@
 				</div>
 				<div class="panel-body">
 					<?php echo $this->Form->create('Member', 
-						array('url' => array('action' => 'addQuick', 'ext' => 'json'), 'class' => 'form-inline')); 
+						array('url' => array('action' => 'addQuick', 'ext' => 'json'), 
+						'class' => 'form-inline',
+						'id' => 'MemberAddQuickForm'
+						)); 
 					?>
 					<div>
 						<?php
@@ -85,19 +88,6 @@
 					<h5><?php echo __('Membri'); ?></h5>
 				</div>
 				<div class="panel-body" style="">
-					<?php 
-						echo $this->Form->create('Member', array('class' => 'form-inline'));
-						echo $this->Form->input(
-							'email', 
-							array(
-								'label' => false, 
-								'div' => false,
-								'type' => 'text',
-								'placeholder' => __('Cerca per email', true),
-								'class' => 'form-control'
-							)
-						);
-					?>
 					<span class="pull-right">
 						<div class="btn-group">
 							<?php
@@ -107,7 +97,8 @@
 										'label' => false, 
 										'div' => false, 
 										'class' => 'btn btn-primary btn-sm',
-										'type' => 'submit'
+										'type' => 'button',
+										'onclick' => "$('#MemberMailinglistForm').submit();"
 									)
 								);
 							?>
@@ -125,42 +116,204 @@
 							?>
 						</div>
 					</span>
-					<?php
-						echo $this->Form->end();
-					?>
 				</div>
 				<div class="panel-body nopadding">
-					<table class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($members)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessun Membro trovato'); ?></h4></td>
-							</tr>
-						<?php else: ?>
-							<thead>
-								<tr>
-									<th><?php echo $this->Paginator->sort('email', __('Email')); ?></th>
+					<div class="grid-toolbar">
+						<?php echo $this->element('pager'); ?>
+					</div>
+					<?php if(!empty($members)) : ?>
+					<div class="grid-toolbar grid-helper clearfix" data-table="MemberGrid">
+						<?php echo $this->element('selector_helper'); ?>
+						<?php 
+						
+							echo $this->Form->create(
+								'Member', 
+								array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'MemberMailinglistActionForm')
+							); 
+						?>
+						<div class="action-container">
+							<span><?=__('Azioni');?> </span>
+							<?php 
+								echo $this->Form->input(
+									'action', 
+									array(
+										'options' => array(
+											'prova'
+										),
+										'label' => false,
+										'div' => false,
+										'empty' => true,
+										'class' => 'action',
+										'id' => false
+									)
+								);
+								echo $this->Form->button(
+									__('Esegui'), 
+									array(
+										'label' => false, 
+										'div' => false, 
+										'class' => 'btn btn-primary btn-xs',
+										'type' => 'submit',
+									)
+								);
+							?>
+						</div>
+						
+						<?php echo $this->Form->end(); ?>
+					</div>
+					<?php endif; ?>
+					<?php echo $this->Form->create('Member', array('class' => 'form-inline')); ?>
+					<table id="MemberGrid" class="table table-striped table-bordered table-hover interactive table-centered">
+						<thead>
+							<tr class="search">
+								<th></th>
+								<th>
+									<?php echo $this->Form->input(
+										'email', 
+										array(
+											'label' => false, 
+											'div' => false,
+											'type' => 'text',
+											'placeholder' => __('Cerca per email'),
+											'class' => 'form-control input-sm',
+											'required' => false
+										)
+									); ?>
+								</th>
+								<?php
+									foreach($memberAdditionalFields as $additionalField) {
+										if($additionalField['Memberfield']['in_grid']) :
+								?>
+								<th>
 									<?php
-										foreach($memberAdditionalFields as $additionalField) {
-											if($additionalField['Memberfield']['in_grid']) :
-									?>
-									<th>
-										<?php 
-											echo $this->Paginator->sort(
-												$additionalField['Memberfield']['code'], 
-												ucfirst(__($additionalField['Memberfield']['name']))
-											); 
-										?>
-									</th>
-									<?php
-											endif;
+										if(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'date') {
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'].'.from', 
+												array(
+													'label' => false, 
+													'type' => 'text',
+													'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'].__(' (da)'),
+													'class' => 'form-control input-sm datepicker',
+													'required' => false
+												)
+											);
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'].'.to', 
+												array(
+													'label' => false, 
+													'type' => 'text',
+													'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'].__(' (a)'),
+													'class' => 'form-control input-sm datepicker',
+													'required' => false
+												)
+											);
+										}
+										elseif(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'boolean') {
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'], 
+												array(
+													'label' => false, 
+													'div' => false,
+													'class' => 'form-control input-sm',
+													'required' => false,
+													'empty' => __('Cerca per ').$additionalField['Memberfield']['name'],
+													'options' => array(
+														'0' => __('No'),
+														'1' => __('Sì')
+													)
+												)
+											);
+										}
+										else {
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'], 
+												array(
+													'label' => false, 
+													'div' => false,
+													'type' => 'text',
+													'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'],
+													'class' => 'form-control input-sm',
+													'required' => false
+												)
+											);
 										}
 									?>
-									<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
-								</tr>
-							</thead>
+								</th>
+								<?php
+										endif;
+									}
+								?>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Member.created.from', 
+											array(
+												'label' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per data creazione (da)'),
+												'class' => 'form-control input-sm datepicker',
+												'required' => false
+											)
+										);
+										echo $this->Form->input(
+											'Member.created.to', 
+											array(
+												'label' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per data creazione (a)'),
+												'class' => 'form-control input-sm datepicker',
+												'required' => false
+											)
+										);
+									?>
+								</th>
+							</tr>
+							<?php if(!empty($members)) : ?>
+							<tr>
+								<th></th>
+								<th><?php echo $this->Paginator->sort('email', __('Email')); ?></th>
+								<?php
+									foreach($memberAdditionalFields as $additionalField) {
+										if($additionalField['Memberfield']['in_grid']) :
+								?>
+								<th>
+									<?php 
+										echo $this->Paginator->sort(
+											$additionalField['Memberfield']['code'], 
+											ucfirst(__($additionalField['Memberfield']['name']))
+										); 
+									?>
+								</th>
+								<?php
+										endif;
+									}
+								?>
+								<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($members)) : ?>
 							<tbody>
 							<?php foreach ($members as $member): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $member['Member']['id'], 'from' =>  $mailinglist['Mailinglist']['id']));?>">
+									<td>
+										<?php 
+											$this->Form->unlockField('id');
+											echo $this->Form->input(
+												'id.',
+												array(
+													'type' => 'checkbox', 
+													'hiddenField' => false,
+													'label' => false,
+													'div' => false,
+													'class' => 'grid-el-select',
+													'id' => false,
+													'value' => $member['Member']['id']
+												)
+											);
+											
+										?>
+									</td>
 									<td><?php echo h($member['Member']['email']); ?></td>
 									<?php
 										foreach($memberAdditionalFields as $additionalField) {
@@ -171,6 +324,9 @@
 											if(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'date') {
 												$date = DateTime::createFromFormat('Y-m-d', $member['Member'][$additionalField['Memberfield']['code']]);
 												echo $this->SafeDate->dateForUser($date, 'd/m/Y');
+											}
+											elseif(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'boolean') {
+												echo $member['Member'][$additionalField['Memberfield']['code']]?__('Sì'):('No');
 											}
 											else {
 												echo h($member['Member'][$additionalField['Memberfield']['code']]);
@@ -192,8 +348,12 @@
 							</tbody>
 						<?php endif; ?>
 					</table>
-			
-					<?php echo $this->element('pagination'); ?>
+					<?php echo $this->Form->end(); ?>
+					<?php if(empty($members)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna Membro trovato'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

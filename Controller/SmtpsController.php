@@ -9,7 +9,11 @@ class SmtpsController extends AppController {
 		$this->Smtp->recursive = -1;
 		$this->autoPaginate = true;
 		$this->autoPaginateOp = array(
-			'email' => 'LIKE'
+			'email' => 'LIKE',
+			'host' => 'LIKE',
+			'name' => 'LIKE',
+			'port' => 'LIKE',
+			'username' => 'LIKE'
 		);
 		$this->paginate = array('Smtp' => array('order' => array('Smtp.created' =>  'desc')));
 		

@@ -178,16 +178,146 @@
 					<?php echo __('Invii Effettuati'); ?>
 				</div>
 				<div class="panel-body">
+					<span class="pull-right">
+						<div class="btn-group">
+							<?php
+								echo $this->Form->button(
+									__('Cerca', true), 
+									array(
+										'label' => false, 
+										'div' => false, 
+										'class' => 'btn btn-primary btn-sm',
+										'type' => 'button',
+										'onclick' => "$('#SendingViewForm').submit();" 
+									)
+								);
+							?>
+							<?php
+								echo $this->Html->link(
+									__('Reset', true),
+									array(
+										'action' => 'filter_reset', 
+										md5($this->params['plugin'].$this->params['controller'].$this->params['action'])
+									), 
+									array(
+										'class' => 'btn btn-default btn-sm',
+									)
+								);
+							?>
+						</div>
+					</span>
+				</div>
+				<div class="panel-body">
+					<?php if(!empty($sendings)) : ?>
+						<div class="grid-toolbar">
+							<?php echo $this->element('pager'); ?>
+						</div>
+					<?php endif; ?>
+					<?php echo $this->Form->create('Sending', array('class' => 'form-inline')); ?>
 					<table class="table table-striped interactive table-centered table-hover table-bordered">
-						<?php if(!empty($sendings)) : ?>
-							<thead>
+						<thead>
+							<tr class="search">
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Sending.created.from', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per data invio (da)'),
+												'class' => 'form-control input-sm datepicker'
+											)
+										);
+										echo $this->Form->input(
+											'Sending.created.to', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per data invio (a)'),
+												'class' => 'form-control input-sm datepicker'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'note', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per note'),
+												'class' => 'form-control input-sm'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Sending.recipient_count.from', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per n° destinatari (da)'),
+												'class' => 'form-control input-sm'
+											)
+										);
+										echo $this->Form->input(
+											'Sending.recipient_count.to', 
+											array(
+												'label' => false, 
+												'placeholder' => __('Cerca per n° destinatari (a)'),
+												'class' => 'form-control input-sm'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'smtp_email', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per indirizzo di invio'),
+												'class' => 'form-control input-sm',
+												'type' => 'text'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'status', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per stato'),
+												'class' => 'form-control input-sm',
+												'options' => array(
+													Sending::$WAITING => __('In Attesa'),
+													Sending::$SENDING => __('In Corso'),
+													Sending::$COMPLETED => __('Completato'),
+													Sending::$ABORTED => __('Annullato')
+												),
+												'empty' => __('Cerca per stato'),
+											)
+										);
+									?>
+								</th>
+							</tr>
+							<?php if(!empty($sendings)) : ?>
+							<tr>
 								<th><?php echo $this->Paginator->sort('created', __('Data Invio')); ?></th>
 								<th><?php echo $this->Paginator->sort('note', __('Note')); ?></th>
 								<th><?php echo $this->Paginator->sort('recipient_count', __('Destinatari')); ?></th>
 								<th><?php echo $this->Paginator->sort('smtp_email', __('Inviato da')); ?></th>
 								<th><?php echo $this->Paginator->sort('status', __('Stato')); ?></th>
-							</thead>
-				
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($sendings)) : ?>
+							<tbody>
 							<?php foreach($sendings as $sending) : ?>
 								<tr data-url="<?php echo $this->Html->url(array('controller' => 'sendings', 'action' => 'view', $sending['Sending']['id'])); ?>">
 									<td>
@@ -234,13 +364,15 @@
 									</td>
 								</tr>
 							<?php endforeach; ?>
-						<?php else: ?>
-							<tr>
-								<td><h4 style="text-align:center;"><?php echo __('Nessun invio effettuato'); ?></h4></td>
-							</tr>
+							</tbody>
 						<?php endif; ?>
 					</table>
-					<?php echo $this->element('pagination'); ?>
+					<?php echo $this->Form->end(); ?>
+					<?php if(empty($sendings)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessun invio effettuato'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

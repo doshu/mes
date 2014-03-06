@@ -356,3 +356,8 @@ tr.search input {
 	font-size:9px;
 	color:#504F63;
 }
+
+tr.search select{
+	font-size:11px;
+	width:100%!important;
+}

@@ -38,19 +38,6 @@
 					<?php echo __('Indirizzi'); ?>
 				</div>
 				<div class="panel-body" style="">
-					<?php 
-						echo $this->Form->create('Smtp', array('class' => 'form-inline'));
-						echo $this->Form->input(
-							'email', 
-							array(
-								'label' => false, 
-								'div' => false,
-								'type' => 'text',
-								'placeholder' => __('Cerca per email', true),
-								'class' => 'form-control'
-							)
-						);
-					?>
 					<span class="pull-right">
 						<div class="btn-group">
 							<?php
@@ -60,7 +47,8 @@
 										'label' => false, 
 										'div' => false, 
 										'class' => 'btn btn-primary btn-sm',
-										'type' => 'submit'
+										'type' => 'submit',
+										'onclick' => "$('#SmtpIndexForm').submit();" 
 									)
 								);
 							?>
@@ -78,25 +66,160 @@
 							?>
 						</div>
 					</span>
-					<?php
-						echo $this->Form->end();
-					?>
 				</div>
 				<div class="panel-body nopadding">
-					<table class="table table-striped table-bordered table-hover interactive table-centered">
+					<?php if(!empty($smtps)) : ?>
+						<div class="grid-toolbar">
+							<?php echo $this->element('pager'); ?>
+						</div>
+						<div class="grid-toolbar grid-helper clearfix" data-table="SmtpGrid">
+							<?php echo $this->element('selector_helper'); ?>
+							<?php 
+						
+								echo $this->Form->create(
+									'Member', 
+									array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'SmtpIndexActionForm')
+								); 
+							?>
+							<div class="action-container">
+								<span><?=__('Azioni');?> </span>
+								<?php 
+									echo $this->Form->input(
+										'action', 
+										array(
+											'options' => array(
+												'prova'
+											),
+											'label' => false,
+											'div' => false,
+											'empty' => true,
+											'class' => 'action',
+											'id' => false
+										)
+									);
+									echo $this->Form->button(
+										__('Esegui'), 
+										array(
+											'label' => false, 
+											'div' => false, 
+											'class' => 'btn btn-primary btn-xs',
+											'type' => 'submit',
+										)
+									);
+								?>
+							</div>
+						
+							<?php echo $this->Form->end(); ?>
+						</div>
+					<?php endif; ?>
+					<?php echo $this->Form->create('Smtp', array('class' => 'form-inline')); ?>
+					<table id="SmtpGrid" class="table table-striped table-bordered table-hover interactive table-centered">
+						<thead>
+							<tr class="search">
+								<th></th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'email', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per email'),
+												'class' => 'form-control input-sm'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'name', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per nome'),
+												'class' => 'form-control input-sm',
+												'type' => 'text'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'host', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per host'),
+												'class' => 'form-control input-sm',
+												'type' => 'text'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'port', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per porta'),
+												'class' => 'form-control input-sm',
+												'type' => 'text'
+											)
+										);
+									?>
+								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'username', 
+											array(
+												'label' => false, 
+												'div' => false, 
+												'placeholder' => __('Cerca per username'),
+												'class' => 'form-control input-sm',
+												'type' => 'text'
+											)
+										);
+									?>
+								</th>
+							</tr>
+							<?php if(!empty($smtps)) : ?>
+							<tr>
+								<th></th>
+								<th><?php echo $this->Paginator->sort('email', __('Email')); ?></th>
+								<th><?php echo $this->Paginator->sort('name', __('Name')); ?></th>
+								<th><?php echo $this->Paginator->sort('host', __('Host')); ?></th>
+								<th><?php echo $this->Paginator->sort('port', __('Port')); ?></th>
+								<th><?php echo $this->Paginator->sort('username', __('Username')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
 						<?php if(!empty($smtps)) : ?>
-							<thead>
-								<tr>
-									<th><?php echo $this->Paginator->sort('email', __('Email')); ?></th>
-									<th><?php echo $this->Paginator->sort('email', __('Name')); ?></th>
-									<th><?php echo $this->Paginator->sort('email', __('Host')); ?></th>
-									<th><?php echo $this->Paginator->sort('email', __('Port')); ?></th>
-									<th><?php echo $this->Paginator->sort('email', __('Username')); ?></th>
-								</tr>
-							</thead>
 							<tbody>
 							<?php foreach ($smtps as $smtp): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $smtp['Smtp']['id']));?>">
+									<td>
+										<?php 
+											$this->Form->unlockField('id');
+											echo $this->Form->input(
+												'id.',
+												array(
+													'type' => 'checkbox', 
+													'hiddenField' => false,
+													'label' => false,
+													'div' => false,
+													'class' => 'grid-el-select',
+													'id' => false,
+													'value' => $smtp['Smtp']['id']
+												)
+											);
+											
+										?>
+									</td>
 									<td><?php echo h($smtp['Smtp']['email']); ?></td>
 									<td><?php echo h($smtp['Smtp']['name']); ?></td>
 									<td><?php echo h($smtp['Smtp']['host']); ?></td>
@@ -105,14 +228,14 @@
 								</tr>
 							<?php endforeach; ?>
 							</tbody>
-						<?php else : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessun Indirizzo di invio trovato'); ?></h4></td>
-							</tr>
 						<?php endif; ?>
 					</table>
-			
-					<?php echo $this->element('pagination'); ?>
+					<?php echo $this->Form->end(); ?>
+					<?php if(empty($smtps)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessun indirizzo di invio trovato'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

@@ -92,6 +92,7 @@
 					<div class="grid-toolbar">
 						<?php echo $this->element('pager'); ?>
 					</div>
+					<?php if(!empty($members)) : ?>
 					<div class="grid-toolbar grid-helper clearfix" data-table="MemberGrid">
 						<?php echo $this->element('selector_helper'); ?>
 						<?php 
@@ -131,124 +132,138 @@
 						
 						<?php echo $this->Form->end(); ?>
 					</div>
+					<?php endif; ?>
 					<?php echo $this->Form->create('Member', array('class' => 'form-inline')); ?>
 					<table id="MemberGrid" class="table table-striped table-bordered table-hover interactive table-centered">
-						<?php if(empty($members)) : ?>
-							<tr>
-								<td><h4 class="text-center"><?php echo __('Nessun Membro trovato'); ?></h4></td>
-							</tr>
-						<?php else: ?>
-							
-							<thead>
-								<tr class="search">
-									<th></th>
-									<th>
-										<?php echo $this->Form->input(
-											'email', 
+						<thead>
+							<tr class="search">
+								<th></th>
+								<th>
+									<?php echo $this->Form->input(
+										'email', 
+										array(
+											'label' => false, 
+											'div' => false,
+											'type' => 'text',
+											'placeholder' => __('Cerca per email'),
+											'class' => 'form-control input-sm',
+											'required' => false
+										)
+									); ?>
+								</th>
+								<?php
+									foreach($memberAdditionalFields as $additionalField) {
+										if($additionalField['Memberfield']['in_grid']) :
+								?>
+								<th>
+									<?php
+										if(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'date') {
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'].'.from', 
+												array(
+													'label' => false, 
+													'type' => 'text',
+													'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'].__(' (da)'),
+													'class' => 'form-control input-sm datepicker',
+													'required' => false
+												)
+											);
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'].'.to', 
+												array(
+													'label' => false, 
+													'type' => 'text',
+													'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'].__(' (a)'),
+													'class' => 'form-control input-sm datepicker',
+													'required' => false
+												)
+											);
+										}
+										elseif(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'boolean') {
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'], 
+												array(
+													'label' => false, 
+													'div' => false,
+													'class' => 'form-control input-sm',
+													'required' => false,
+													'empty' => __('Cerca per ').$additionalField['Memberfield']['name'],
+													'options' => array(
+														'0' => __('No'),
+														'1' => __('Sì')
+													)
+												)
+											);
+										}
+										else {
+											echo $this->Form->input(
+												'Member.'.$additionalField['Memberfield']['code'], 
+												array(
+													'label' => false, 
+													'div' => false,
+													'type' => 'text',
+													'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'],
+													'class' => 'form-control input-sm',
+													'required' => false
+												)
+											);
+										}
+									?>
+								</th>
+								<?php
+										endif;
+									}
+								?>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Member.created.from', 
 											array(
 												'label' => false, 
-												'div' => false,
 												'type' => 'text',
-												'placeholder' => __('Cerca per email'),
-												'class' => 'form-control input-sm',
+												'placeholder' => __('Cerca per data creazione (da)'),
+												'class' => 'form-control input-sm datepicker',
 												'required' => false
 											)
-										); ?>
-									</th>
-									<?php
-										foreach($memberAdditionalFields as $additionalField) {
-											if($additionalField['Memberfield']['in_grid']) :
+										);
+										echo $this->Form->input(
+											'Member.created.to', 
+											array(
+												'label' => false, 
+												'type' => 'text',
+												'placeholder' => __('Cerca per data creazione (a)'),
+												'class' => 'form-control input-sm datepicker',
+												'required' => false
+											)
+										);
 									?>
-									<th>
-										<?php
-											if(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'date') {
-												echo $this->Form->input(
-													'Member.'.$additionalField['Memberfield']['code'].'.from', 
-													array(
-														'label' => false, 
-														'type' => 'text',
-														'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'].__(' (da)'),
-														'class' => 'form-control input-sm datepicker',
-														'required' => false
-													)
-												);
-												echo $this->Form->input(
-													'Member.'.$additionalField['Memberfield']['code'].'.to', 
-													array(
-														'label' => false, 
-														'type' => 'text',
-														'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'].__(' (a)'),
-														'class' => 'form-control input-sm datepicker',
-														'required' => false
-													)
-												);
-											}
-											else {
-												echo $this->Form->input(
-													'Member.'.$additionalField['Memberfield']['code'], 
-													array(
-														'label' => false, 
-														'div' => false,
-														'type' => 'text',
-														'placeholder' => __('Cerca per ').$additionalField['Memberfield']['name'],
-														'class' => 'form-control input-sm',
-														'required' => false
-													)
-												);
-											}
-										?>
-									</th>
-									<?php
-											endif;
-										}
+								</th>
+							</tr>
+							<?php if(!empty($members)) : ?>
+							<tr>
+								<th></th>
+								<th><?php echo $this->Paginator->sort('email', __('Email')); ?></th>
+								<?php
+									foreach($memberAdditionalFields as $additionalField) {
+										if($additionalField['Memberfield']['in_grid']) :
+								?>
+								<th>
+									<?php 
+										echo $this->Paginator->sort(
+											$additionalField['Memberfield']['code'], 
+											ucfirst(__($additionalField['Memberfield']['name']))
+										); 
 									?>
-									<th>
-										<?php
-											echo $this->Form->input(
-												'Member.created.from', 
-												array(
-													'label' => false, 
-													'type' => 'text',
-													'placeholder' => __('Cerca per data creazione (da)'),
-													'class' => 'form-control input-sm datepicker',
-													'required' => false
-												)
-											);
-											echo $this->Form->input(
-												'Member.created.to', 
-												array(
-													'label' => false, 
-													'type' => 'text',
-													'placeholder' => __('Cerca per data creazione (a)'),
-													'class' => 'form-control input-sm datepicker',
-													'required' => false
-												)
-											);
-										?>
-									</th>
-								</tr>
-								<tr>
-									<th></th>
-									<th><?php echo $this->Paginator->sort('email', __('Email')); ?></th>
-									<?php
-										foreach($memberAdditionalFields as $additionalField) {
-											if($additionalField['Memberfield']['in_grid']) :
-									?>
-									<th>
-										<?php 
-											echo $this->Paginator->sort(
-												$additionalField['Memberfield']['code'], 
-												ucfirst(__($additionalField['Memberfield']['name']))
-											); 
-										?>
-									</th>
-									<?php
-											endif;
-										}
-									?>
-									<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
-								</tr>
-							</thead>
+								</th>
+								<?php
+										endif;
+									}
+								?>
+								<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
+							</tr>
+							<?php endif; ?>
+						</thead>
+						<?php if(!empty($members)) : ?>
 							<tbody>
 							<?php foreach ($members as $member): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $member['Member']['id']));?>">
@@ -263,7 +278,8 @@
 													'label' => false,
 													'div' => false,
 													'class' => 'grid-el-select',
-													'id' => false
+													'id' => false,
+													'value' => $member['Member']['id']
 												)
 											);
 											
@@ -279,6 +295,9 @@
 											if(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'date') {
 												$date = DateTime::createFromFormat('Y-m-d', $member['Member'][$additionalField['Memberfield']['code']]);
 												echo $this->SafeDate->dateForUser($date, 'd/m/Y');
+											}
+											elseif(Memberfield::$dataType[$additionalField['Memberfield']['type']] == 'boolean') {
+												echo $member['Member'][$additionalField['Memberfield']['code']]?__('Sì'):('No');
 											}
 											else {
 												echo h($member['Member'][$additionalField['Memberfield']['code']]);
@@ -301,7 +320,11 @@
 						<?php endif; ?>
 					</table>
 					<?php echo $this->Form->end(); ?>
-					<?php echo $this->element('pagination'); ?>
+					<?php if(empty($members)) : ?>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna Membro trovato'); ?></h4></div>
+					<?php else: ?>
+						<?php echo $this->element('pagination'); ?>
+					<?php endif; ?>
 				</div>
 			</div>
 		</div>

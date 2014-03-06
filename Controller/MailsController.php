@@ -71,7 +71,7 @@ class MailsController extends AppController {
 		$this->autoPaginateOp = array(
 			'name' => 'LIKE',
 			'description' => 'LIKE',
-			'created' => array('BETWEEN', array('convert' => true, 'type' => 'date'))
+			'created' => array('BETWEEN', array('convert' => true, 'type' => 'date', 'time' => true))
 		);
 		
 		$this->paginate = array('Mail' => array('order' => array('Mail.created' =>  'desc')));
@@ -97,6 +97,15 @@ class MailsController extends AppController {
 			'Sending' => array(
 				'order' => array('created DESC'),
 			)
+		);
+		
+		$this->autoPaginate = true;
+		$this->autoPaginateOp = array(
+			'note' => 'LIKE',
+			'recipient_count' => 'BETWEEN',
+			'created' => array('BETWEEN', array('convert' => true, 'type' => 'date', 'time' => true)),
+			'smtp_email' => 'LIKE',
+			'status' => 'LIKE'
 		);
 		
 		$sendings = $this->paginate('Sending', array('mail_id' => $id));
