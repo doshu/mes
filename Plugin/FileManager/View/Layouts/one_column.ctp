@@ -11,8 +11,8 @@
 
 		echo $this->Html->css(array(
 			'bootstrap.min',
-			'doshu.grey',
-			'doshu.main',
+			'doshu',
+			'doshu-skin',
 			'font-awesome.min',
 			'layout',
 			'FileManager.filemanager'
@@ -42,7 +42,7 @@
 <body>
 	<div id="header">
 		<?php
-			echo $this->Html->image('logo.png', array('style' => 'width:90px', 'id' => 'top-logo'));
+			echo $this->Html->image('likeasirblack.png', array('style' => 'width:90px', 'id' => 'top-logo'));
 		?>
 		<h1 style="display:inline-block; margin-left:0;">MES</h1>
 	</div>

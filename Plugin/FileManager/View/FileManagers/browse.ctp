@@ -33,10 +33,10 @@
 	</span>
 	<div id="actionContainer">
 		<a href="#" id="select">
-			<i class="icon icon-ok"></i>
+			<i class="fa fa-check"></i>
 		</a>
 		<a href="#" id="trash">
-			<i class="icon icon-trash"></i>
+			<i class="fa fa-trash-o"></i>
 		</a>
 	</div>
 	

@@ -8,11 +8,9 @@
 			echo $this->Html->meta('icon');
 			echo $this->Html->css(array(
 				'bootstrap.min',
-				'pace',
-				'morris',
 				'select2',
-				'endless',
-				'endless-skin',
+				'doshu',
+				'doshu-skin',
 				'font-awesome.min',
 				'jquery.datetimepicker',
 				'layout'
