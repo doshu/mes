@@ -29,4 +29,28 @@ $(function() {
 			setTimeout("$('#quickAddResult').fadeOut(1000, function() { $('#quickAddResult').empty(); })", 4000);
 		}
 	);
+	
+	
+	$('#MemberMailinglistActionFormSubmit').on('click', function(e) {
+		if($('#MemberAction').val() == 'bulkDelete') {
+			customConfirm(
+				'Sei sicuro di voler eliminare gli elementi selezionati?',
+				function() {
+					$('#MemberMailinglistActionForm').submit();
+				}
+			);
+		}
+		else if($('#MemberAction').val() == 'bulkUnsubscribe') {
+			customConfirm(
+				'Sei sicuro di voler disiscrivere i membri selezionati?',
+				function() {
+					$('#MemberMailinglistActionForm').submit();
+				}
+			);
+		}
+		else {
+			$('#MemberMailinglistActionForm').submit();
+		}
+	});
+	
 });

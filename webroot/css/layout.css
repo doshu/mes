@@ -352,7 +352,7 @@ tr.search input {
 	float:right;
 } 
 
-.select-all-trigger, .select-visible-trigger, .unselect-all-trigger {
+.select-visible-trigger, .unselect-visible-trigger {
 	font-size:9px;
 	color:#504F63;
 }
@@ -364,4 +364,8 @@ tr.search select{
 
 a, a:active, a:hover, a:focus {
 	outline:none;
+}
+
+.shortcut-wrapper:empty {
+	display:none;
 }

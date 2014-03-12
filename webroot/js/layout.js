@@ -133,35 +133,53 @@ $(function() {
     	e.stopPropagation();
     });
     
-    $('.select-all-trigger').on('click', function(e) {
-    	e.preventDefault();
-    	var gridHelper = $(this).parents('.grid-helper')[0];
-    	var useTable = $('#'+$(gridHelper).attr('data-table'));
-    	if(useTable.length) {
-    		useTable.find('.grid-el-select').prop('checked', true);
-    		$(gridHelper).find('.is-all-selected').val(1);
+    $('.grid-el-select').on('change', function(e) {
+    	var gridHelper = $('.grid-helper[data-table='+$(this).parents('table[id]').attr('id')+']');
+    	var current = $(gridHelper).find('.selected-list').val();
+		current = current.length?
+			$.map(current.split(','), function(v) {
+				return v.toString().trim();
+			}):[];
+			
+    	var index = $.inArray($(this).val(), current);
+    	if($(this).prop('checked')) {
+    		if(index == -1) {
+    			current.push($(this).val());
+    		}	
     	}
+    	else {
+    		console.log(index);
+    		if(index > -1) {
+    			current.splice(index, 1);
+    		}
+    	}
+    	$(gridHelper).find('.selected-list').val(current.join(','));
     });
-    
     
     $('.select-visible-trigger').on('click', function(e) {
     	e.preventDefault();
     	var gridHelper = $(this).parents('.grid-helper')[0];
     	var useTable = $('#'+$(gridHelper).attr('data-table'));
     	if(useTable.length) {
-    		useTable.find('.grid-el-select').prop('checked', true);
-    		$(gridHelper).find('.is-all-selected').val(0);
+    		useTable.find('.grid-el-select').prop('checked', true).change();
     	}
     });
     
     
-    $('.unselect-all-trigger').on('click', function(e) {
+    $('.unselect-visible-trigger').on('click', function(e) {
     	e.preventDefault();
     	var gridHelper = $(this).parents('.grid-helper')[0];
     	var useTable = $('#'+$(gridHelper).attr('data-table'));
     	if(useTable.length) {
-    		useTable.find('.grid-el-select').prop('checked', false);
-    		$(gridHelper).find('.is-all-selected').val(0);
+    		useTable.find('.grid-el-select').prop('checked', false).change();
+    	}
+    });
+    
+    $('.bulk-form').on('submit', function(e) {
+    	if(!$(this).find('.selected-list').val().length) {
+    		e.preventDefault();
+    		alert('Seleziona almeno un elemento');
+    		return false;
     	}
     });
     

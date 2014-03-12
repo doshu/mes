@@ -1,15 +1,14 @@
-<?php echo $this->Html->link(__('Seleziona tutto'), '#', array('class' => 'select-all-trigger')); ?> | 
 <?php echo $this->Html->link(__('Seleziona visibili'), '#', array('class' => 'select-visible-trigger')); ?> | 
-<?php echo $this->Html->link(__('Deseleziona tutto'), '#', array('class' => 'unselect-all-trigger')); ?>
+<?php echo $this->Html->link(__('Deseleziona visibili'), '#', array('class' => 'unselect-visible-trigger')); ?>
 <?php 
+	$this->Form->unlockField('selected');
 	echo $this->Form->input(
-		'all', 
+		'selected', 
 		array(
 			'type' => 'hidden', 
-			'value' => 0, 
-			'name' => false, 
+			'value' => '', 
 			'id' => false,
-			'class' => 'is-all-selected'
+			'class' => 'selected-list'
 		)
 	); 
 ?>

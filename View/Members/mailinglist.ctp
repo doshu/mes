@@ -123,7 +123,6 @@
 					</div>
 					<?php if(!empty($members)) : ?>
 					<div class="grid-toolbar grid-helper clearfix" data-table="MemberGrid">
-						<?php echo $this->element('selector_helper'); ?>
 						<?php 
 						
 							echo $this->Form->create(
@@ -131,6 +130,8 @@
 								array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'MemberMailinglistActionForm')
 							); 
 						?>
+						<?php echo $this->element('selector_helper'); ?>
+						<?php echo $this->Form->hidden('mailinglist', array('value' => $mailinglist['Mailinglist']['id'])); ?>
 						<div class="action-container">
 							<span><?=__('Azioni');?> </span>
 							<?php 
@@ -138,13 +139,13 @@
 									'action', 
 									array(
 										'options' => array(
-											'prova'
+											'bulkDelete' => __('Elimina'),
+											'bulkUnsubscribe' => __('Disiscrivi')
 										),
 										'label' => false,
 										'div' => false,
 										'empty' => true,
 										'class' => 'action',
-										'id' => false
 									)
 								);
 								echo $this->Form->button(
@@ -153,7 +154,8 @@
 										'label' => false, 
 										'div' => false, 
 										'class' => 'btn btn-primary btn-xs',
-										'type' => 'submit',
+										'type' => 'button',
+										'id' => 'MemberMailinglistActionFormSubmit'
 									)
 								);
 							?>

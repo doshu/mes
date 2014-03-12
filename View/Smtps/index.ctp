@@ -73,14 +73,14 @@
 							<?php echo $this->element('pager'); ?>
 						</div>
 						<div class="grid-toolbar grid-helper clearfix" data-table="SmtpGrid">
-							<?php echo $this->element('selector_helper'); ?>
 							<?php 
 						
 								echo $this->Form->create(
-									'Member', 
+									'Smtp', 
 									array('style' => 'display:inline', 'url' => array('action' => 'bulk'), 'id' => 'SmtpIndexActionForm')
 								); 
 							?>
+							<?php echo $this->element('selector_helper'); ?>
 							<div class="action-container">
 								<span><?=__('Azioni');?> </span>
 								<?php 
@@ -88,13 +88,12 @@
 										'action', 
 										array(
 											'options' => array(
-												'prova'
+												'bulkDelete' => __('Elimina')
 											),
 											'label' => false,
 											'div' => false,
 											'empty' => true,
 											'class' => 'action',
-											'id' => false
 										)
 									);
 									echo $this->Form->button(
@@ -103,7 +102,8 @@
 											'label' => false, 
 											'div' => false, 
 											'class' => 'btn btn-primary btn-xs',
-											'type' => 'submit',
+											'type' => 'button',
+											'id' => 'SmtpIndexActionFormSubmit'
 										)
 									);
 								?>

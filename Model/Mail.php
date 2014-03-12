@@ -144,6 +144,27 @@ class Mail extends AppModel {
 	}
 	
 	
+	public function bulkDelete($ids) {
+		$dbo = $this->getDataSource();
+		$dbo->begin();
+		foreach($ids as $id) {
+			if($this->isInSending($id)) {
+				$dbo->rollback();
+				return array(false, __('Errore durante l\'operazione. Alcune Email sono attualmente in corso di invio.'));
+			}
+			else {
+				if(!$this->delete($id)) {
+					$dbo->rollback();
+					return array(false, __('Errore durante l\'operazione. Impossibile eliminare alcune Email.'));
+				}
+			}
+		}
+		
+		$dbo->commit();
+		return array(true, true);
+	}
+	
+	
 	public function checkPerm($id, $params, $userId) {
 			
 		$data = $this->read('user_id', $id);

@@ -437,6 +437,38 @@ class Sending extends AppModel {
 	}
 	
 	
+	public function isInSending($id) {
+		return (bool)$this->find('count', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'id' => $id,
+				'status' => self::$SENDING
+			)
+		));
+	}
+	
+	
+	public function bulkDelete($ids) {
+		$dbo = $this->getDataSource();
+		$dbo->begin();
+		foreach($ids as $id) {
+			if($this->isInSending($id)) {
+				$dbo->rollback();
+				return array(false, __('Errore durante l\'operazione. Alcuni Invii sono attualmente in corso.'));
+			}
+			else {
+				if(!$this->delete($id)) {
+					$dbo->rollback();
+					return array(false, __('Errore durante l\'operazione. Impossibile eliminare alcune Invii.'));
+				}
+			}
+		}
+		
+		$dbo->commit();
+		return array(true, true);
+	}
+	
+	
 	public function checkPerm($id, $params, $userId) {
 		$data = $this->read(null, $id);
 		if(isset($data['Mail']['user_id']) && !empty($data['Mail']['user_id']))

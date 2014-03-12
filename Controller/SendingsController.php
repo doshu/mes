@@ -147,17 +147,22 @@ class SendingsController extends AppController {
 	public function delete($id = null, $mail_id = null) {
 		$this->Sending->id = $id;
 		$this->Sending->getDataSource()->begin();
-		if ($this->Sending->delete()) {
-			$this->Sending->getDataSource()->commit();
-			$this->Session->setFlash(__("L'Invio è stato eliminato"), 'default', array(), 'info');
-			if($this->Sending->Mail->exists($mail_id))
-				$this->redirect(array('controller' => 'mails', 'action' => 'view', $mail_id));
-			else
-				$this->redirect(array('controller' => 'mails', 'action' => 'index'));
+		
+		if(!$this->Sending->isInSending($id)) {
+			if ($this->Sending->delete()) {
+				$this->Sending->getDataSource()->commit();
+				$this->Session->setFlash(__("L'Invio è stato eliminato"), 'default', array(), 'info');
+			
+			}
+			else {
+				$this->Sending->getDataSource()->rollback();
+				$this->Session->setFlash(__('Errore durante la rimozione. Riprovare'), 'default', array(), 'error');
+			}
 		}
-		else
-			$this->Sending->getDataSource()->rollback();
-		$this->Session->setFlash(__('Errore durante la rimozione. Riprovare'), 'default', array(), 'error');
+		else {
+			$this->Session->setFlash(__('Impossibile eliminare un invio in corso.'), 'default', array(), 'error');
+		}
+		
 		if($this->Sending->Mail->exists($mail_id))
 			$this->redirect(array('controller' => 'mails', 'action' => 'view', $mail_id));
 		else
@@ -202,6 +207,52 @@ class SendingsController extends AppController {
 		
 		$this->set('unsubscribeds', $this->paginate('Unsubscription'));
 	}
+	
+	
+	public function bulk() {
+	
+		$result = false;
+		$message = __('Errore durante l\'operazione.');
+		
+		switch($this->request->data['Sending']['action']) {
+			case 'bulkDelete':
+				list($result, $message) = $this->Sending->bulkDelete($this->request->data['Sending']['selected']);
+			break;
+		}
+		if($result) {
+			if($message === true) {
+				$message = __('Operazione eseguita con successo.');
+			}
+			$this->Session->setFlash($message, 'default', array(), 'info');
+		}
+		else {
+			$this->Session->setFlash($message, 'default', array(), 'error');
+		}
+		$this->redirect($this->referer(true, '/'));
+	}
+	
+	
+	protected function __securitySettings_bulk() {
+		$this->request->onlyAllow('post');
+		if(isset($this->request->data['Sending']['action']) && isset($this->request->data['Sending']['selected'])) {
+			switch($this->request->data['Sending']['action']) {
+				case 'bulkDelete':
+					$this->Security->allowedControllers = array('mails');
+					$this->Security->allowedActions = array('view');
+					$this->request->data['Sending']['selected'] = explode(',', $this->request->data['Sending']['selected']);
+					foreach($this->request->data['Sending']['selected'] as $selected) {
+						$this->Xuser->checkPerm($this->Sending, $selected);
+					}
+				break;
+				default:
+					$this->Security->blackHole($this, 'auth');
+			}
+		}
+		else {
+			$this->Security->blackHole($this, 'auth');
+		}
+	}
+	
 	
 	protected function __securitySettings_resend() {
 		$this->request->onlyAllow('post');

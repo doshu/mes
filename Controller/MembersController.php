@@ -45,6 +45,7 @@ class MembersController extends AppController {
 		);
 	}
 
+	
 
 	public function view($id = null) {
 		$this->set('member', $this->Member->find('first', array('conditions' => array('Member.id' => $id))));
@@ -457,6 +458,71 @@ class MembersController extends AppController {
 		$filename = __('esempio_importazione');
 		$this->response->download($filename.'.csv');
 		return $this->response;
+	}
+	
+	
+	
+	public function bulk() {
+	
+		$result = false;
+		$message = __('Errore durante l\'operazione.');
+		
+		switch($this->request->data['Member']['action']) {
+			case 'bulkDelete':
+				list($result, $message) = $this->Member->bulkDelete($this->request->data['Member']['selected']);
+			break;
+			case 'bulkUnsubscribe':
+				list($result, $message) = $this->Member->bulkUnsubscribe(
+					$this->request->data['Member']['selected'], 
+					$this->request->data['Member']['mailinglist']
+				);
+			break;
+		}
+		if($result) {
+			if($message === true) {
+				$message = __('Operazione eseguita con successo.');
+			}
+			$this->Session->setFlash($message, 'default', array(), 'info');
+		}
+		else {
+			$this->Session->setFlash($message, 'default', array(), 'error');
+		}
+		$this->redirect($this->referer(true, '/'));
+	}
+	
+	
+	protected function __securitySettings_bulk() {
+		$this->request->onlyAllow('post');
+		if(isset($this->request->data['Member']['action']) && isset($this->request->data['Member']['selected'])) {
+			switch($this->request->data['Member']['action']) {
+				case 'bulkDelete':
+					$this->Security->allowedControllers = array('members');
+					$this->Security->allowedActions = array('index');
+					$this->request->data['Member']['selected'] = explode(',', $this->request->data['Member']['selected']);
+					foreach($this->request->data['Member']['selected'] as $selected) {
+						$this->Xuser->checkPerm($this->Member, $selected);
+					}
+				break;
+				case 'bulkUnsubscribe':
+					if(isset($this->request->data['Member']['mailinglist'])) {
+						$this->Security->allowedControllers = array('members');
+						$this->Security->allowedActions = array('mailinglists');
+						$this->request->data['Member']['selected'] = explode(',', $this->request->data['Member']['selected']);
+						foreach($this->request->data['Member']['selected'] as $selected) {
+							$this->Xuser->checkPerm($this->Member, $selected);
+						}
+						$this->Xuser->checkPerm($this->Member->Mailinglist, $this->request->data['Member']['mailinglist']);
+					}
+					else
+						$this->Security->blackHole($this, 'auth');
+				break;
+				default:
+					$this->Security->blackHole($this, 'auth');
+			}
+		}
+		else {
+			$this->Security->blackHole($this, 'auth');
+		}
 	}
 	
 	protected function __securitySettings_index() {

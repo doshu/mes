@@ -212,11 +212,56 @@
 						<div class="grid-toolbar">
 							<?php echo $this->element('pager'); ?>
 						</div>
+						<div class="grid-toolbar grid-helper clearfix" data-table="SendingGrid">
+							<?php 
+						
+								echo $this->Form->create(
+									'Sending', 
+									array(
+										'style' => 'display:inline', 
+										'url' => array('controller' => 'sendings', 'action' => 'bulk'), 
+										'id' => 'MailViewActionForm',
+										'class' => 'bulk-form'
+									)
+								); 
+							?>
+							<?php echo $this->element('selector_helper'); ?>
+							<div class="action-container">
+								<span><?=__('Azioni');?> </span>
+								<?php 
+									echo $this->Form->input(
+										'action', 
+										array(
+											'options' => array(
+												'bulkDelete' => __('Elimina')
+											),
+											'label' => false,
+											'div' => false,
+											'empty' => true,
+											'class' => 'action',
+										)
+									);
+									echo $this->Form->button(
+										__('Esegui'), 
+										array(
+											'label' => false, 
+											'div' => false, 
+											'class' => 'btn btn-primary btn-xs',
+											'type' => 'button',
+											'id' => 'MailViewActionFormSubmit'
+										)
+									);
+								?>
+							</div>
+						
+							<?php echo $this->Form->end(); ?>
+						</div>
 					<?php endif; ?>
 					<?php echo $this->Form->create('Sending', array('class' => 'form-inline')); ?>
-					<table class="table table-striped interactive table-centered table-hover table-bordered">
+					<table id="SendingGrid" class="table table-striped interactive table-centered table-hover table-bordered">
 						<thead>
 							<tr class="search">
+								<th></th>
 								<th>
 									<?php
 										echo $this->Form->input(
@@ -308,6 +353,7 @@
 							</tr>
 							<?php if(!empty($sendings)) : ?>
 							<tr>
+								<th></th>
 								<th><?php echo $this->Paginator->sort('created', __('Data Invio')); ?></th>
 								<th><?php echo $this->Paginator->sort('note', __('Note')); ?></th>
 								<th><?php echo $this->Paginator->sort('recipient_count', __('Destinatari')); ?></th>
@@ -320,6 +366,24 @@
 							<tbody>
 							<?php foreach($sendings as $sending) : ?>
 								<tr data-url="<?php echo $this->Html->url(array('controller' => 'sendings', 'action' => 'view', $sending['Sending']['id'])); ?>">
+									<td>
+										<?php 
+											$this->Form->unlockField('id');
+											echo $this->Form->input(
+												'id.',
+												array(
+													'type' => 'checkbox', 
+													'hiddenField' => false,
+													'label' => false,
+													'div' => false,
+													'class' => 'grid-el-select',
+													'id' => false,
+													'value' => $sending['Sending']['id']
+												)
+											);
+											
+										?>
+									</td>
 									<td>
 										<?php 
 											if(empty($sending['Sending']['time'])) {

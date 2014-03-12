@@ -130,6 +130,21 @@ class Smtp extends AppModel {
 	}
 	
 	
+	public function bulkDelete($ids) {
+		$dbo = $this->getDataSource();
+		$dbo->begin();
+		foreach($ids as $id) {
+			if(!$this->delete($id)) {
+				$dbo->rollback();
+				return array(false, __('Errore durante l\'operazione. Impossibile eliminare alcuni Indirizzi di Invio.'));
+			}
+		}
+		
+		$dbo->commit();
+		return array(true, true);
+	}
+	
+	
 	public function checkPerm($id, $params, $userId) {
 		$data = $this->read('user_id', $id);
 		if(isset($data['Smtp']['user_id']) && !empty($data['Smtp']['user_id']))

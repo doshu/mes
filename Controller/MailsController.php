@@ -212,7 +212,12 @@ class MailsController extends AppController {
 				$this->Session->setFlash(__('Errore durante la rimozione. Riprovare'), 'default', array(), 'error');
 		}
 		else {
-			$this->Session->setFlash(__('Attendere il completamento di tutti gli invii prima di eliminare questa Email.'), 'default', array(), 'error');
+			$this->Session->setFlash(
+				__('Attendere il completamento di tutti gli invii prima di eliminare questa Email.'), 
+				'default', 
+				array(), 
+				'error'
+			);
 		}
 		
 		$this->redirect($this->referer(array('action' => 'view', $this->Mail->id), true));
@@ -249,10 +254,54 @@ class MailsController extends AppController {
 		);
 	}
 	
+	public function bulk() {
 	
+		$result = false;
+		$message = __('Errore durante l\'operazione.');
+		
+		switch($this->request->data['Mail']['action']) {
+			case 'bulkDelete':
+				list($result, $message) = $this->Mail->bulkDelete($this->request->data['Mail']['selected']);
+			break;
+		}
+		if($result) {
+			if($message === true) {
+				$message = __('Operazione eseguita con successo.');
+			}
+			$this->Session->setFlash($message, 'default', array(), 'info');
+		}
+		else {
+			$this->Session->setFlash($message, 'default', array(), 'error');
+		}
+		$this->redirect($this->referer(true, '/'));
+	}
+	
+		
 	public function preview($id) {
 		$this->layout = 'preview';
 		$this->set('mail', $this->Mail->read(null, $id));
+	}
+	
+	
+	protected function __securitySettings_bulk() {
+		$this->request->onlyAllow('post');
+		if(isset($this->request->data['Mail']['action']) && isset($this->request->data['Mail']['selected'])) {
+			switch($this->request->data['Mail']['action']) {
+				case 'bulkDelete':
+					$this->Security->allowedControllers = array('mails');
+					$this->Security->allowedActions = array('index');
+					$this->request->data['Mail']['selected'] = explode(',', $this->request->data['Mail']['selected']);
+					foreach($this->request->data['Mail']['selected'] as $selected) {
+						$this->Xuser->checkPerm($this->Mail, $selected);
+					}
+				break;
+				default:
+					$this->Security->blackHole($this, 'auth');
+			}
+		}
+		else {
+			$this->Security->blackHole($this, 'auth');
+		}
 	}
 	
 	protected function __securitySettings_add() {

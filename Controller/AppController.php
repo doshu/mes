@@ -84,9 +84,9 @@ class AppController extends Controller {
 	public function _securitySettings($event) {
 		$action = $this->request->params['action'];
 		$sec = '__securitySettings_'.$action;
-		if(method_exists($this, $sec))
+		if(method_exists($this, $sec)) {
 			$this->$sec();
-		
+		}
 		return $event;
 	}  
 	

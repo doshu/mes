@@ -627,6 +627,31 @@ class Member extends AppModel {
 		}
 	}
 	
+	public function bulkDelete($ids) {
+		$dbo = $this->getDataSource();
+		$dbo->begin();
+		foreach($ids as $id) {
+			if(!$this->delete($id)) {
+				$dbo->rollback();
+				return array(false, __('Errore durante l\'operazione. Impossibile eliminare alcuni Membri.'));
+			}
+		}
+		$dbo->commit();
+		return array(true, true);
+	}
+	
+	
+	public function bulkUnsubscribe($ids, $list_id) {
+		if(!$this->MailinglistsMember->deleteAll(
+			array('MailinglistsMember.member_id' => $ids, 'MailinglistsMember.mailinglist_id' => $list_id)
+		)) {
+			$dbo->rollback();
+			return array(false, __('Errore durante l\'operazione. Impossibile disiscrivere alcuni Membri.'));
+		}
+		return array(true, true);
+	}
+	
+	
 	public function checkPerm($id, $params, $userId) {
 		$data = $this->read('user_id', $id);
 		if(isset($data['Member']['user_id']) && !empty($data['Member']['user_id']))

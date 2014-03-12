@@ -156,6 +156,50 @@ class SmtpsController extends AppController {
 	
 	
 	
+	public function bulk() {
+	
+		$result = false;
+		$message = __('Errore durante l\'operazione.');
+		
+		switch($this->request->data['Smtp']['action']) {
+			case 'bulkDelete':
+				list($result, $message) = $this->Smtp->bulkDelete($this->request->data['Smtp']['selected']);
+			break;
+		}
+		if($result) {
+			if($message === true) {
+				$message = __('Operazione eseguita con successo.');
+			}
+			$this->Session->setFlash($message, 'default', array(), 'info');
+		}
+		else {
+			$this->Session->setFlash($message, 'default', array(), 'error');
+		}
+		$this->redirect($this->referer(true, '/'));
+	}
+	
+	
+	protected function __securitySettings_bulk() {
+		$this->request->onlyAllow('post');
+		if(isset($this->request->data['Smtp']['action']) && isset($this->request->data['Smtp']['selected'])) {
+			switch($this->request->data['Smtp']['action']) {
+				case 'bulkDelete':
+					$this->Security->allowedControllers = array('smtps');
+					$this->Security->allowedActions = array('index');
+					$this->request->data['Smtp']['selected'] = explode(',', $this->request->data['Smtp']['selected']);
+					foreach($this->request->data['Smtp']['selected'] as $selected) {
+						$this->Xuser->checkPerm($this->Smtp, $selected);
+					}
+				break;
+				default:
+					$this->Security->blackHole($this, 'auth');
+			}
+		}
+		else {
+			$this->Security->blackHole($this, 'auth');
+		}
+	}
+	
 	protected function __securitySettings_view() {
 		$this->Xuser->checkPerm($this->Smtp, isset($this->request->pass[0])?$this->request->pass[0]:null);
 	}

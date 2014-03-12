@@ -175,6 +175,20 @@ class Mailinglist extends AppModel {
 		);
 	}
 	
+	public function bulkDelete($ids) {
+		$dbo = $this->getDataSource();
+		$dbo->begin();
+		foreach($ids as $id) {
+			if(!$this->delete($id)) {
+				$dbo->rollback();
+				return array(false, __('Errore durante l\'operazione. Impossibile eliminare alcune Liste.'));
+			}
+		}
+		
+		$dbo->commit();
+		return array(true, true);
+	}
+	
 	
 	public function checkPerm($id, $params, $userId) {
 		$data = $this->read('user_id', $id);

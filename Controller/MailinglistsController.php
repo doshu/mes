@@ -179,6 +179,50 @@ class MailinglistsController extends AppController {
 	}
 	
 	
+	public function bulk() {
+	
+		$result = false;
+		$message = __('Errore durante l\'operazione.');
+		
+		switch($this->request->data['Mailinglist']['action']) {
+			case 'bulkDelete':
+				list($result, $message) = $this->Mailinglist->bulkDelete($this->request->data['Mailinglist']['selected']);
+			break;
+		}
+		if($result) {
+			if($message === true) {
+				$message = __('Operazione eseguita con successo.');
+			}
+			$this->Session->setFlash($message, 'default', array(), 'info');
+		}
+		else {
+			$this->Session->setFlash($message, 'default', array(), 'error');
+		}
+		$this->redirect($this->referer(true, '/'));
+	}
+	
+	
+	protected function __securitySettings_bulk() {
+		$this->request->onlyAllow('post');
+		if(isset($this->request->data['Mailinglist']['action']) && isset($this->request->data['Mailinglist']['selected'])) {
+			switch($this->request->data['Mailinglist']['action']) {
+				case 'bulkDelete':
+					$this->Security->allowedControllers = array('mailinglists');
+					$this->Security->allowedActions = array('index');
+					$this->request->data['Mailinglist']['selected'] = explode(',', $this->request->data['Mailinglist']['selected']);
+					foreach($this->request->data['Mailinglist']['selected'] as $selected) {
+						$this->Xuser->checkPerm($this->Mailinglist, $selected);
+					}
+				break;
+				default:
+					$this->Security->blackHole($this, 'auth');
+			}
+		}
+		else {
+			$this->Security->blackHole($this, 'auth');
+		}
+	}
+	
 	
 	protected function __securitySettings_view() {
 		$this->Xuser->checkPerm($this->Mailinglist, isset($this->request->pass[0])?$this->request->pass[0]:null);
