@@ -10,6 +10,16 @@
 </div>
 <div class="grey-container shortcut-wrapper">
 	<?php
+	
+		echo $this->Html->link(
+			'<span class="shortcut-icon"><i class="fa fa-envelope"></i></span><span class="text">'.__('Crea Email').'</span>',
+			array('controller' => 'mails', 'action' => 'add', 'templatetype' => 'personal', 'template' => $template['Template']['id']),
+			array(
+				'class' => 'shortcut-link',
+				'escape' => false,
+				'title' => __('Crea Email')
+			)
+		);
 		
 		echo $this->Html->link(
 			'<span class="shortcut-icon"><i class="fa fa-pencil"></i></span><span class="text">'.__('Modifica Template').'</span>',
