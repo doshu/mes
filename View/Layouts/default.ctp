@@ -134,6 +134,13 @@
 										<span class="menu-hover"></span>
 									</a>
 								<li>
+								<li class="<?=(isset($active) && $active == 'template')?'active':'';?>">
+									<a href="<?=$this->Html->url(array('controller' => 'templates', 'action' => 'index'));?>">
+										<i class="fa fa-clipboard"></i>
+										<span class="text"><?php echo __('Template'); ?></span>
+										<span class="menu-hover"></span>
+									</a>
+								<li>
 								<li class="<?=(isset($active) && $active == 'list')?'active':'';?>">
 									<a href="<?=$this->Html->url(array('controller' => 'mailinglists', 'action' => 'index'));?>">
 										<i class="fa fa-group"></i>

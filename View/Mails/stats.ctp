@@ -11,6 +11,12 @@
 <?php $this->set('active', 'stats'); ?>
 <?php $this->Html->addCrumb('Email', '/mails/index'); ?>
 <?php $this->Html->addCrumb('Statistiche', '/mails/stats'); ?>
+<?php
+	$browserStatsDataset = Hash::extract($browsers, '{n}.Recipient');
+	$deviceStatsDataset = Hash::extract($devices, '{n}.Recipient');
+	$osStatsDataset = Hash::extract($oss, '{n}.Recipient');
+?>
+
 <div class="main-header clearfix">
 	<div class="headline">
 		<h3 class="no-margin"><?php echo __('Statistiche'); ?></h3>
@@ -49,7 +55,11 @@
 					<?php echo __('Device più utilizzati'); ?>
 				</div>
 				<div class="panel-body text-center">
-					<div id="deviceStats"></div>
+					<div id="deviceStats">
+						<?php if(empty($deviceStatsDataset)) : ?>
+							<div class="no-data"><?php echo __('Nessun Dato Disponibile'); ?></div>
+						<?php endif; ?>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -59,7 +69,11 @@
 					<?php echo __('Browser più utilizzati'); ?>
 				</div>
 				<div class="panel-body text-center">
-					<div id="browserStats"></div>
+					<div id="browserStats">
+						<?php if(empty($browserStatsDataset)) : ?>
+							<div class="no-data"><?php echo __('Nessun Dato Disponibile'); ?></div>
+						<?php endif; ?>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -69,7 +83,11 @@
 					<?php echo __('Sistemi operativi più utilizzati'); ?>
 				</div>
 				<div class="panel-body text-center">
-					<div id="osStats"></div>
+					<div id="osStats">
+						<?php if(empty($osStatsDataset)) : ?>
+							<div class="no-data"><?php echo __('Nessun Dato Disponibile'); ?></div>
+						<?php endif; ?>
+					</div>
 				</div>
 			</div>
 		</div>
@@ -87,15 +105,18 @@
 		</div>
 	</div>
 </div>
-<script>
-	<?php 
-		echo $this->Javascript->setGlobal(array(
-			'browserStatsDataset' => Hash::extract($browsers, '{n}.Recipient'),
-			'deviceStatsDataset' => Hash::extract($devices, '{n}.Recipient'),
-			'osStatsDataset' => Hash::extract($oss, '{n}.Recipient'),
-			'usageDataset' => $usage,
-			'geoDataset' => $geo
-		));
-	?>
-</script>
+
+<?php 
+	echo $this->Javascript->setGlobal(array(
+		'usageDataset' => $usage,
+		'geoDataset' => $geo
+	));
+	
+	echo $this->Javascript->setGlobal(compact(
+		'browserStatsDataset',
+		'deviceStatsDataset',
+		'osStatsDataset'
+	));
+?>
+
 

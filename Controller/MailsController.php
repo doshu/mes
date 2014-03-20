@@ -80,6 +80,16 @@ class MailsController extends AppController {
 	}
 
 
+	public function choose() {
+		$this->set('personal_templates', $this->Mail->User->Template->find('all', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'user_id' => $this->Auth->user('id')
+			),
+			'order' => 'name ASC'
+		)));
+	}
+
 	public function view($id = null) {
 
 		$mail = $this->Mail->find(
@@ -146,9 +156,16 @@ class MailsController extends AppController {
 				$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
 			}
 		}
-		$users = $this->Mail->User->find('list');
+		else {
+			if(isset($this->request->params['named']['templatetype']) && $this->request->params['named']['templatetype'] == 'personal') {
+				if(isset($this->request->params['named']['template']) && !empty($this->request->params['named']['template'])) {
+					$pt = $this->Mail->User->Template->read(null, $this->request->params['named']['template']);
+					$this->request->data['Mail']['html'] = $pt['Template']['html'];
+					$this->request->data['Mail']['text'] = $pt['Template']['text'];
+				}
+			} 
+		}
 		$this->set('member_custom_fields', $this->Mail->Sending->Recipient->Member->getModelFields());
-		$this->set(compact('users'));
 	}
 
 
@@ -191,8 +208,9 @@ class MailsController extends AppController {
 				$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
 			}
 		} 
-		
-		$this->request->data = $this->Mail->find('first', array('conditions' => array('Mail.id' => $id)));
+		else {
+			$this->request->data = $this->Mail->find('first', array('conditions' => array('Mail.id' => $id)));
+		}
 		$this->set('member_custom_fields', $this->Mail->Sending->Recipient->Member->getModelFields());
 	}
 
@@ -205,7 +223,7 @@ class MailsController extends AppController {
 		
 		if(!$inSending) {
 			if ($this->Mail->delete()) {
-				$this->Session->setFlash(__("L'Email è stata cancellata"), 'default', array(), 'info');
+				$this->Session->setFlash(__("L'Email è stata eliminata"), 'default', array(), 'info');
 				$this->redirect(array('action' => 'index'));
 			}
 			else
@@ -306,6 +324,11 @@ class MailsController extends AppController {
 	
 	protected function __securitySettings_add() {
 		$this->Security->unlockedFields = array('Attachment..path', 'Attachment.path');
+		if(isset($this->request->params['named']['templatetype']) && $this->request->params['named']['templatetype'] == 'personal') {
+			if(isset($this->request->params['named']['template']) && !empty($this->request->params['named']['template'])) {
+				$this->Xuser->checkPerm($this->Mail->User->Template, $this->request->params['named']['template']);
+			}
+		} 
 	}
 	
 	protected function __securitySettings_edit() {
@@ -314,6 +337,10 @@ class MailsController extends AppController {
 	}
 	
 	protected function __securitySettings_view() {
+		$this->Xuser->checkPerm($this->Mail, isset($this->request->pass[0])?$this->request->pass[0]:null);
+	}
+	
+	protected function __securitySettings_preview() {
 		$this->Xuser->checkPerm($this->Mail, isset($this->request->pass[0])?$this->request->pass[0]:null);
 	}
 	

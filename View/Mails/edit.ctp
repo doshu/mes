@@ -120,6 +120,11 @@
 				<div class="panel panel-default">
 					<div class="panel-heading"><?php echo __('Aggiungi allegati'); ?></div>
 					<div class="panel-body attachment-upload-container">
+						<?php 
+							if(!isset($this->data['Attachment'])) {
+								$this->request->data['Attachment'] = array();
+							}
+						?>
 						<?php foreach($this->data['Attachment'] as $attachment) : ?>
 							<div class="row">
 								<div class="col-lg-12 attachment-upload-el">

@@ -87,66 +87,99 @@ class Recipient extends AppModel {
 	}
 
 
-	public function getBrowserStats($user_id) {
+	public function getBrowserStats($user_id, $sending_id = null) {
 		
 		$this->Sending->Recipient->virtualFields['times'] = 'COUNT(browser)';
+		$conditions = array('browser <>' => null, 'browser <>' => '');
+		if(!is_null($sending_id)) {
+			$conditions['sending_id'] = $sending_id;
+		} 
+		
 		$result = $this->Sending->Recipient->find('all', array(
 			'recursive' => -1,
 			'fields' => array('browser', 'times'),
 			'joins' => array(
 				array(
-					'table' => 'members',
-					'alias' => 'Member',
-					'conditions' => array('member_id = Member.id',' Member.user_id = '.$user_id),
+					'table' => 'sendings',
+					'alias' => 'Sending',
+					'conditions' => array('sending_id = Sending.id'),
+					'type' => 'INNER'
+				),
+				array(
+					'table' => 'mails',
+					'alias' => 'Mail',
+					'conditions' => array('mail_id = Mail.id', 'Mail.user_id' => $user_id),
 					'type' => 'INNER'
 				)
 			),
 			'group' => array('browser'),
-			'conditions' => array('browser <>' => null, 'browser <>' => '')
+			'conditions' => $conditions
 		));
 		$this->Sending->Recipient->virtualFields['times'] = array();
 		return $result;
 	}
 	
 	
-	public function getDeviceStats($user_id) {
+	public function getDeviceStats($user_id, $sending_id = null) {
 		
 		$this->Sending->Recipient->virtualFields['times'] = 'COUNT(device)';
+		$conditions = array('device <>' => null, 'device <>' => '');
+		if(!is_null($sending_id)) {
+			$conditions['sending_id'] = $sending_id;
+		} 
+		
 		$result = $this->Sending->Recipient->find('all', array(
 			'recursive' => -1,
 			'fields' => array('device', 'times'),
 			'joins' => array(
 				array(
-					'table' => 'members',
-					'alias' => 'Member',
-					'conditions' => array('member_id = Member.id',' Member.user_id = '.$user_id),
+					'table' => 'sendings',
+					'alias' => 'Sending',
+					'conditions' => array('sending_id = Sending.id'),
+					'type' => 'INNER'
+				),
+				array(
+					'table' => 'mails',
+					'alias' => 'Mail',
+					'conditions' => array('mail_id = Mail.id', 'Mail.user_id' => $user_id),
 					'type' => 'INNER'
 				)
 			),
 			'group' => array('device'),
-			'conditions' => array('device <>' => null, 'device <>' => '')
+			'conditions' => $conditions
 		));
 		$this->Sending->Recipient->virtualFields['times'] = array();
 		return $result;
 	}
 	
 	
-	public function getOsStats($user_id) {
+	public function getOsStats($user_id, $sending_id = null) {
 		
 		$this->Sending->Recipient->virtualFields['times'] = 'COUNT(os)';
+		$conditions = array('os <>' => null, 'os <>' => '');
+		if(!is_null($sending_id)) {
+			$conditions['sending_id'] = $sending_id;
+		} 
+		
 		$result = $this->Sending->Recipient->find('all', array(
 			'recursive' => -1,
 			'fields' => array('os', 'times'),
 			'joins' => array(
 				array(
-					'table' => 'members',
-					'alias' => 'Member',
-					'conditions' => array('member_id = Member.id',' Member.user_id = '.$user_id),
+					'table' => 'sendings',
+					'alias' => 'Sending',
+					'conditions' => array('sending_id = Sending.id'),
+					'type' => 'INNER'
+				),
+				array(
+					'table' => 'mails',
+					'alias' => 'Mail',
+					'conditions' => array('mail_id = Mail.id', 'Mail.user_id' => $user_id),
 					'type' => 'INNER'
 				)
 			),
 			'group' => array('os'),
-			'conditions' => array('os <>' => null, 'os <>' => '')
+			'conditions' => $conditions
 		));
 		$this->Sending->Recipient->virtualFields['times'] = array();
 		return $result;
@@ -160,9 +193,15 @@ class Recipient extends AppModel {
 			'recursive' => -1,
 			'joins' => array(
 				array(
-					'table' => 'members',
-					'alias' => 'Member',
-					'conditions' => array('member_id = Member.id',' Member.user_id = '.$user_id),
+					'table' => 'sendings',
+					'alias' => 'Sending',
+					'conditions' => array('sending_id = Sending.id'),
+					'type' => 'INNER'
+				),
+				array(
+					'table' => 'mails',
+					'alias' => 'Mail',
+					'conditions' => array('mail_id = Mail.id', 'Mail.user_id' => $user_id),
 					'type' => 'INNER'
 				)
 			),
@@ -174,9 +213,15 @@ class Recipient extends AppModel {
 			'recursive' => -1,
 			'joins' => array(
 				array(
-					'table' => 'members',
-					'alias' => 'Member',
-					'conditions' => array('member_id = Member.id',' Member.user_id = '.$user_id),
+					'table' => 'sendings',
+					'alias' => 'Sending',
+					'conditions' => array('sending_id = Sending.id'),
+					'type' => 'INNER'
+				),
+				array(
+					'table' => 'mails',
+					'alias' => 'Mail',
+					'conditions' => array('mail_id = Mail.id', 'Mail.user_id' => $user_id),
 					'type' => 'INNER'
 				)
 			),
@@ -189,9 +234,15 @@ class Recipient extends AppModel {
 			'fields' => 'DISTINCT Recipient.id',
 			'joins' => array(
 				array(
-					'table' => 'members',
-					'alias' => 'Member',
-					'conditions' => array('member_id = Member.id',' Member.user_id = '.$user_id),
+					'table' => 'sendings',
+					'alias' => 'Sending',
+					'conditions' => array('sending_id = Sending.id'),
+					'type' => 'INNER'
+				),
+				array(
+					'table' => 'mails',
+					'alias' => 'Mail',
+					'conditions' => array('mail_id = Mail.id', 'Mail.user_id' => $user_id),
 					'type' => 'INNER'
 				),
 				array(

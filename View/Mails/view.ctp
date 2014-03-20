@@ -14,8 +14,8 @@
 	));
 ?>
 <div class="main-header clearfix">
-	<div class="page-title">
-		<h3 class="headline"><?php echo h($mail['Mail']['name']); ?></h3>
+	<div class="headline">
+		<h3><?php echo h($mail['Mail']['name']); ?></h3>
 		<span class="line"></span>
 	</div>
 </div>
@@ -43,7 +43,7 @@
 		
 		echo $this->Form->postLink(
 			'<span class="shortcut-icon"><i class="fa fa-times"></i></span><span class="text">'.__('Elimina Email').'</span>',
-			array('action' => 'edit', $mail['Mail']['id']),
+			array('action' => 'delete', $mail['Mail']['id']),
 			array(
 				'class' => 'shortcut-link',
 				'data-to-confirm' => __("Sei sicuro di voler eliminare l'Email?"),

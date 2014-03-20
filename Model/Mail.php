@@ -18,31 +18,22 @@ class Mail extends AppModel {
 		'user_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'name' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+			),
+			'userUnique' => array(
+				'rule' => array('userUnique'),
+				'message' => 'Esiste già un email con questo nome',
 			),
 		),
 		'subject' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		)
 	);
@@ -101,6 +92,25 @@ class Mail extends AppModel {
 	public function beforeSave($options = array()) {
 		$this->data['Mail']['user_id'] = AuthComponent::user('id');
 		return true;
+	}
+	
+	
+	public function userUnique($data) {
+		if(is_array($data)) {
+			$data = array_values($data);
+			$data = $data[0];
+		}
+		$conditions = array(
+			'user_id' => AuthComponent::user('id'),
+			'name' => $data
+		);
+		if(isset($this->data['Mail']['id']) && !empty($this->data['Mail']['id'])) {
+			$conditions['id <>'] = $this->data['Mail']['id'];
+		}
+		return !(bool)$this->find('count', array(
+			'recursive' => -1,
+			'conditions' => $conditions
+		));
 	}
 	
 	public function getUserMailId($user_id) {

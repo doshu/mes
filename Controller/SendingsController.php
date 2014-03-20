@@ -52,6 +52,21 @@ class SendingsController extends AppController {
 				'sending_id' => $id
 			)
 		)));
+		
+		$this->set(
+			'browsers',
+			$this->Sending->Recipient->getBrowserStats($this->Auth->user('id'), $id)
+		);
+		
+		$this->set(
+			'devices',
+			$this->Sending->Recipient->getDeviceStats($this->Auth->user('id'), $id)
+		);
+		
+		$this->set(
+			'oss',
+			$this->Sending->Recipient->getOsStats($this->Auth->user('id'), $id)
+		);
 	}
 
 

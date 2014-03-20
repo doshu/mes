@@ -372,5 +372,15 @@ a, a:active, a:hover, a:focus {
 
 .grey-container.affix {
 	top:45px;
-	z-index:9999;
+	z-index:1000;
+	opacity:0.9;
+	-moz-opacity:0.9;
+	-webkit-opacity:0.9;
+	filter:alpha(90);
+}
+
+.tab-pane {
+	background-color:#FFF;
+	border:1px solid #DDD;
+	border-top:none;
 }
