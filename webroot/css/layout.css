@@ -369,3 +369,8 @@ a, a:active, a:hover, a:focus {
 .shortcut-wrapper:empty {
 	display:none;
 }
+
+.grey-container.affix {
+	top:45px;
+	z-index:9999;
+}

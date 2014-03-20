@@ -13,11 +13,13 @@
 <div class="container-fluid">
 	<div id="dashStat" class="site-stats clearfix">
 		<div class="col-lg-3">
-			<div class="panel-stat3 bg-success">
-				<h2 class="m-top-none"><?=$allmail;?></h2>
-				<h5><?php echo __('Email in archivio'); ?></h5>
-				<div class="stat-icon"><i class="fa fa-envelope"></i></div>
-			</div>
+			<a href="<?php echo $this->Html->url(array('controller' => 'mails', 'action' => 'index')); ?>">
+				<div class="panel-stat3 bg-success">
+					<h2 class="m-top-none"><?=$allmail;?></h2>
+					<h5><?php echo __('Email in archivio'); ?></h5>
+					<div class="stat-icon"><i class="fa fa-envelope"></i></div>
+				</div>
+			</a>
 		</div>
 		<div class="col-lg-3">
 			<div class="panel-stat3 bg-success">
@@ -27,11 +29,13 @@
 			</div>
 		</div>
 		<div class="col-lg-3">
-			<div class="panel-stat3 bg-success">
-				<h2 class="m-top-none"><?=$mailinglistCount;?></h2>
-				<h5><?php echo __('Liste in archivio'); ?></h5>
-				<div class="stat-icon"><i class="fa fa-group"></i></div>
-			</div>
+			<a href="<?php echo $this->Html->url(array('controller' => 'lists', 'action' => 'index')); ?>">
+				<div class="panel-stat3 bg-success">
+					<h2 class="m-top-none"><?=$mailinglistCount;?></h2>
+					<h5><?php echo __('Liste in archivio'); ?></h5>
+					<div class="stat-icon"><i class="fa fa-group"></i></div>
+				</div>
+			</a>
 		</div>
 	</div>
 	

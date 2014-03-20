@@ -39,8 +39,7 @@
 			
 			if($isToSend) {
 				$recipients = $RecipientModel->getRecipientBySending($this->entityId);
-				//il main setta lo status a 1. se non lo unsetto, sovrascriverebbe con quello vecchio.
-				unset($entity->data['status']);
+				
 				
 				if(count($recipients)) {
 					

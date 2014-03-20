@@ -183,4 +183,27 @@ $(function() {
     	}
     });
     
+    
+    $('.grey-container').each(function() {
+    	var offsetTop = $(this).offset().top - $(this).height();
+    	$(this).affix({
+			offset: {
+				top: offsetTop
+			}
+		});
+		$(this).on('affix.bs.affix', function() {
+			$(this).css('width', $('#main-container').width());
+			var placeholder = $('<div></div>');
+			placeholder.height($(this).innerHeight());
+			placeholder.width($(this).width());
+			placeholder.css('margin-bottom', '15px');
+			$(this).after(placeholder);
+			$.data(this, 'placeholder_affix', placeholder);
+		});
+		$(this).on('affix-top.bs.affix', function() {
+			$(this).css('width', '100%');
+			$($.data(this, 'placeholder_affix')).remove();
+		});
+    });
+    
 });

@@ -8,7 +8,7 @@
 		<span class="line"></span>
 	</div>
 </div>
-<div class="grey-container shortcut-wrapper">
+<div class="grey-container shortcut-wrapper enable-affix">
 	<?php
 		echo $this->Html->link(
 			'<span class="shortcut-icon"><i class="fa fa-pencil"></i></span><span class="text">'.__('Modifica Indirizzo').'</span>',
@@ -27,6 +27,16 @@
 				'data-to-confirm' => __("Sei sicuro di voler eliminare l'indirizzo?"), 
 				'escape' => false,
 				'title' => __('Elimina Indirizzo', true),
+				'class' => 'shortcut-link', 
+			)
+		);
+		
+		echo $this->Form->postLink(
+			'<span class="shortcut-icon"><i class="fa fa-check"></i></span><span class="text">'.__('Testa Indirizzo').'</span>',
+			array('action' => 'test', $smtp['Smtp']['id']),
+			array(
+				'escape' => false,
+				'title' => __('Testa Indirizzo', true),
 				'class' => 'shortcut-link', 
 			)
 		);

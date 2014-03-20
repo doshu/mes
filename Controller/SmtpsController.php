@@ -179,6 +179,40 @@ class SmtpsController extends AppController {
 	}
 	
 	
+	public function test($id) {
+		
+		$this->set('_serialize', array('result'));
+		$smtp = $this->Smtp->read(null, $id);
+		App::import('Vendor', 'Mailer');
+		$mailer = new Mailer(true);
+		$mailer->IsSMTP();
+		$mailer->Host = $smtp['Smtp']['host'];
+		$mailer->SMTPAuth = true;
+		$mailer->Username = $smtp['Smtp']['username'];
+		$mailer->Password = $smtp['Smtp']['password'];
+		
+		$mailer->AuthType = $smtp['Smtp']['authtype'];
+		
+		if($smtp['Smtp']['enctype'] == 'tls' || $smtp['Smtp']['enctype'] == 'ssl') {
+			$mailer->SMTPSecure = $smtp['Smtp']['enctype'];   
+		}
+		
+		$vendorPath = App::path('Vendor');
+		$mailer->PluginDir = $vendorPath[0].'PHPMailer'.DS;
+		try {
+			if($mailer->SmtpTest()) {
+				$this->Session->setFlash(__("L'indirizzo di invio è configurato correttamente"), 'default', array(), 'info');
+			}
+			else {
+				$this->Session->setFlash(__("Impossibile collegarsi con l'indirizzo di invio"), 'default', array(), 'error');
+			}
+		}
+		catch(phpmailerException $e) {
+			$this->Session->setFlash(__("Impossibile collegarsi con l'indirizzo di invio (".$e->getMessage().")"), 'default', array(), 'error');
+		}
+		$this->redirect($this->referer('/', true));
+	}
+	
 	protected function __securitySettings_bulk() {
 		$this->request->onlyAllow('post');
 		if(isset($this->request->data['Smtp']['action']) && isset($this->request->data['Smtp']['selected'])) {
@@ -198,6 +232,11 @@ class SmtpsController extends AppController {
 		else {
 			$this->Security->blackHole($this, 'auth');
 		}
+	}
+	
+	protected function __securitySettings_test() {
+		$this->request->onlyAllow('post', 'delete');
+		$this->Xuser->checkPerm($this->Smtp, isset($this->request->pass[0])?$this->request->pass[0]:null);
 	}
 	
 	protected function __securitySettings_view() {
