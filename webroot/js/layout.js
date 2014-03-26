@@ -204,6 +204,10 @@ $(function() {
 			$(this).css('width', '100%');
 			$($.data(this, 'placeholder_affix')).remove();
 		});
+		
+		if($(this).hasClass('affix')) {
+			$(this).trigger('affix.bs.affix');
+		}
     });
     
 });

@@ -228,12 +228,21 @@ class SendingsController extends AppController {
 	
 		$result = false;
 		$message = __('Errore durante l\'operazione.');
-		
-		switch($this->request->data['Sending']['action']) {
-			case 'bulkDelete':
-				list($result, $message) = $this->Sending->bulkDelete($this->request->data['Sending']['selected']);
-			break;
+		if(!empty($this->request->data['Sending']['selected'])) {
+			switch($this->request->data['Sending']['action']) {
+				case 'bulkDelete':
+					list($result, $message) = $this->Sending->bulkDelete($this->request->data['Sending']['selected']);
+				break;
+				default:
+					$this->Session->setFlash(__("Seleziona una operazione valida"), 'default', array(), 'error');
+					$this->redirect($this->referer(true, '/'));
+			}
 		}
+		else {
+			$this->Session->setFlash(__("Seleziona almeno un indirizzo"), 'default', array(), 'error');
+			$this->redirect($this->referer(true, '/'));
+		}
+		
 		if($result) {
 			if($message === true) {
 				$message = __('Operazione eseguita con successo.');
@@ -249,22 +258,20 @@ class SendingsController extends AppController {
 	
 	protected function __securitySettings_bulk() {
 		$this->request->onlyAllow('post');
-		if(isset($this->request->data['Sending']['action']) && isset($this->request->data['Sending']['selected'])) {
-			switch($this->request->data['Sending']['action']) {
-				case 'bulkDelete':
-					$this->Security->allowedControllers = array('mails');
-					$this->Security->allowedActions = array('view');
-					$this->request->data['Sending']['selected'] = explode(',', $this->request->data['Sending']['selected']);
-					foreach($this->request->data['Sending']['selected'] as $selected) {
-						$this->Xuser->checkPerm($this->Sending, $selected);
-					}
-				break;
-				default:
-					$this->Security->blackHole($this, 'auth');
-			}
-		}
-		else {
-			$this->Security->blackHole($this, 'auth');
+		if(!isset($this->request->data['Sending']['action']))
+			$this->request->data['Sending']['action'] = null;
+		if(!isset($this->request->data['Sending']['selected']))
+			$this->request->data['Sending']['selected'] = array();
+			
+		switch($this->request->data['Sending']['action']) {
+			case 'bulkDelete':
+				$this->Security->allowedControllers = array('mails');
+				$this->Security->allowedActions = array('view');
+				$this->request->data['Sending']['selected'] = explode(',', $this->request->data['Sending']['selected']);
+				foreach($this->request->data['Sending']['selected'] as $selected) {
+					$this->Xuser->checkPerm($this->Sending, $selected);
+				}
+			break;
 		}
 	}
 	

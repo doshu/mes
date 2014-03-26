@@ -6,6 +6,7 @@ class MembersController extends AppController {
 
 
 	public function index() {
+	
 		$this->Member->recursive = -1;
 		$this->autoPaginate = true;
 		
@@ -22,12 +23,24 @@ class MembersController extends AppController {
 			)
 		);
 		
+		$this->set(
+			'countValid', 
+			$this->Member->find(
+				'count', 
+				array(
+					'recursive' => -1, 
+					'conditions' => array('user_id' => $this->Auth->user('id'), 'valid' => Member::isValid)
+				)
+			)
+		);
+		
 		$memberAdditionalFields = $this->Member->getModelFields();
 		$this->set('memberAdditionalFields', $memberAdditionalFields);
 		
 		$this->autoPaginateOp = array(
 			'email' => 'LIKE',
-			'created' => array('BETWEEN', array('type' => 'date', 'convert' => true, 'time' => true))
+			'created' => array('BETWEEN', array('type' => 'date', 'convert' => true, 'time' => true)),
+			'valid' => '='
 		);
 		
 		foreach($memberAdditionalFields as $additionalField) {
@@ -103,13 +116,16 @@ class MembersController extends AppController {
 		if ($this->request->is('post')) {
 			$this->Member->create();
 			$this->Member->getDataSource()->begin();
+			
+			$this->request->data['Member']['secret'] = $this->Member->__generateNewSecret($this->data['Member']['email'].time());
+		
 			if (
 				$this->Member->validateOnCreate($this->request->data) && 
 				$this->Member->saveAssociated(
 					$this->request->data,
 					array(
 						'fieldList' => array(
-							'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist'),
+							'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist', 'secret'),
 							'MailinglistsMember' => array('mailinglist_id', 'member_id'),
 							'Memberfieldvalue' => array(
 								'id', 
@@ -143,41 +159,37 @@ class MembersController extends AppController {
 	
 	public function addQuick() {
 		App::uses('SafeDateHelper', 'View/Helper');
-		if($this->request->is('json') && $this->request->isPost() ) {
+		if($this->request->is('json') && $this->request->isPost()) {
 			$this->Member->getDataSource()->begin();
-			if($this->Member->Mailinglist->exists($this->request->data['Mailinglist']['Mailinglist'])) {
-				$exists = $this->Member->getByEmailForCurrentUser($this->request->data['Member']['email']);
-				
-				if(empty($exists)) {
-					if(
-						$this->Member->save($this->request->data, true, 
-							array(
-								'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist'),
-								'MailinglistsMember' => array('mailinglist_id'),
-							)
+			$this->request->data['Member']['secret'] = $this->Member->__generateNewSecret($this->data['Member']['email'].time());
+			if($this->Member->validateOnCreate($this->request->data)) {
+				if(
+					$this->Member->save($this->request->data, true, 
+						array(
+							'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist', 'secret'),
+							'MailinglistsMember' => array('mailinglist_id'),
 						)
-					) {
-						$this->Member->getDataSource()->commit();
-						$new = $this->Member->find('first', array('recursive' => -1, 'conditions' => array('Member.id' => $this->Member->id)));
-						$userTimezoneDate = DateTime::createFromFormat('Y-m-d H:i:s', $new['Member']['created']);
-						$new['Member']['createdUserTimeZone'] =	SafeDateHelper::dateForUser($userTimezoneDate);
-						$result = array('status' => 1, 'message' => __('Inserimento effettuato.'), 'new' => $new);
-					}
-					else {
-						$this->Member->getDataSource()->rollback();
-						$errors = array_values($this->Member->validationErrors);
-						$result = array('status' => 0, 'message' => $errors[0]);
-					}
+					)
+				) {
+					$this->Member->getDataSource()->commit();
+					$new = $this->Member->find('first', array('recursive' => -1, 'conditions' => array('Member.id' => $this->Member->id)));
+					$userTimezoneDate = DateTime::createFromFormat('Y-m-d H:i:s', $new['Member']['created']);
+					$new['Member']['createdUserTimeZone'] =	SafeDateHelper::dateForUser($userTimezoneDate);
+					$result = array('status' => 1, 'message' => __('Inserimento effettuato.'), 'new' => $new);
 				}
 				else {
 					$this->Member->getDataSource()->rollback();
-					$result = array('status' => 0, 'message' => __('Questa email è già utilizzata da un altro membro.'));
+					$errors = array_values($this->Member->validationErrors);
+					$result = array('status' => 0, 'message' => $errors[0]);
 				}
 			}
 			else {
 				$this->Member->getDataSource()->rollback();
-				$result = array('status' => 0, 'message' => __('La mailinglist specificata non è valida.'));
+				$error = isset($this->Member->validationErrors['email']) && !empty($this->Member->validationErrors['email'])?
+					$this->Member->validationErrors['email']:__('Errore durante l\'inserimento.');
+				$result = array('status' => 0, 'message' => $error);
 			}
+			
 		}
 		else {
 			$result = array('status' => 0, 'message' => __('Errore inserimento.'));
@@ -197,7 +209,7 @@ class MembersController extends AppController {
 					$this->request->data,
 					array(
 						'fieldList' => array(
-							'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist'),
+							'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist', 'secret'),
 							'MailinglistsMember' => array('mailinglist_id'),
 							'Memberfieldvalue' => array(
 								'id', 
@@ -329,13 +341,37 @@ class MembersController extends AppController {
 						array(
 							'table' => 'mailinglists_members',
 							'alias' => 'MailinglistsMember',
-							'type' => 'LEFT',
+							'type' => 'INNER',
 							'conditions' => array(
 								'MailinglistsMember.member_id = Member.id',
 							)
 						)
 					),
 					'conditions' => array('MailinglistsMember.mailinglist_id' => $list_id)
+				)
+			)	
+		);
+		
+		$this->set(
+			'countValid',
+			$this->Member->find(
+				'count',
+				array(
+					'recursive' => -1,
+					'joins' => array(
+						array(
+							'table' => 'mailinglists_members',
+							'alias' => 'MailinglistsMember',
+							'type' => 'INNER',
+							'conditions' => array(
+								'MailinglistsMember.member_id = Member.id',
+							)
+						)
+					),
+					'conditions' => array(
+						'MailinglistsMember.mailinglist_id' => $list_id,
+						'Member.valid' => Member::isValid
+					)
 				)
 			)	
 		);
@@ -461,23 +497,56 @@ class MembersController extends AppController {
 	}
 	
 	
-	
 	public function bulk() {
 	
 		$result = false;
 		$message = __('Errore durante l\'operazione.');
-		
-		switch($this->request->data['Member']['action']) {
-			case 'bulkDelete':
-				list($result, $message) = $this->Member->bulkDelete($this->request->data['Member']['selected']);
-			break;
-			case 'bulkUnsubscribe':
-				list($result, $message) = $this->Member->bulkUnsubscribe(
-					$this->request->data['Member']['selected'], 
-					$this->request->data['Member']['mailinglist']
-				);
-			break;
+		if(!empty($this->request->data['Member']['selected'])) {
+			switch($this->request->data['Member']['action']) {
+				case 'bulkDelete':
+					list($result, $message) = $this->Member->bulkDelete($this->request->data['Member']['selected']);
+				break;
+				case 'bulkUnsubscribe':
+					list($result, $message) = $this->Member->bulkUnsubscribe(
+						$this->request->data['Member']['selected'], 
+						$this->request->data['Member']['mailinglist']
+					);
+				break;
+				case 'bulkValidate':
+					$this->Member->Behaviors->disable('Eav');
+				
+					$this->set(
+						'members', 
+						$this->Member->find('all', array(
+							'recursive' => -1,
+							'conditions' => array(
+								'id' => $this->request->data['Member']['selected']
+							)
+						))
+					);
+					if(isset($this->params['named']['from']) && !empty($this->params['named']['from'])) {
+						$this->set('from', $this->params['named']['from']);
+						if(isset($this->params['named']['scope']) && !empty($this->params['named']['scope'])) {
+							$this->set('scope', $this->params['named']['scope']);
+						}
+					}
+					else {
+						$this->set('from', 'members');
+					}
+					$this->render('validate');
+					return true;
+					
+				break;
+				default:
+					$this->Session->setFlash(__("Seleziona una operazione valida"), 'default', array(), 'error');
+					$this->redirect($this->referer(true, '/'));
+			}
 		}
+		else {
+			$this->Session->setFlash(__("Seleziona almeno un indirizzo"), 'default', array(), 'error');
+			$this->redirect($this->referer(true, '/'));
+		}
+		
 		if($result) {
 			if($message === true) {
 				$message = __('Operazione eseguita con successo.');
@@ -491,38 +560,63 @@ class MembersController extends AppController {
 	}
 	
 	
+	public function validateMember($id) {
+		App::import('Vendor', 'Mailer');
+		$Mailer = new Mailer();
+		$this->Member->recursive = -1;
+		$member = $this->Member->read(null, $id);
+		$status = $Mailer->smtpCheckAddress($member['Member']['email']);
+		$this->Member->set('valid', $status);
+		$this->set('_serialize', array('status'));
+		if($this->Member->save()) {
+			$this->set('status', $status);
+		}
+		else {
+			throw new InternalErrorException('Cannot Save');
+		}
+	}
+	
+	
 	protected function __securitySettings_bulk() {
+	
 		$this->request->onlyAllow('post');
-		if(isset($this->request->data['Member']['action']) && isset($this->request->data['Member']['selected'])) {
-			switch($this->request->data['Member']['action']) {
-				case 'bulkDelete':
+		if(!isset($this->request->data['Member']['action']))
+			$this->request->data['Member']['action'] = null;
+		if(!isset($this->request->data['Member']['selected']))
+			$this->request->data['Member']['selected'] = array();
+		
+		switch($this->request->data['Member']['action']) {
+			case 'bulkDelete':
+				$this->Security->allowedControllers = array('members');
+				$this->Security->allowedActions = array('index');
+				$this->request->data['Member']['selected'] = explode(',', $this->request->data['Member']['selected']);
+				foreach($this->request->data['Member']['selected'] as $selected) {
+					$this->Xuser->checkPerm($this->Member, $selected);
+				}
+			break;
+			case 'bulkValidate':
+				$this->Security->allowedControllers = array('members');
+				$this->Security->allowedActions = array('index');
+				$this->request->data['Member']['selected'] = array_filter(explode(',', $this->request->data['Member']['selected']));
+				foreach($this->request->data['Member']['selected'] as $selected) {
+					$this->Xuser->checkPerm($this->Member, $selected);
+				}
+			break;
+			case 'bulkUnsubscribe':
+				if(isset($this->request->data['Member']['mailinglist'])) {
 					$this->Security->allowedControllers = array('members');
-					$this->Security->allowedActions = array('index');
+					$this->Security->allowedActions = array('mailinglists');
 					$this->request->data['Member']['selected'] = explode(',', $this->request->data['Member']['selected']);
 					foreach($this->request->data['Member']['selected'] as $selected) {
 						$this->Xuser->checkPerm($this->Member, $selected);
 					}
-				break;
-				case 'bulkUnsubscribe':
-					if(isset($this->request->data['Member']['mailinglist'])) {
-						$this->Security->allowedControllers = array('members');
-						$this->Security->allowedActions = array('mailinglists');
-						$this->request->data['Member']['selected'] = explode(',', $this->request->data['Member']['selected']);
-						foreach($this->request->data['Member']['selected'] as $selected) {
-							$this->Xuser->checkPerm($this->Member, $selected);
-						}
-						$this->Xuser->checkPerm($this->Member->Mailinglist, $this->request->data['Member']['mailinglist']);
-					}
-					else
-						$this->Security->blackHole($this, 'auth');
-				break;
-				default:
+					$this->Xuser->checkPerm($this->Member->Mailinglist, $this->request->data['Member']['mailinglist']);
+				}
+				else
 					$this->Security->blackHole($this, 'auth');
-			}
+			break;
 		}
-		else {
-			$this->Security->blackHole($this, 'auth');
-		}
+		
 	}
 	
 	protected function __securitySettings_index() {
@@ -557,6 +651,13 @@ class MembersController extends AppController {
 	}
 	
 	protected function __securitySettings_edit() {
+		$this->Xuser->checkPerm($this->Member, isset($this->request->pass[0])?$this->request->pass[0]:null);
+	}
+	
+	protected function __securitySettings_validateMember() {
+		$this->request->onlyAllow('post');
+		$this->Security->csrfUseOnce = false;
+		$this->Security->validatePost = false;
 		$this->Xuser->checkPerm($this->Member, isset($this->request->pass[0])?$this->request->pass[0]:null);
 	}
 	

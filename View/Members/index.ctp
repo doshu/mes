@@ -51,6 +51,13 @@
 				<div class="stat-icon"><i class="fa fa-user"></i></div>
 			</div>
 		</div>
+		<div class="col-lg-3">
+			<div class="panel-stat3 bg-success">
+				<h2 class="m-top-none"><?=$countValid;?></h2>
+				<h5><?php echo __('Indirizzi Validi'); ?></h5>
+				<div class="stat-icon"><i class="fa fa-thumbs-o-up"></i></div>
+			</div>
+		</div>
 	</ul>
 	<div class="row">
 		<div class="col-lg-12">
@@ -109,6 +116,7 @@
 									'action', 
 									array(
 										'options' => array(
+											'bulkValidate' => __('Valida Indirizzi'),
 											'bulkDelete' => __('Elimina')
 										),
 										'label' => false,
@@ -238,6 +246,26 @@
 										);
 									?>
 								</th>
+								<th>
+									<?php
+										echo $this->Form->input(
+											'Member.valid', 
+											array(
+												'label' => false, 
+												'div' => false,
+												'class' => 'form-control input-sm',
+												'required' => false,
+												'empty' => __('Cerca per validità'),
+												'options' => array(
+													'0' => __('Non Esiste'),
+													'1' => __('Esiste'),
+													'2' => __('Impossibile da verificare'),
+													'-1' => __('Non verificato')
+												)
+											)
+										);
+									?>
+								</th>
 							</tr>
 							<?php if(!empty($members)) : ?>
 							<tr>
@@ -260,6 +288,7 @@
 									}
 								?>
 								<th><?php echo $this->Paginator->sort('created', __('Data creazione')); ?></th>
+								<th><?php echo $this->Paginator->sort('valid', __('Validità')); ?></th>
 							</tr>
 							<?php endif; ?>
 						</thead>
@@ -312,6 +341,23 @@
 										<?php
 											$date = DateTime::createFromFormat('Y-m-d H:i:s', $member['Member']['created']);
 											echo $this->SafeDate->dateForUser($date);
+										?>
+									</td>
+									<td>
+										<?php
+											switch($member['Member']['valid']) {
+												case Member::isNotValid:
+													echo '<span class="label label-danger">'.__('Non Esiste').'</span>';
+												break;
+												case Member::isValid:
+													echo '<span class="label label-success">'.__('Esiste').'</span>';
+												break;
+												case Member::cannotValidate:
+													echo '<span class="label label-warning">'.__('Impossibile Verificare').'</span>';
+												break;
+												default:
+													echo '<span class="label label-default">'.__('Non Verificato').'</span>';
+											}
 										?>
 									</td>
 								</tr>

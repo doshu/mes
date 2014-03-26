@@ -19,6 +19,10 @@ class Member extends AppModel {
 		)
 	);	
 	
+	const isValid = 1;
+	const isNotValid = 0;
+	const cannotValidate = 2;
+	
 	
 	public function __construct($id = false, $table = null, $ds = null) {
 		$this->actsAs['Eav']['fieldScope'] = array('Memberfield.user_id' => AuthComponent::user('id'));
@@ -203,14 +207,11 @@ class Member extends AppModel {
 	
 	public function beforeSave($options = array()) {
 		
-		if(!isset($this->data['Member']['secret'])) {
-			$this->data['Member']['secret'] = $this->__generateNewSecret($this->data['Member']['email'].time());
-		}
 		$this->data['Member']['user_id'] = AuthComponent::user('id');
 		return true;
 	}
 	
-	private function __generateNewSecret($data) {
+	public function __generateNewSecret($data) {
 		Security::setHash('blowfish');
 		return Security::hash($data);
 	}
@@ -653,7 +654,10 @@ class Member extends AppModel {
 	
 	
 	public function checkPerm($id, $params, $userId) {
+		$this->Behaviors->disable('Eav');
+		$this->recursive = -1;
 		$data = $this->read('user_id', $id);
+		$this->Behaviors->enable('Eav');
 		if(isset($data['Member']['user_id']) && !empty($data['Member']['user_id']))
 			return $data['Member']['user_id'] == $userId;
 		throw new NotFoundException();

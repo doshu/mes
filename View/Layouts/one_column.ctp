@@ -29,6 +29,8 @@
 				'select2.min',
 				'doshupie',
 				'layout',
+				'jquery.datetimepicker',
+				'datetime_locales/i18n'
 			));
 
 			echo $this->fetch('meta');

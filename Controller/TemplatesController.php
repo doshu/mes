@@ -113,12 +113,21 @@ class TemplatesController extends AppController {
 	
 		$result = false;
 		$message = __('Errore durante l\'operazione.');
-		
-		switch($this->request->data['Template']['action']) {
-			case 'bulkDelete':
-				list($result, $message) = $this->Template->bulkDelete($this->request->data['Template']['selected']);
-			break;
+		if(!empty($this->request->data['Template']['selected'])) {
+			switch($this->request->data['Template']['action']) {
+				case 'bulkDelete':
+					list($result, $message) = $this->Template->bulkDelete($this->request->data['Template']['selected']);
+				break;
+				default:
+					$this->Session->setFlash(__("Seleziona una operazione valida"), 'default', array(), 'error');
+					$this->redirect($this->referer(true, '/'));
+			}
 		}
+		else {
+			$this->Session->setFlash(__("Seleziona almeno un indirizzo"), 'default', array(), 'error');
+			$this->redirect($this->referer(true, '/'));
+		}
+		
 		if($result) {
 			if($message === true) {
 				$message = __('Operazione eseguita con successo.');
@@ -140,22 +149,21 @@ class TemplatesController extends AppController {
 	
 	protected function __securitySettings_bulk() {
 		$this->request->onlyAllow('post');
-		if(isset($this->request->data['Template']['action']) && isset($this->request->data['Template']['selected'])) {
-			switch($this->request->data['Template']['action']) {
-				case 'bulkDelete':
-					$this->Security->allowedControllers = array('templates');
-					$this->Security->allowedActions = array('index');
-					$this->request->data['Template']['selected'] = explode(',', $this->request->data['Template']['selected']);
-					foreach($this->request->data['Template']['selected'] as $selected) {
-						$this->Xuser->checkPerm($this->Template, $selected);
-					}
-				break;
-				default:
-					$this->Security->blackHole($this, 'auth');
-			}
-		}
-		else {
-			$this->Security->blackHole($this, 'auth');
+		
+		if(!isset($this->request->data['Template']['action']))
+			$this->request->data['Template']['action'] = null;
+		if(!isset($this->request->data['Template']['selected']))
+			$this->request->data['Template']['selected'] = array();
+			
+		switch($this->request->data['Template']['action']) {
+			case 'bulkDelete':
+				$this->Security->allowedControllers = array('templates');
+				$this->Security->allowedActions = array('index');
+				$this->request->data['Template']['selected'] = explode(',', $this->request->data['Template']['selected']);
+				foreach($this->request->data['Template']['selected'] as $selected) {
+					$this->Xuser->checkPerm($this->Template, $selected);
+				}
+			break;
 		}
 	}
 	

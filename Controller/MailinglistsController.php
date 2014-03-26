@@ -183,12 +183,21 @@ class MailinglistsController extends AppController {
 	
 		$result = false;
 		$message = __('Errore durante l\'operazione.');
-		
-		switch($this->request->data['Mailinglist']['action']) {
-			case 'bulkDelete':
-				list($result, $message) = $this->Mailinglist->bulkDelete($this->request->data['Mailinglist']['selected']);
-			break;
+		if(!empty($this->request->data['Mailinglist']['selected'])) {
+			switch($this->request->data['Mailinglist']['action']) {
+				case 'bulkDelete':
+					list($result, $message) = $this->Mailinglist->bulkDelete($this->request->data['Mailinglist']['selected']);
+				break;
+				default:
+					$this->Session->setFlash(__("Seleziona una operazione valida"), 'default', array(), 'error');
+					$this->redirect($this->referer(true, '/'));
+			}
 		}
+		else {
+			$this->Session->setFlash(__("Seleziona almeno un indirizzo"), 'default', array(), 'error');
+			$this->redirect($this->referer(true, '/'));
+		}
+		
 		if($result) {
 			if($message === true) {
 				$message = __('Operazione eseguita con successo.');
@@ -202,29 +211,58 @@ class MailinglistsController extends AppController {
 	}
 	
 	
+	public function validateListAddresses($id) {
+		$this->Mailinglist->Member->Behaviors->disable('Eav');
+		$this->set(
+			'members', 
+			$this->Mailinglist->Member->find('all', array(
+				'recursive' => -1,
+				'joins' => array(
+					array(
+						'table' => 'mailinglists_members',
+						'alias' => 'MailinglistsMember',
+						'type' => 'INNER',
+						'conditions' => array('Member.id = MailinglistsMember.member_id')
+					)
+				),
+				'conditions' => array(
+					'MailinglistsMember.mailinglist_id' => $id
+				)
+			))
+		);
+		
+		
+		$this->set('from', 'mailinglists');
+		$this->set('scope', $id);
+		
+		$this->render('/Members/validate');
+	}
+	
 	protected function __securitySettings_bulk() {
 		$this->request->onlyAllow('post');
-		if(isset($this->request->data['Mailinglist']['action']) && isset($this->request->data['Mailinglist']['selected'])) {
-			switch($this->request->data['Mailinglist']['action']) {
-				case 'bulkDelete':
-					$this->Security->allowedControllers = array('mailinglists');
-					$this->Security->allowedActions = array('index');
-					$this->request->data['Mailinglist']['selected'] = explode(',', $this->request->data['Mailinglist']['selected']);
-					foreach($this->request->data['Mailinglist']['selected'] as $selected) {
-						$this->Xuser->checkPerm($this->Mailinglist, $selected);
-					}
-				break;
-				default:
-					$this->Security->blackHole($this, 'auth');
-			}
-		}
-		else {
-			$this->Security->blackHole($this, 'auth');
+		if(!isset($this->request->data['Mailinglist']['action']))
+			$this->request->data['Mailinglist']['action'] = null;
+		if(!isset($this->request->data['Mailinglist']['selected']))
+			$this->request->data['Mailinglist']['selected'] = array();
+			
+		switch($this->request->data['Mailinglist']['action']) {
+			case 'bulkDelete':
+				$this->Security->allowedControllers = array('mailinglists');
+				$this->Security->allowedActions = array('index');
+				$this->request->data['Mailinglist']['selected'] = explode(',', $this->request->data['Mailinglist']['selected']);
+				foreach($this->request->data['Mailinglist']['selected'] as $selected) {
+					$this->Xuser->checkPerm($this->Mailinglist, $selected);
+				}
+			break;
 		}
 	}
 	
 	
 	protected function __securitySettings_view() {
+		$this->Xuser->checkPerm($this->Mailinglist, isset($this->request->pass[0])?$this->request->pass[0]:null);
+	}
+	
+	protected function __securitySettings_validate() {
 		$this->Xuser->checkPerm($this->Mailinglist, isset($this->request->pass[0])?$this->request->pass[0]:null);
 	}
 	

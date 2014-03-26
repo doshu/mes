@@ -107,6 +107,28 @@
 									?>
 								</td>
 							</tr>
+							<tr>
+								<td>
+									<span class="custom-label"><?php echo __('Validità'); ?></span>
+								</td>
+								<td>
+									<?php
+										switch($member['Member']['valid']) {
+											case 0:
+												echo '<span class="label label-danger">'.__('Non Esiste').'</span>';
+											break;
+											case 1:
+												echo '<span class="label label-success">'.__('Esiste').'</span>';
+											break;
+											case 2:
+												echo '<span class="label label-warning">'.__('Impossibile Verificare').'</span>';
+											break;
+											default:
+												echo '<span class="label label-default">'.__('Non Verificato').'</span>';
+										}
+									?>
+								</td>
+							</tr>
 						</tbody>
 					</table>
 				</div>
