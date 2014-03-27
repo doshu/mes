@@ -12,7 +12,7 @@ class RecipientsController extends AppController {
 			'opened' => '='
 		);
 		
-		$this->paginate = array('Recipient' => array('order' => array('Recipient.member_email' =>  'desc')));
+		$this->paginate = array('Recipient' => array('recursive' => -1, 'order' => array('Recipient.member_email' =>  'desc')));
 		
 		$this->set(
 			'sended',
@@ -52,7 +52,17 @@ class RecipientsController extends AppController {
 			)
 		);
 		
-		$this->set('sending', $this->Recipient->Sending->read(null, $sending_id));
+		$this->set(
+			'sending', 
+			$this->Recipient->Sending->find(
+				'first', 
+				array(
+					'conditions' => array('Sending.id' => $sending_id),
+					'contain' => array('Mail'),
+					'recursive' => -1
+				)
+			)
+		);
 	}
 	
 	
@@ -65,7 +75,7 @@ class RecipientsController extends AppController {
 			'opened_time' => array('BETWEEN', array('type' => 'datetime', 'convert' => true, 'format' => 'd/m/Y H:i:s'))
 		);
 		
-		$this->paginate = array('Recipient' => array('order' => array('Recipient.opened_time' =>  'desc')));
+		$this->paginate = array('Recipient' => array('recursive' => -1, 'order' => array('Recipient.opened_time' =>  'desc')));
 		
 		$this->set(
 			'opened',
@@ -107,7 +117,17 @@ class RecipientsController extends AppController {
 			)
 		);
 		
-		$this->set('sending', $this->Recipient->Sending->read(null, $sending_id));
+		$this->set(
+			'sending', 
+			$this->Recipient->Sending->find(
+				'first', 
+				array(
+					'conditions' => array('Sending.id' => $sending_id),
+					'contain' => array('Mail'),
+					'recursive' => -1
+				)
+			)
+		);
 	}
 	
 	
@@ -119,7 +139,7 @@ class RecipientsController extends AppController {
 			'member_email' => 'LIKE'
 		);
 		
-		$this->paginate = array('Recipient' => array('order' => array('Recipient.member_email' =>  'desc')));
+		$this->paginate = array('Recipient' => array('recursive' => -1, 'order' => array('Recipient.member_email' =>  'desc')));
 		
 		$this->set(
 			'sendedError',
@@ -159,7 +179,17 @@ class RecipientsController extends AppController {
 			)
 		);
 		
-		$this->set('sending', $this->Recipient->Sending->read(null, $sending_id));
+		$this->set(
+			'sending', 
+			$this->Recipient->Sending->find(
+				'first', 
+				array(
+					'conditions' => array('Sending.id' => $sending_id),
+					'contain' => array('Mail'),
+					'recursive' => -1
+				)
+			)
+		);
 	}
 	
 	
@@ -255,21 +285,10 @@ class RecipientsController extends AppController {
 	
 	
 	public function view($id = null) {
-			
+		
+		$this->Recipient->recursive = -1;
 		$this->set('recipient', $this->Recipient->read(null, $id));
-		if(isset($this->request->params['named']['sending']) && !empty($this->request->params['named']['sending'])) {
-			$this->set('sending', $this->Recipient->Sending->find(
-				'first', 
-				array(
-					'recursive' => -1, 
-					'conditions' => array('Sending.id' => $this->request->params['named']['sending']), 
-					'contain' => 'Mail')
-				)
-			);
-		}
-		if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) {
-			$this->set('from', $this->request->params['named']['from']);
-		}
+		
 	}
 	
 	

@@ -14,7 +14,7 @@ class MemberfieldsController extends AppController {
 			'code' => 'LIKE'
 		);
 		
-		$this->paginate = array('Memberfield' => array('order' => array('Memberfield.created' =>  'desc')));
+		$this->paginate = array('Memberfield' => array('recursive' => -1, 'order' => array('Memberfield.created' =>  'desc')));
 		
 		$this->set(
 			'memberfields',
@@ -64,7 +64,8 @@ class MemberfieldsController extends AppController {
 			}
 		}
 		else {
-			$this->request->data = $this->Memberfield->find('first', array('conditions' => array('Memberfield.id' => $id)));
+			$this->Memberfield->recursive = -1;
+			$this->request->data = $this->Memberfield->read(null, $id);
 		}
 	}
 	
@@ -81,7 +82,8 @@ class MemberfieldsController extends AppController {
 	
 	
 	public function view($id) {
-		$this->set('memberfield', $this->Memberfield->find('first', array('conditions' => array('Memberfield.id' => $id))));
+		$this->Memberfield->recursive = -1;
+		$this->set('memberfield', $this->Memberfield->read(null, $id));
 	}
 	
 	protected function __securitySettings_view() {

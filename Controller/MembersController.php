@@ -61,7 +61,8 @@ class MembersController extends AppController {
 	
 
 	public function view($id = null) {
-		$this->set('member', $this->Member->find('first', array('conditions' => array('Member.id' => $id))));
+		$this->Member->recursive = -1;
+		$this->set('member', $this->Member->read(null, $id));
 		$this->set('memberAdditionalFields', $this->Member->getModelFields());
 		$this->set('unsubscribed', $this->Member->Unsubscription->find(
 			'count',
@@ -70,16 +71,6 @@ class MembersController extends AppController {
 				'conditions' => array('member_id' => $id)
 			)
 		));
-		
-		if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) {
-			$this->set(
-				'mailinglist', 
-				$this->Member->Mailinglist->find(
-					'first', 
-					array('recursive' => -1, 'conditions' => array('id' => $this->request->params['named']['from']))
-				)
-			);
-		}
 	}
 	
 	
@@ -248,9 +239,8 @@ class MembersController extends AppController {
 			
 		}
 		$mailinglists = $this->Member->Mailinglist->find('list');
-		if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) {
-			$this->set('mailinglist', $this->Member->Mailinglist->find('first', array('recursive' => -1, 'conditions' => array('id' => $this->request->params['named']['from']))));
-		}
+		
+		
 		$this->set('memberAdditionalFields', $this->Member->getModelFields());
 		$this->set(compact('mailinglists'));
 	}

@@ -3,6 +3,7 @@ App::uses('AppController', 'Controller');
 
 class UnsubscriptionsController extends AppController {
 
+	/*
 	public function showSended($sending_id) {
 		
 		
@@ -11,7 +12,7 @@ class UnsubscriptionsController extends AppController {
 			'member_email' => 'LIKE'
 		);
 		
-		$this->paginate = array('Recipient' => array('order' => array('Recipient.member_email' =>  'desc')));
+		$this->paginate = array('Recipient' => array('recursive' => -1, 'order' => array('Recipient.member_email' =>  'desc')));
 		
 		$this->set(
 			'sended',
@@ -53,7 +54,7 @@ class UnsubscriptionsController extends AppController {
 		
 		$this->set('sending', $this->Recipient->Sending->read(null, $sending_id));
 	}
-	
+	*/
 	
 	public function view($id = null) {
 		$this->set('unsubscription', $this->Unsubscription->find(
@@ -69,19 +70,7 @@ class UnsubscriptionsController extends AppController {
 			)
 		));	
 			
-		if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) {
-			if(
-				$this->request->params['named']['from'] == 'mailinglists' &&
-				isset($this->request->params['named']['mailinglist']) && 
-				!empty($this->request->params['named']['mailinglist'])
-			) {
-				$mailinglist = $this->Unsubscription->Mailinglist->find(
-					'first',
-					array('recursive' => -1, 'conditions' => array('id' => $this->request->params['named']['mailinglist']))
-				);
-				$this->set('mailinglist', $mailinglist);
-			}
-		}
+		
 	}
 	
 	

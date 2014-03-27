@@ -35,13 +35,8 @@ class TemplatesController extends AppController {
 
 	public function view($id = null) {
 
-		$template = $this->Template->find(
-			'first', 
-			array(
-				'conditions' => array('Template.id' => $id), 
-				'recursive' => -1,
-			)
-		);
+		$this->Template->recursive = -1;
+		$template = $this->Template->read(null, $id);
 	
 		$this->set('template', $template);
 	}
@@ -143,6 +138,7 @@ class TemplatesController extends AppController {
 		
 	public function preview($id) {
 		$this->layout = 'preview';
+		$this->Template->recursive = -1;
 		$this->set('template', $this->Template->read(null, $id));
 	}
 	

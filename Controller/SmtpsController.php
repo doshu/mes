@@ -37,7 +37,8 @@ class SmtpsController extends AppController {
 
 	public function view($id = null) {
 		
-		$this->set('smtp', $this->Smtp->find('first', array('recursive' => -1, 'conditions' => array('Smtp.id' => $id))));
+		$this->Smtp->recursive = -1;
+		$this->set('smtp', $this->Smtp->read(null, $id));
 		$this->set(
 			'count', 
 			$this->Smtp->Sending->find(
@@ -76,7 +77,8 @@ class SmtpsController extends AppController {
 				$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
 			}
 		} else {
-			$this->request->data = $this->Smtp->find('first', array('conditions' => array('Smtp.id' => $id)));
+			$this->Smtp->recursive = -1;
+			$this->request->data = $this->Smtp->read(null, $id);
 		}
 	}
 

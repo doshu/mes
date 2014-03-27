@@ -9,8 +9,7 @@ class AttachmentsController extends AppController {
 		
 		$this->Attachment->id = $id;
 		
-		
-		$filePath = $this->Attachment->read(null, $id);
+		//$filePath = $this->Attachment->read(null, $id);
 		
 		if ($this->Attachment->delete()) {
 
@@ -59,6 +58,7 @@ class AttachmentsController extends AppController {
 	public function download($id) {
 		Configure::load('path');
 		$path = Configure::read('Path.Attachment');
+		$this->Attachment->recursive = -1;
 		$attachment = $this->Attachment->read(null, $id);
 		$this->response->file(
 			$path.$attachment['Attachment']['path'], 

@@ -1,5 +1,23 @@
 <?php $this->set('title_for_layout', __('Disiscrizione di').' '.h($unsubscription['Member']['email'])); ?>
 <?php $this->set('active', 'member'); ?>
+<?php
+	App::uses('Mailinglist', 'Model');
+	$Mailinglist = new Mailinglist();
+	
+	if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) {
+		if(
+			$this->request->params['named']['from'] == 'mailinglists' &&
+			isset($this->request->params['named']['mailinglist']) && 
+			!empty($this->request->params['named']['mailinglist'])
+		) {
+			$Mailinglist->recursive = -1;
+			$mailinglist = $Mailinglist->read(null, $this->request->params['named']['mailinglist']);
+				
+		}
+	}
+
+?>
+
 <?php if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) : ?>
 	<?php
 		switch($this->request->params['named']['from']) {

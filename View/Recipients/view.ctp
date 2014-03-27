@@ -1,5 +1,23 @@
 <?php $this->set('title_for_layout', __('Destinatario %s', h($recipient['Recipient']['member_email']))); ?>
 <?php $this->set('active', 'email'); ?>
+<?php App::uses('Sending', 'Model'); ?>
+<?php
+	if(isset($this->request->params['named']['sending']) && !empty($this->request->params['named']['sending'])) {
+		$Sending = new Sending();
+		$sending = $Sending->find(
+			'first', 
+			array(
+				'recursive' => -1, 
+				'conditions' => array('Sending.id' => $this->request->params['named']['sending']), 
+				'contain' => array('Mail')
+			)
+		);
+	}
+	
+	if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) {
+		$from =  $this->request->params['named']['from'];
+	}
+?>
 <?php 
 	if(isset($from) && isset($sending)) {
 		$this->Html->addCrumb('Email', '/mails/index');

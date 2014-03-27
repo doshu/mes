@@ -13,12 +13,23 @@ class MailsController extends AppController {
 		
 		$this->set(
 			'allmail',
-			$this->Mail->find('count', array('conditions' => array('Mail.user_id' => $this->Auth->user('id'))))
+			$this->Mail->find(
+				'count', 
+				array(
+					'recursive' => -1,
+					'conditions' => array('Mail.user_id' => $this->Auth->user('id'))
+				)
+			)
 		);
 		
 		$this->set(
 			'allsending',
-			$this->Mail->Sending->find('count', array('conditions' => array('Mail.user_id' => $this->Auth->user('id'))))
+			$this->Mail->Sending->find(
+				'count', 
+				array(
+					'conditions' => array('Mail.user_id' => $this->Auth->user('id'))
+				)
+			)
 		);
 		
 		$this->set(
@@ -74,7 +85,7 @@ class MailsController extends AppController {
 			'created' => array('BETWEEN', array('convert' => true, 'type' => 'date', 'time' => true))
 		);
 		
-		$this->paginate = array('Mail' => array('order' => array('Mail.created' =>  'desc')));
+		$this->paginate = array('Mail' => array('recursive' => -1, 'order' => array('Mail.created' =>  'desc')));
 		$this->set('mails', $this->paginate('Mail', array('Mail.user_id' => $this->Auth->user('id'))));
 		
 	}
@@ -159,6 +170,7 @@ class MailsController extends AppController {
 		else {
 			if(isset($this->request->params['named']['templatetype']) && $this->request->params['named']['templatetype'] == 'personal') {
 				if(isset($this->request->params['named']['template']) && !empty($this->request->params['named']['template'])) {
+					$this->Mail->User->Template->recursive = -1;
 					$pt = $this->Mail->User->Template->read(null, $this->request->params['named']['template']);
 					$this->request->data['Mail']['html'] = $pt['Template']['html'];
 					$this->request->data['Mail']['text'] = $pt['Template']['text'];
@@ -306,6 +318,7 @@ class MailsController extends AppController {
 		
 	public function preview($id) {
 		$this->layout = 'preview';
+		$this->Mail->recursive = -1;
 		$this->set('mail', $this->Mail->read(null, $id));
 	}
 	

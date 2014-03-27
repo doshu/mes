@@ -39,6 +39,7 @@ class MailinglistsController extends AppController {
 				'group' => array('Mailinglist.id')
 			)
 		);
+		
 		$this->Mailinglist->virtualFields['members_count'] = 'COUNT(member_id)';
 		$mailinglists = $this->paginate('Mailinglist', array('Mailinglist.user_id' => $this->Auth->user('id')));
 		unset($this->Mailinglist->virtualFields['members_count']);
@@ -54,6 +55,7 @@ class MailinglistsController extends AppController {
 				)
 			)
 		);
+		
 		$this->set('avg', $this->Mailinglist->getAvg($this->Auth->user('id')));
 		$this->set(compact('mailinglists'));
 	}
@@ -61,7 +63,8 @@ class MailinglistsController extends AppController {
 
 	public function view($id = null) {
 
-		$mailinglist = $this->Mailinglist->find('first', array('recursive' => -1, 'conditions' => array('id' => $id)));
+		$this->Mailinglist->recursive = -1;
+		$mailinglist = $this->Mailinglist->read(null, $id);
 		$mailinglist['Mailinglist']['members_count'] = $this->Mailinglist->getMembersCount($mailinglist['Mailinglist']['id']);
 		$this->set(
 			'unsubscribed', 
@@ -109,7 +112,8 @@ class MailinglistsController extends AppController {
 				$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
 			}
 		} else {
-			$this->request->data = $this->Mailinglist->find('first', array('conditions' => array('Mailinglist.id' => $id)));
+			$this->Mailinglist->recursive = -1;
+			$this->request->data = $this->Mailinglist->read(null, $id);
 		}
 		
 	}

@@ -1,6 +1,19 @@
 <?php $this->set('title_for_layout', h($member['Member']['email'])); ?>
 <?php $this->set('active', 'member'); ?>
 <?php App::uses('Memberfield', 'Model'); ?>
+<?php App::uses('Mailinglist', 'Model'); ?>
+<?php
+	if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) {
+		$Mailinglist = new Mailinglist();
+		$mailinglist = $Mailinglist->find(
+			'first', 
+			array(
+				'recursive' => -1, 
+				'conditions' => array('id' => $this->request->params['named']['from'])
+			)
+		);
+	}
+?>
 <?php if(isset($this->request->params['named']['from']) && !empty($this->request->params['named']['from'])) : ?>
 	<?php $this->Html->addCrumb('Liste', '/mailinglists/index'); ?>
 	<?php $this->Html->addCrumb(h($mailinglist['Mailinglist']['name']), '/mailinglists/view/'.$mailinglist['Mailinglist']['id']); ?>
