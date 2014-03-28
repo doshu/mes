@@ -11,28 +11,16 @@ class Memberfieldvalue extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'memberfield_id' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 			'allowed' => array(
 				'rule' => array('belongsToCurrentUser'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'value_date' => array(
@@ -67,7 +55,12 @@ class Memberfieldvalue extends AppModel {
 	
 	
 	public function checkPerm($id, $params, $userId) {
-		$data = $this->read(null, $id);
+		$data = $this->find('first',array(
+			'recursive' => 2,
+			'conditions' => array('id' => $id),
+			'contain' => array('Member')
+		));
+		
 		if(isset($data['Member']['user_id']) && !empty($data['Member']['user_id']))
 			return $data['Member']['user_id'] == $userId;
 		throw new NotFoundException();

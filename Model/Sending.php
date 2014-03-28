@@ -10,11 +10,6 @@ class Sending extends AppModel {
 		'mail_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'time' => array(
@@ -470,7 +465,14 @@ class Sending extends AppModel {
 	
 	
 	public function checkPerm($id, $params, $userId) {
-		$data = $this->read(null, $id);
+		
+		$data = $this->find('first',array(
+			'recursive' => -1,
+			'conditions' => array('Sending.id' => $id),
+			'fields' => array('Mail.user_id'),
+			'contain' => array('Mail')
+		));
+		
 		if(isset($data['Mail']['user_id']) && !empty($data['Mail']['user_id']))
 			return $data['Mail']['user_id'] == $userId;
 		throw new NotFoundException();

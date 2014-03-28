@@ -16,44 +16,24 @@ class Memberfield extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 			'unique' => array(
 				'rule' => array('isFieldUnique', 'name'),
 				'message' => 'Esiste già un campo con questo nome',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'code' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 			'format' => array(
 				'rule' => '/^[a-z_]*$/i',
 				'message' => 'Questo campo può contenere solo lettere e _',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 			'unique' => array(
 				'rule' => array('isFieldUnique', 'code'),
 				'message' => 'Esiste già un campo con questo nome',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 			'restricted' => array(
 				'rule' => array('isRestricted'),
@@ -64,30 +44,18 @@ class Memberfield extends AppModel {
 			'validType' => array(
 				'rule' => array('inList', array('0', '1', '2', '3')),
 				'message' => 'Valore campo errato',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			)
 		),
 		'in_grid' => array(
 			'validType' => array(
 				'rule' => array('boolean'),
 				'message' => 'Valore campo errato',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			)
 		),
 		'user_id' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		)
 	);
@@ -144,7 +112,13 @@ class Memberfield extends AppModel {
 	}
 	
 	public function checkPerm($id, $params, $userId) {
-		$data = $this->read('user_id', $id);
+	
+		$data = $this->find('first',array(
+			'recursive' => -1,
+			'conditions' => array('id' => $id),
+			'fields' => array('user_id')
+		));
+		
 		if(isset($data['Memberfield']['user_id']) && !empty($data['Memberfield']['user_id']))
 			return $data['Memberfield']['user_id'] == $userId;
 		throw new NotFoundException();

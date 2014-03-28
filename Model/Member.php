@@ -1,11 +1,7 @@
 <?php
 App::uses('AppModel', 'Model');
-/**
- * Member Model
- *
- * @property Recipient $Recipient
- * @property Mailinglist $Mailinglist
- */
+
+
 class Member extends AppModel {
 
 	
@@ -34,39 +30,21 @@ class Member extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 			'email' => array(
 				'rule' => array('email'),
 				'message' => 'Inserisci una email valida',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'secret' => array(
 			'notempty' => array(
 				'rule' => array('notempty'),
-				//'message' => 'Your custom message here',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
+				'message' => 'Questo campo non può essere vuoto',
 			),
 		),
 	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * hasMany associations
- *
- * @var array
- */
 	public $hasMany = array(
 		'Recipient' => array(
 			'className' => 'Recipient',
@@ -500,7 +478,9 @@ class Member extends AppModel {
 	public function getCsv($user_id, $list = null) {
 	
 		$conditions = array('Member.user_id' => $user_id);
+		$join = array();
 		if($list != null) {
+			/*
 			$db = $this->getDataSource();
 			$subQuery = $db->buildStatement(
 				array(
@@ -520,12 +500,20 @@ class Member extends AppModel {
 			$subQuery = ' `Member`.`id` IN (' . $subQuery . ') ';
 			$subQueryExpression = $db->expression($subQuery);
 			$conditions[] = $subQueryExpression;
+			*/
+			$join[] = array(
+				'table' => 'mailinglists_members',
+				'alias' => 'MailinglistsMember',
+				'conditions' => array('Member.id = MailinglistsMember.member_id AND MailinglistsMember.mailinglist_id = '.$list),
+				'type' => 'INNER'
+			);
 		}
 		
 		$members = $this->find('all', array(
 			'conditions' => $conditions,
 			'recursive' => -1,
-			'contain' => array('Mailinglist')
+			'joins' => $join,
+			'contain' => array('Mailinglist'),
 		));
 		
 		

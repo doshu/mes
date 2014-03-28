@@ -1,19 +1,9 @@
 <?php
 App::uses('AppModel', 'Model');
-/**
- * Mail Model
- *
- * @property User $User
- * @property Attachment $Attachment
- * @property Sending $Sending
- */
+
 class Mail extends AppModel {
 
-/**
- * Validation rules
- *
- * @var array
- */
+
 	public $validate = array(
 		'user_id' => array(
 			'numeric' => array(
@@ -38,13 +28,7 @@ class Mail extends AppModel {
 		)
 	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * belongsTo associations
- *
- * @var array
- */
 	public $belongsTo = array(
 		'User' => array(
 			'className' => 'User',
@@ -55,11 +39,7 @@ class Mail extends AppModel {
 		)
 	);
 
-/**
- * hasMany associations
- *
- * @var array
- */
+
 	public $hasMany = array(
 		'Attachment' => array(
 			'className' => 'Attachment',
@@ -89,6 +69,7 @@ class Mail extends AppModel {
 		)
 	);
 	
+	
 	public function beforeSave($options = array()) {
 		$this->data['Mail']['user_id'] = AuthComponent::user('id');
 		return true;
@@ -107,6 +88,7 @@ class Mail extends AppModel {
 		if(isset($this->data['Mail']['id']) && !empty($this->data['Mail']['id'])) {
 			$conditions['id <>'] = $this->data['Mail']['id'];
 		}
+		
 		return !(bool)$this->find('count', array(
 			'recursive' => -1,
 			'conditions' => $conditions
@@ -177,7 +159,12 @@ class Mail extends AppModel {
 	
 	public function checkPerm($id, $params, $userId) {
 			
-		$data = $this->read('user_id', $id);
+		$data = $this->find('first',array(
+			'recursive' => -1,
+			'conditions' => array('id' => $id),
+			'fields' => array('user_id')
+		));
+		
 		if(isset($data['Mail']['user_id']) && !empty($data['Mail']['user_id']))
 			return $data['Mail']['user_id'] == $userId;
 		throw new NotFoundException();

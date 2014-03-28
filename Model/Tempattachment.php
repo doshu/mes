@@ -8,7 +8,12 @@ class Tempattachment extends AppModel {
 	
 	  public function ownedByUser($attachment, $user) {
 	  	
-	  	$userId = $this->read('user_id', $attachment);
+	  	$data = $this->find('first',array(
+			'recursive' => -1,
+			'conditions' => array('id' => $id),
+			'fields' => array('user_id')
+		));
+		
 	  	return $userId['Tempattachment']['user_id'] == $user;
 	  }
     

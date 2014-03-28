@@ -12,31 +12,17 @@ class Attachment extends AppModel {
 			'notempty' => array(
 				'rule' => array('notempty'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 		'mail_id' => array(
 			'numeric' => array(
 				'rule' => array('numeric'),
 				'message' => 'Questo campo non può essere vuoto',
-				//'allowEmpty' => false,
-				//'required' => false,
-				//'last' => false, // Stop validation after this rule
-				//'on' => 'create', // Limit validation to 'create' or 'update' operations
 			),
 		),
 	);
 
-	//The Associations below have been created with all possible keys, those that are not needed can be removed
 
-/**
- * belongsTo associations
- *
- * @var array
- */
 	public $belongsTo = array(
 		'Mail' => array(
 			'className' => 'Mail',
@@ -66,6 +52,7 @@ class Attachment extends AppModel {
 	}
 	
 	private function tempNameExists($name) {
+	
 		App::uses('Tempattachment', 'Model');
 		$Tempattachment = new Tempattachment();
 		
@@ -127,6 +114,7 @@ class Attachment extends AppModel {
 			}
 		}
 		else {
+		
 			$error = "";
 			switch($file['error']) {
 				case UPLOAD_ERR_INI_SIZE:
@@ -176,6 +164,8 @@ class Attachment extends AppModel {
 	
 	
 	public function beforeDelete($cascade = true) {
+		
+		$this->recursive = -1;
 		$attachment = $this->read('path', $this->id);
 		$this->__attachmentToDelete = $attachment['Attachment']['path'];
 		return true;

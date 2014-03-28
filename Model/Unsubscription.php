@@ -49,7 +49,14 @@ class Unsubscription extends AppModel {
 	
 	
 	public function checkPerm($id, $params, $userId) {
-		$data = $this->read(null, $id);
+		
+		$data = $this->find('first',array(
+			'recursive' => -1,
+			'conditions' => array('Unsubscription.id' => $id),
+			'fields' => array('Member.user_id'),
+			'contain' => array('Member')
+		));
+		
 		if(isset($data['Member']['user_id']) && !empty($data['Member']['user_id']))
 			return $data['Member']['user_id'] == $userId;
 		throw new NotFoundException();

@@ -86,8 +86,13 @@ class Template extends AppModel {
 	
 	
 	public function checkPerm($id, $params, $userId) {
-			
-		$data = $this->read('user_id', $id);
+		
+		$data = $this->find('first',array(
+			'recursive' => -1,
+			'conditions' => array('id' => $id),
+			'fields' => array('user_id')
+		));
+
 		if(isset($data['Template']['user_id']) && !empty($data['Template']['user_id']))
 			return $data['Template']['user_id'] == $userId;
 		throw new NotFoundException();
