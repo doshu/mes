@@ -155,7 +155,7 @@ class MailsController extends AppController {
 					$this->request->data, 
 					array(
 						'fieldList' => array(
-							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject'),
+							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject', 'html_spam_point', 'text_spam_point'),
 							'Attachment' => array('realname', 'path', 'mail_id')
 						)
 					)
@@ -182,7 +182,7 @@ class MailsController extends AppController {
 
 
 	public function edit($id = null) {
-		
+	
 		if($this->Mail->isInSending($id)) {
 			$this->Session->setFlash(
 				__('Attendere il completamento di tutti gli invii prima di modificare questa Email.'), 
@@ -208,7 +208,7 @@ class MailsController extends AppController {
 					$this->request->data, 
 					array(
 						'fieldList' => array(
-							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject'),
+							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject', 'html_spam_point', 'text_spam_point'),
 							'Attachment' => array('realname', 'path', 'mail_id')
 						)
 					)

@@ -71,6 +71,21 @@ class Mail extends AppModel {
 	
 	
 	public function beforeSave($options = array()) {
+		
+		App::uses('Spamassassin', 'Network/Email');
+		$Spamassassin = new Spamassassin();
+		
+		try {
+			$html_spam_point = $Spamassassin->getSpamPoint($this->data['Mail']['html']);
+			$text_spam_point = $Spamassassin->getSpamPoint($this->data['Mail']['text']);
+			$this->data['Mail']['html_spam_point'] = 100*$html_spam_point['point']/$html_spam_point['limit'];
+			$this->data['Mail']['text_spam_point'] = 100*$text_spam_point['point']/$text_spam_point['limit'];
+		}
+		catch(Exception $e) {
+			$this->validationErrors['html'] = $this->validationErrors['text'] = $e->getMessage();
+			return false;
+		}
+		
 		$this->data['Mail']['user_id'] = AuthComponent::user('id');
 		return true;
 	}

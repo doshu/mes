@@ -161,3 +161,6 @@ function timeToWords($seconds) {
 
 
 Configure::write('check_cookie_action', array('plugin' => null, 'controller' => 'users', 'action' => 'checkCookie'));
+
+define('SPAM_LIMIT_OK', 30);
+define('SPAM_LIMIT_WARNING', 60);

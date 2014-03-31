@@ -89,6 +89,44 @@
 							</tr>
 							<tr>
 								<td>
+									<span class="custom-label"><?php echo __('Punteggio Spam HTML'); ?></span>
+								</td>
+								<td>
+									<?php 
+										if($mail['Mail']['html_spam_point'] == null)
+											$mail['Mail']['html_spam_point'] = 0;
+										
+										$spamClass = 'danger';
+										if($mail['Mail']['html_spam_point'] <= SPAM_LIMIT_WARNING)
+											$spamClass = 'warning';
+										if($mail['Mail']['html_spam_point'] <= SPAM_LIMIT_OK)
+											$spamClass = 'success';
+										
+										echo '<span class="label label-'.$spamClass.'">'.h($mail['Mail']['html_spam_point']).'%'.'</span>'; 
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<span class="custom-label"><?php echo __('Punteggio Spam Testo'); ?></span>
+								</td>
+								<td>
+									<?php 
+										if($mail['Mail']['text_spam_point'] == null)
+											$mail['Mail']['text_spam_point'] = 0;
+										
+										$spamClass = 'danger';
+										if($mail['Mail']['text_spam_point'] <= SPAM_LIMIT_WARNING)
+											$spamClass = 'warning';
+										if($mail['Mail']['text_spam_point'] <= SPAM_LIMIT_OK)
+											$spamClass = 'success';
+											
+										echo '<span class="label label-'.$spamClass.'">'.h($mail['Mail']['text_spam_point']).'%'.'</span>'; 
+									?>
+								</td>
+							</tr>
+							<tr>
+								<td>
 									<span class="custom-label"><?php echo __('Data creazione'); ?></span>
 								</td>
 								<td>
