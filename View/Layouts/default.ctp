@@ -54,7 +54,15 @@
 	<body>
 		<div id="wrapper" class="">
 			<div id="top-nav" class="fixed skin-6">
-				<a href="#" class="brand"><span class="text-toggle">MES</span></a>
+				<a href="#" class="brand">
+					<button type="button" class="navbar-toggle" style="float:none;" id="showMenuButton">
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+						<span class="icon-bar"></span>
+					</button>
+					<span class="">MES</span>
+				</a>
+      
 				<ul class="nav-notification clearfix">
 					<li class="profile dropdown">
 						<?php
@@ -187,6 +195,9 @@
 				<?php echo $this->fetch('content'); ?>
 				<?php echo $this->element('sql_dump'); ?>
 			</div>
+			<footer id="footer">
+				<?php echo __('MES è stato creato da Thomas Schiavello'); ?>
+			</footer>
 		</div>
 	</body>
 </html>

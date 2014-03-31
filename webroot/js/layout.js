@@ -210,4 +210,9 @@ $(function() {
 		}
     });
     
+    
+    $('#showMenuButton').click(function() {
+    	$('#wrapper').toggleClass('sidebar-display');
+    });
+    
 });

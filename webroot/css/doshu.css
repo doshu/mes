@@ -20,12 +20,12 @@
 }
 @media (max-width: 767px) {
   #top-nav.fixed {
-    left: -194px;
+   
   }
 }
 #top-nav .brand {
   display: block;
-  text-align: center;
+  padding-left:10px;
   font-size: 17px;
   line-height: 45px;
   width: 194px;
@@ -236,7 +236,7 @@
 }
 @media (max-width: 767px) {
   #top-nav {
-    left: -194px;
+    
   }
 }
 @media (min-width: 768px) and (max-width: 868px) {
@@ -1254,7 +1254,7 @@ a.list-group-item {
 }
 #main-container {
   position: relative;
-  min-height: 800px;
+  /*min-height: 800px;*/
   padding-top: 45px;
   margin-left: 194px;
   transition: all 0.5s ease;
@@ -1956,6 +1956,7 @@ footer {
   -moz-transition: all 0.5s ease;
   -ms-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
+  padding-right:194px;
 }
 footer.dark {
   background: #1a1a1a;
@@ -2039,7 +2040,7 @@ footer hr {
   width: 25px;
   height: 25px;
 }
-.social-connect {
+.social-connect {min-height: 800px;
   display: inline-block;
   border: 1px solid #f1f5fc;
   background: #fff;

@@ -50,6 +50,9 @@
 					</div>
 				<?php echo $this->Form->end(); ?>
 			</div>
+			<div class="panel-body text-center">
+				<?php echo __('MES è stato creato da Thomas Schiavello'); ?>
+			</div>
 		</div>
 	</div>
 </div>
