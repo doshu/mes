@@ -8,21 +8,24 @@
 			if(!empty($text)) {
 				$cmd = 'echo '.escapeshellarg("\n\n".$text).' | '.($this->bin); //added \n\n as end of headers and start of body
 				$result = trim(shell_exec($cmd));
+				
 				if($result != null && !empty($result)) {
-					$parsed = $this->__parseResult($result);
-					if(is_array($parsed)) {
-						return $parsed;
-					}
-					else {
-						//throw new InternalErrorException(__('Errore durante il controllo Antispam'));
-					}
+					$toParse = $result;
 				}
 				else {
-					//throw new InternalErrorException(__('Errore durante il controllo Antispam'));
+					throw new InternalErrorException(__('Errore durante il controllo Antispam'));
 				}
 			}
 			else {
-				return 0;
+				$toParse = '0/0';
+			}
+			
+			$parsed = $this->__parseResult($toParse);
+			if(is_array($parsed)) {
+				return $parsed;
+			}
+			else {
+				throw new InternalErrorException(__('Errore durante il controllo Antispam'));
 			}
 		}
 		

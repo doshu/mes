@@ -27,7 +27,7 @@
 		
 		echo $this->Form->postLink(
 			'<span class="shortcut-icon"><i class="fa fa-refresh"></i></span><span class="text">'.__('Ripeti invio per email NON Inviate').'</span>',
-			array('action' => 'resend', $sending['Sending']['id']),
+			array('controller' => 'sendings', 'action' => 'resend', $sending['Sending']['id']),
 			array(
 				'data-to-confirm' => __("Sei sicuro di voler tentare il reinvio delle email?"),
 				'escape' => false,

@@ -6,8 +6,10 @@
 <div class="login-wrapper">
 	<div class="text-center">
 		<h2 class="" style="font-weight:bold">
-			<?php echo $this->Html->image('likeasirblack.png', array('width' => 75)); ?>
-			<span style="color:#ccc; text-shadow:0 1px #fff">MES</span>
+			<?php echo $this->Html->image('mylogo.png', array('width' => 75)); ?>
+			
+			<strong>POWAMAIL</strong>
+			<span style="font-size:10px; line-height:10px;">Mail like a Pro!</span>
 		</h2>
 	</div>
 	<div class="login-widget">

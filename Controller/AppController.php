@@ -52,12 +52,12 @@ class AppController extends Controller {
 			)
 		);
 		
-		
-		if(!$this->Session->check('mes_cookie_enabled') && !$this->isCheckCookieAction()) {
-			setcookie('mes_cookie_check', 1, 0, '/', $_SERVER['HTTP_HOST'], false, true);
-			$this->redirect(Configure::read('check_cookie_action'));
+		if(!Configure::check('no_check_cookie')) {
+			if(!$this->Session->check('mes_cookie_enabled') && !$this->isCheckCookieAction()) {
+				setcookie('mes_cookie_check', 1, 0, '/', $_SERVER['HTTP_HOST'], false, true);
+				$this->redirect(Configure::read('check_cookie_action'));
+			}
 		}
-		
 		
 		//$this->Auth->allow();
 	}

@@ -116,7 +116,7 @@ class MailsController extends AppController {
 		
 		$this->paginate = array(
 			'Sending' => array(
-				'order' => array('created DESC'),
+				'order' => array('Sending.created' => 'DESC'),
 			)
 		);
 		

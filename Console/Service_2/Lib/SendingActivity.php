@@ -37,6 +37,8 @@
 			$this->notify();
 			$this->wait();
 			
+			$entity = (new Sending())->load($this->entityId); //reload the entity after parent changes
+			
 			if($isToSend) {
 				$recipients = $RecipientModel->getRecipientBySending($this->entityId);
 				
@@ -88,18 +90,14 @@
 					
 					switch($entity->data['type']) {
 						case Sending::$TEXT:
-							$mailer->Body = $mail['text'];
 							$mailer->IsHTML(false);
 						break;
 						case Sending::$HTML:
 							//$mailer->Body = $this->MailParser->parse($mail['html'], $secretPlaceholder, $recipientPlaceholder);
-							$mailer->Body = $mail['html'];
 							$mailer->IsHTML(true);
 						break;
 						case Sending::$BOTH:
 							//$mailer->Body = $this->MailParser->parse($mail['html'], $secretPlaceholder, $recipientPlaceholder);
-							$mailer->Body = $mail['html'];
-							$mailer->AltBody = $mail['text'];
 							$mailer->IsHTML(true);
 						break;
 						
@@ -121,8 +119,8 @@
 								);
 								*/
 								
-								$mailer->Body = $this->MailParser->replaceVariable($recipient, $entity, $mailer->Body);
-								$mailer->AltBody = $this->MailParser->replaceVariable($recipient, $entity, $mailer->AltBody);
+								$mailer->Body = $this->MailParser->replaceVariable($recipient, $entity, $mail['html']);
+								$mailer->AltBody = $this->MailParser->replaceVariable($recipient, $entity, $mail['text']);
 								
 								$mailer->Body = $this->MailParser->parse($mailer->Body, $recipient);
 							}
@@ -157,6 +155,7 @@
 				$entity->data['status'] = Sending::$COMPLETED;
 				$entity->data['ended'] = time();
 				$entity->save();
+				
 				echo "Fine\n";
 				$this->removeFromPool($this->entityId);
 				$this->finish = true;

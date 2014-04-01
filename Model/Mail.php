@@ -78,6 +78,9 @@ class Mail extends AppModel {
 		try {
 			$html_spam_point = $Spamassassin->getSpamPoint($this->data['Mail']['html']);
 			$text_spam_point = $Spamassassin->getSpamPoint($this->data['Mail']['text']);
+			$html_spam_point['limit'] = max($html_spam_point['limit'], 1);
+			$text_spam_point['limit'] = max($text_spam_point['limit'], 1);
+			
 			$this->data['Mail']['html_spam_point'] = 100*$html_spam_point['point']/$html_spam_point['limit'];
 			$this->data['Mail']['text_spam_point'] = 100*$text_spam_point['point']/$text_spam_point['limit'];
 		}

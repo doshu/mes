@@ -126,6 +126,7 @@
 								</td>
 								<td>
 									<?php
+										$member['Member']['valid'] = $member['Member']['valid'] === null?-1:$member['Member']['valid'];
 										switch($member['Member']['valid']) {
 											case 0:
 												echo '<span class="label label-danger">'.__('Non Esiste').'</span>';

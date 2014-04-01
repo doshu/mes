@@ -60,7 +60,8 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</button>
-					<span class="">MES</span>
+					<strong>POWAMAIL</strong>
+					<span style="font-size:10px; line-height:10px;">Mail like a Pro!</span>
 				</a>
       
 				<ul class="nav-notification clearfix">
@@ -121,9 +122,10 @@
 							</a>
 						</div>
 						<div class="user-block clearfix">
-							<?php echo $this->Html->image('likeasir.png'); ?>
+							<?php echo $this->Html->image('mylogo.png'); ?>
 							<div class="detail">
-								<strong>MES</strong>
+								<strong>POWAMAIL</strong>
+								<div>Mail like Pro!</div>
 							</div>
 						</div>
 						<div class="main-menu">

@@ -48,10 +48,9 @@
 			<?php
 				$file = new File($file);
 				$fileInfo = $file->info();
-				
 			?>
 	
-			<div class="thumbnail" draggable="true" data-image="<?php echo Router::fullBaseUrl().FileManager::getFullUrl($file->path); ?>">
+			<div class="thumbnail" draggable="true" data-image="<?php echo FILE_MANAGER_DOMAIN.FileManager::getFullUrl($file->path); ?>">
 				<image src="" data-url="<?=Router::url(FileManager::getUrl($this->Image->resize($file->path, 100, 100))) ?>"/>
 				<?php 
 					/*

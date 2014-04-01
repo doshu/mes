@@ -8,7 +8,7 @@
 	$this->Javascript->setGlobal(array(
 		'addressIsValid' => Member::isValid,
 		'addressIsNotValid' => Member::isNotValid,
-		'addressCannotValidated' => Member::cannotValidate
+		'addressCannotValidate' => Member::cannotValidate
 	)); 
 ?>
 <?php

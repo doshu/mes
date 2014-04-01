@@ -75,7 +75,7 @@ class RecipientsController extends AppController {
 			'opened_time' => array('BETWEEN', array('type' => 'datetime', 'convert' => true, 'format' => 'd/m/Y H:i:s'))
 		);
 		
-		$this->paginate = array('Recipient' => array('recursive' => -1, 'order' => array('Recipient.opened_time' =>  'desc')));
+		$this->paginate = array('Recipient' => array('contain' => array('Link'), 'recursive' => 2, 'order' => array('Recipient.opened_time' =>  'desc')));
 		
 		$this->set(
 			'opened',
@@ -207,7 +207,7 @@ class RecipientsController extends AppController {
 		{
 			
 			$recipient = $this->Recipient->getToOpenBySecret($this->request->query['recipient'], $this->request->query['key']);
-			
+
 			if(isset($recipient['Recipient']['id']) && !$recipient['Recipient']['opened']) {
 				$this->Recipient->id = $recipient['Recipient']['id'];
 				$browserInfo = get_browser();
@@ -217,8 +217,12 @@ class RecipientsController extends AppController {
 				$fields['os'] = $browserInfo->platform;
 				$fields['browser'] = $browserInfo->browser;
 				
+
+				$geoInfo = geoip_record_by_name(
+					isset($_SERVER['HTTP_X_FORWARDED_HOST']) && !empty($_SERVER['HTTP_X_FORWARDED_HOST'])?
+						$_SERVER['HTTP_X_FORWARDED_HOST']:$_SERVER['REMOTE_ADDR']
+				);
 				
-				$geoInfo = geoip_record_by_name($_SERVER['REMOTE_ADDR']);
 				if($geoInfo) {
 					if(isset($geoInfo['country_code']) && !empty($geoInfo['country_code'])) {
 						$fields['country'] = $geoInfo['country_code'];
@@ -271,6 +275,8 @@ class RecipientsController extends AppController {
 				 }
 			}
 			else {
+				header('Content-Type:image/png');
+				die(file_get_contents(IMAGES.'openme.png'));
 				$this->response->statusCode(200);
 				$this->response->type('image/png');
 				$this->response->body(file_get_contents(IMAGES.'openme.png'));
@@ -291,10 +297,16 @@ class RecipientsController extends AppController {
 		
 	}
 	
-	
-	protected function __securitySettings_openMe() {
+
+	public function beforeFilter() {
+		
 		$this->Auth->allow('openMe');
-	}
+		Configure::write('no_check_cookie', true);
+		var_dump(Configure::read('no_check_cookie'));
+		parent::beforeFilter();
+		Configure::delete('no_check_cookie');
+	}	
+
 	
 	protected function __securitySettings_showSended() {
 		$this->Xuser->checkPerm($this->Recipient->Sending, isset($this->request->pass[0])?$this->request->pass[0]:null);

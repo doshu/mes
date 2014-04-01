@@ -42,9 +42,10 @@
 <body>
 	<div id="header">
 		<?php
-			echo $this->Html->image('likeasirblack.png', array('style' => 'width:90px', 'id' => 'top-logo'));
+			echo $this->Html->image('mylogo.png', array('style' => 'width:90px', 'id' => 'top-logo'));
 		?>
-		<h1 style="display:inline-block; margin-left:0;">MES</h1>
+		<h1 style="display:inline-block; margin-left:0;">POWAMAIL</h1>
+		<span style="font-size:10px; line-height:10px;">Mail like a Pro!</span>
 	</div>
 	<div id="content">
 		<?php echo $this->element('flash'); ?>

@@ -375,9 +375,6 @@ aside .sidebar-inner .user-block img {
   float: left;
   width: 45px;
   height: 45px;
-  border-radius: 50em;
-  -moz-border-radius: 50em;
-  -webkit-border-radius: 50em;
 }
 aside .sidebar-inner .user-block .detail {
   float: left;

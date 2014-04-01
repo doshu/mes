@@ -43,6 +43,7 @@
 		
 		public function query($query, $param = array()) {
 			$pdoStatement = $this->prepare($query);
+			
 			$pdoStatement->execute($param);
 			
 			if($this->queryIsSelect($query)) {

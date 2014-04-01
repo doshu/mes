@@ -10,6 +10,8 @@
 			$this->bcc = array();
 			$this->ReplyTo = array();
 			$this->all_recipients = array();
+			$this->Body = '';
+			$this->AltBody = '';
 		}
 		
 	}

@@ -546,6 +546,7 @@ class MembersController extends AppController {
 		else {
 			$this->Session->setFlash($message, 'default', array(), 'error');
 		}
+		
 		$this->redirect($this->referer(true, '/'));
 	}
 	
