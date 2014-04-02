@@ -30,24 +30,21 @@
 		}
 		
 		private function __run() {
-			
+
 			while(true) {
 				
 				if($this->countToSend()) {
-					
 					$next = $this->getNextToSend();
 					
 					if($next['id']) {
-						
 						try {
 							$nextActivity = new SendingActivity($next['id']);
 							$nextActivity->mutex = $this->mutex;
 							$this->SendingsCollection[] = $nextActivity;
 							$this->log('Starting sending '.$next['id'], 'info');
 							$nextActivity->start();
-							
 							$nextActivity->wait();
-							echo 'messo in send';
+							
 							Factory::getInstance('Model/Sending')->setSendingStatus($next['id'], Sending::$SENDING);
 							$this->pushToPool($next['id']);
 							$nextActivity->notify();

@@ -23,8 +23,10 @@
 			$this->MailParser = new MailParser();
 		}
 	
+		
 		public function run() {
 		 
+		 	
 			$SendingModel = new Sending();
 			$RecipientModel = new Recipient();
 			$MailModel = new Mail();
@@ -150,7 +152,6 @@
 				}
 				$entity->data['status'] = Sending::$COMPLETED;
 				$entity->data['ended'] = time();
-				echo 'messo finito';
 				$entity->save();
 				
 				echo "Fine\n";
