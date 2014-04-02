@@ -2,3 +2,4 @@ tmp/cache/*
 tmp/session/*
 tmp/logs/*
 tmp/tests/*
+Console/Service_2/Var/Fifo/*
