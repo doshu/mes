@@ -12,11 +12,11 @@
 			if(!posix_mkfifo(FIFO_DIR.$this->__fifo, 0777)) {
 				throw new Exception('Cannot create fifo');
 			}
-			
+			$this->__fifoFp = fopen(FIFO_DIR.$this->__fifo, 'a+');
 		}
 		
 		private function __afterFork() {
-			$this->__fifoFp = fopen(FIFO_DIR.$this->__fifo, 'w+');
+			//$this->__fifoFp = fopen(FIFO_DIR.$this->__fifo, 'a+');
 			if(!$this->__fifoFp) {
 				throw new Exception('Cannot open fifo');
 			}
@@ -33,11 +33,14 @@
 		}
 		
 		public function wait() {
-			if(is_resource($this->__fifoFp))
-				fread($this->__fifoFp, 1);
+			if(is_resource($this->__fifoFp)) {
+				echo 'ricevuto ';
+				var_dump(fread($this->__fifoFp, 1));
+			 }
 		}
 		
 		public function notify() {
+			echo 'inviato ';
 			fwrite($this->__fifoFp, '1', 1);
 		}
 		

@@ -22,12 +22,12 @@
 	<div class="grey-container shortcut-wrapper">
 		<?php
 			echo $this->Html->link(
-				'<span class="shortcut-icon"><i class="fa fa-save"></i></span><span class="text">'.__('Salva').'</span>',
+				'<span class="shortcut-icon"><i class="fa fa-plane"></i></span><span class="text">'.__('Invia').'</span>',
 				'#',
 				array(
 					'class' => 'shortcut-link', 
 					'escape' => false,
-					'title' => __('Salva'),
+					'title' => __('Invia'),
 					'onclick' => "$('#SendingAddForm').submit();"
 				)
 			);

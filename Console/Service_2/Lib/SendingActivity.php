@@ -135,7 +135,7 @@
 								$recipient->save();
 							}
 							else {
-								throw new Exception();
+								throw new Exception('Errore durante l\'invio a '.$recipient->data['member_email']);
 							}
 							
 						}
@@ -145,15 +145,12 @@
 							$entity->data['errors'] = 1;
 							$this->withErrors = 1;
 							$recipient->save();
-							if(!$this->withErrors) {
-								$entity->save();
-							}
 						}
 					}
-					
 				}
 				$entity->data['status'] = Sending::$COMPLETED;
 				$entity->data['ended'] = time();
+				echo 'messo finito';
 				$entity->save();
 				
 				echo "Fine\n";

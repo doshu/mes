@@ -47,11 +47,12 @@
 							$nextActivity->start();
 							
 							$nextActivity->wait();
-							
+							echo 'messo in send';
 							Factory::getInstance('Model/Sending')->setSendingStatus($next['id'], Sending::$SENDING);
 							$this->pushToPool($next['id']);
 							$nextActivity->notify();
 							
+							unset($next);
 						}
 						catch(Exception $e) {
 							$this->log('Error starting sending '.$next['id'], 'error');
