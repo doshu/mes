@@ -23,9 +23,12 @@
 		private function __afterForkParent() {
 			//$this->__fifoFp = fopen(FIFO_DIR.$this->__fifo, 'a+');
 			$this->__fifoFp = stream_socket_server('unix://'.FIFO_DIR.$this->__fifo);
+			if(!$this->__fifoFp) {
+				throw new Exception('Cannot create socket server');
+			}
 			$this->__fifoFp = stream_socket_accept($this->__fifoFp);
 			if(!$this->__fifoFp) {
-				throw new Exception('Cannot open fifo');
+				throw new Exception('Cannot accept socket connection');
 			}
 		}
 		
@@ -33,12 +36,14 @@
 			//$this->__fifoFp = fopen(FIFO_DIR.$this->__fifo, 'a+');
 			$this->__fifoFp = stream_socket_client('unix://'.FIFO_DIR.$this->__fifo);
 			if(!$this->__fifoFp) {
-				throw new Exception('Cannot open fifo');
+				throw new Exception('Cannot create socket client');
 			}
 		}
 		
 		private function __afterEnd() {
-			fclose($this->__fifoFp);
+			if(is_resource($this->__fifoFp)) {
+				fclose($this->__fifoFp);
+			}
 			@unlink(FIFO_DIR.$this->__fifo);
 		}
 		
@@ -63,18 +68,44 @@
 		public function start() {
 			$this->__beforeStart();
 			$pid = pcntl_fork();
-			if($pid == 0) {
+			
+			if($pid == -1) {
+				throw new Exception('Cannot fork');
+			}
+			elseif($pid == 0) {
 				$this->whoAmI = 'child';
-				$this->__afterForkChild();
-				$this->run();
-				$this->__afterEnd();
-				exit;
+				try {
+					$this->__afterForkChild();
+					$this->run();
+					$this->__afterEnd();
+					exit;
+				}
+				catch (Exception $e) {
+					$this->onStartChildFail($e); //on start child fail (rimettere invio a waiting)
+					exit;
+				}
 			}
 			else {
 				$this->whoAmI = 'parent';
-				$this->__afterForkParent();
+				try {
+					$this->__afterForkParent();
+				}
+				catch (Exception $e) {
+					$this->onAfterForkParentFail($e, $pid);//on after fork parent fail (killare il child e rimettere invio a waiting)
+					throw $e;
+				}
+				
+				return $pid; //mettere associato all'invio nel pool e creare script per eventuale kill di un invio.
 			}
 			
+		}
+		
+		public function onAfterForkParentFail($e, $childPid) {
+			posix_kill($childPid, SIGTERM);
+		}
+		
+		public function onStartChildFail($e) {
+			die($e->getMessage);
 		}
 		
 		private function __createFifoName() {
@@ -86,7 +117,9 @@
 		
 		
 		public function __destruct() {
-			fclose($this->__fifoFp);
+			if(is_resource($this->__fifoFp)) {
+				fclose($this->__fifoFp);
+			}
 			@unlink(FIFO_DIR.$this->__fifo);
 		}
 		

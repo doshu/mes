@@ -40,6 +40,7 @@
 						try {
 							$nextActivity = new SendingActivity($next['id']);
 							$nextActivity->mutex = $this->mutex;
+							$nextActivity->__isDaemon = $this->__isDaemon;
 							$this->SendingsCollection[] = $nextActivity;
 							$this->log('Starting sending '.$next['id'], 'info');
 							$nextActivity->start();

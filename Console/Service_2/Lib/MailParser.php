@@ -11,7 +11,7 @@
 			
 			//change the href a attribute
 			$code = $this->replaceLinkIn('a', 'href', $code, $recipient);
-			$code = $this->replaceLinkIn('img', 'src', $code, $recipient);
+			//$code = $this->replaceLinkIn('img', 'src', $code, $recipient);
 			$code = $this->pushFakeImage($code, $recipient);
 			return $code;
 		}

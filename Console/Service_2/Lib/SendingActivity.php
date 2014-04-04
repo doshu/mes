@@ -8,6 +8,8 @@
 	require_once 'MailParser.php';
 	require_once 'Mailer.php';
 	require_once 'FThread.php';
+	require_once 'Logger.php';
+	require_once 'Output.php';
 
 	class SendingActivity extends FThread {
 	
@@ -16,30 +18,34 @@
 		public $withErrors = 0;
 		public $mutex;
 		public $finish = false;
+		public $__isDaemon = false;
+		public $Logger;
+		public $Output;
 		
 		public function __construct($sending) {
-			
 			$this->entityId = $sending;
 			$this->MailParser = new MailParser();
+			$this->Logger = new Logger(LOGFILE);
+			$this->Output = new Output();
 		}
 	
 		
 		public function run() {
 		 
 		 	
-			$SendingModel = new Sending();
-			$RecipientModel = new Recipient();
-			$MailModel = new Mail();
-			$SmtpModel = new Smtp();
-			$Attachment = new Attachment();
-			$entity = (new Sending())->load($this->entityId);
+			$SendingModel = Factory::getInstance('Model/Sending');
+			$RecipientModel = Factory::getInstance('Model/Recipient');
+			$MailModel = Factory::getInstance('Model/Mail');
+			$SmtpModel = Factory::getInstance('Model/Smtp');
+			$Attachment = Factory::getInstance('Model/Attachment');
+			$entity = Factory::getInstance('Model/Sending')->load($this->entityId);
 			
 			$isToSend = $entity->isToSend();
 			
 			$this->notify();
 			$this->wait();
 			
-			$entity = (new Sending())->load($this->entityId); //reload the entity after parent changes
+			$entity = Factory::getInstance('Model/Sending')->load($this->entityId); //reload the entity after parent changes
 			
 			if($isToSend) {
 				$recipients = $RecipientModel->getRecipientBySending($this->entityId);
@@ -65,6 +71,7 @@
 					$mailer->SMTPAuth = true;
 					$mailer->Username = $smtp['username'];
 					$mailer->Password = $smtp['password'];
+					//$mailer->Hostname = 'www.powamail.tk';
 					
 					$mailer->AuthType = $smtp['authtype'];
 					
@@ -106,7 +113,7 @@
 					}
 					
 					foreach($recipients as $recipient) {
-						$recipient = (new Recipient())->load($recipient['id']);
+						$recipient = Factory::getInstance('Model/Recipient')->load($recipient['id']);
 						$mailer->resetAddresses();
 						try {
 							
@@ -128,21 +135,20 @@
 							}
 							
 							$mailer->AddAddress($recipient->data['member_email']);
-							echo $recipient->data['member_email']."\n";
 							
 							if($mailer->Send()) {
-								echo "Inviata con successo\n";
+								$this->log($recipient->data['member_email']." Sended Succesfully",'info');
 								$recipient->data['sended'] = 1;
 								$recipient->data['sended_time'] = time();
 								$recipient->save();
 							}
 							else {
-								throw new Exception('Errore durante l\'invio a '.$recipient->data['member_email']);
+								throw new Exception('Error during sending to '.$recipient->data['member_email']);
 							}
 							
 						}
 						catch(Exception $e) {
-							echo $e->getMessage()."\n";
+							$this->log($e->getMessage(), 'error');
 							$recipient->data['errors'] = 1;
 							$entity->data['errors'] = 1;
 							$this->withErrors = 1;
@@ -154,7 +160,7 @@
 				$entity->data['ended'] = time();
 				$entity->save();
 				
-				echo "Fine\n";
+				$this->log("Ended ".$this->entityId, 'info');
 				$this->removeFromPool($this->entityId);
 				$this->finish = true;
 			}
@@ -176,6 +182,24 @@
 				$new = implode("\n", $new);
 				file_put_contents(SENDING_POOL, $new);
    			 	sem_release($this->mutex);
+			}
+		}
+		
+		// execute as parent
+		public function onAfterForkParentFail($e, $childPid) {
+			parent::onAfterForkParentFail($e, $childPid);
+			Factory::getInstance('Model/Sending')->setSendingStatus($this->entityId, Sending::$SENDING);			
+		}
+		
+		public function onStartChildFail($e) {
+			die($this->entityId.': '.$e->getMessage);
+		}
+		
+		
+		public function log($msg, $type) {
+			$this->Logger->$type(date('d/m/Y H:i:s').' '.$msg);
+			if(!$this->__isDaemon) {
+				$this->Output->$type(date('d/m/Y H:i:s').' '.$msg);
 			}
 		}
 		
