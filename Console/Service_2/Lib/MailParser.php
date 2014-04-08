@@ -11,11 +11,57 @@
 			
 			//change the href a attribute
 			$code = $this->replaceLinkIn('a', 'href', $code, $recipient);
-			//$code = $this->replaceLinkIn('img', 'src', $code, $recipient);
+			$code = $this->replaceLinkIn('img', 'src', $code, $recipient);
 			$code = $this->pushFakeImage($code, $recipient);
 			return $code;
 		}
 		
+		public function replaceLinkIn($tag, $attribute, $code, $recipient) {
+			
+			$code = preg_replace_callback(
+				'/(<\s*'.$tag.'[^>]*'.$attribute.'=["\'])([^"\']*)(["\'][^<]*>)/i', 
+				function($m) use ($recipient, $tag){
+				
+					if($tag == 'img') {
+						$uriInfo = parse_url($m[2]);
+						$extension = '';
+						if(isset($uriInfo['path']) && !empty($uriInfo['path'])) {
+							$uriInfo = pathinfo($uriInfo['path']);
+							if(isset($uriInfo['extension']) && !empty($uriInfo['extension'])) {
+								$extension = $uriInfo['extension'];
+							}
+						}
+						
+						$tagUrl = sprintf(
+							OPEN_ME_IMAGE, 
+							$recipient->data['id'], 
+							$recipient->data['member_secret'], 
+							base64_encode($m[2]),
+							$extension
+						);
+					}
+					else {
+						$tagUrl = sprintf(
+							OPEN_ME_LINK, 
+							$recipient->data['id'], 
+							$recipient->data['member_secret'], 
+							base64_encode($m[2])
+						);
+					}
+					
+					return $m[1].$tagUrl.$m[3];
+				}, 
+				$code
+			);
+			return $code;
+		}
+		
+		public function pushFakeImage($code, $recipient) {
+			$imgUrl = sprintf(OPEN_ME_FAKE, $recipient->data['id'], $recipient->data['member_secret']);
+			return $code.'<img src="'.$imgUrl.'"/>';
+		}
+		
+		/*
 		public function replaceLinkIn($tag, $attribute, $code, $recipient) {
 			
 			//preg_match_all('/<(\s*'.$tag.'[^>])'.$attribute.'=["\']([^"\']*)["\']([^<]*)>/i', $code, $matches);
@@ -40,7 +86,7 @@
 		public function pushFakeImage($code, $recipient) {
 			return $code.'<img src="'.FAKE_IMAGE_URL.'?recipient='.$recipient->data['id'].'&key='.$recipient->data['member_secret'].'"/>';
 		}
-		
+		*/
 		/*
 		public function createPlaceholder($code) {
 			$placeholder = '{{__insert_secret_%s__}}';

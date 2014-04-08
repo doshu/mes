@@ -193,11 +193,109 @@ class RecipientsController extends AppController {
 	}
 	
 	
+	public function openMe($recipient = null, $key = null, $uri = null, $fromimage = false, $ext = null) {
+
+		
+		App::uses('Url', 'Utility');
+		
+		if(!is_null($uri)) {
+			$uri = base64_decode($uri);
+		}
+		
+		
+		if(!empty($recipient) && !empty($key)) {
+			
+			$recipient = $this->Recipient->getToOpenBySecret($recipient, $key);
+
+			if(isset($recipient['Recipient']['id']) && !$recipient['Recipient']['opened']) {
+			
+				$this->Recipient->id = $recipient['Recipient']['id'];
+				$browserInfo = get_browser();
+				$fields['opened'] = true;
+				$fields['opened_time'] = date('Y-m-d H:i:s');
+				$fields['device'] = $browserInfo->ismobiledevice?'Mobile':'Pc';
+				$fields['os'] = strtolower($browserInfo->platform) == 'unknown'?'Sconosciuto':$browserInfo->platform;
+				$fields['browser'] = strtolower($browserInfo->browser) == 'Default Browser'?'Sconosciuto':$browserInfo->browser;
+				
+
+				$geoInfo = geoip_record_by_name(
+					isset($_SERVER['HTTP_X_FORWARDED_HOST']) && !empty($_SERVER['HTTP_X_FORWARDED_HOST'])?
+						$_SERVER['HTTP_X_FORWARDED_HOST']:$_SERVER['REMOTE_ADDR']
+				);
+				
+				if($geoInfo) {
+					if(isset($geoInfo['country_code']) && !empty($geoInfo['country_code'])) {
+						$fields['country'] = $geoInfo['country_code'];
+						if(isset($geoInfo['region']) && !empty($geoInfo['region'])) {
+							$region = geoip_region_name_by_code($geoInfo['country_code'], $geoInfo['region']);
+							if($region) {
+								$fields['region'] = $region;
+							}
+						}
+					}
+					if(
+						isset($geoInfo['latitude']) && 
+						isset($geoInfo['longitude']) && 
+						!empty($geoInfo['latitude']) && 
+						!empty($geoInfo['longitude'])
+					) {
+						$fields['lat'] = $geoInfo['latitude'];
+						$fields['lon'] = $geoInfo['longitude'];
+					}
+				}
+				
+				$this->Recipient->save($fields);
+			}
+			
+			
+			if(!empty($uri))  {
+			 	if(Url::isAbsolute($uri)) {
+			 	
+				 	if(is_null($fromimage)) {
+				 		if(!$this->Recipient->Link->find('count', array(
+				 			'recursive' => -1,
+				 			'conditions' => array(
+				 				'recipient_id' => $recipient['Recipient']['id'],
+				 				'url' => $this->request->query['uri']
+				 			)
+				 		))) {
+				 		
+				 			$this->Recipient->Link->create();
+				 			$this->Recipient->Link->save(array(
+				 				'url' => $uri, 
+				 				'recipient_id' => $recipient['Recipient']['id'],
+				 				'date' => date('Y-m-d H:i:s'),
+				 				'sending_id' => $recipient['Recipient']['sending_id']
+				 			));
+				 		
+				 		}
+				 	}
+				}
+			 	else {
+			 		$this->redirect('/brokenLink');
+				}
+			 	$this->redirect($uri);
+			}
+			else {
+				header('Content-Type:image/png');
+				$this->response->statusCode(200);
+				$this->response->type('image/png');
+				$this->response->body(file_get_contents(IMAGES.'openme.png'));
+				return $this->response;
+			}
+		}
+		else {
+			$this->redirect('/brokenLink');
+		}
+		
+	}
+	
+	
+	/*
 	public function openMe() {
 		
-		//file_put_contents('/tmp/asd/', var_export(get_browser(null, true))); exit;
 		App::uses('Url', 'Utility');
-		//debug(Url::isAbsolute($this->request->query['uri'])); exit;
+		
 		if(
 			isset($this->request->query['recipient']) && 
 			isset($this->request->query['key']) && 
@@ -249,6 +347,7 @@ class RecipientsController extends AppController {
 			
 			if(isset($this->request->query['uri'])) {
 				 if(!empty($this->request->query['uri']) && Url::isAbsolute($this->request->query['uri']))  {
+				 
 				 	if(!isset($this->request->query['fromimage'])) {
 				 		if(!$this->Recipient->Link->find('count', array(
 				 			'recursive' => -1,
@@ -288,7 +387,7 @@ class RecipientsController extends AppController {
 		}
 		
 	}
-	
+	*/
 	
 	public function view($id = null) {
 		
@@ -302,7 +401,6 @@ class RecipientsController extends AppController {
 		
 		$this->Auth->allow('openMe');
 		Configure::write('no_check_cookie', true);
-		var_dump(Configure::read('no_check_cookie'));
 		parent::beforeFilter();
 		Configure::delete('no_check_cookie');
 	}	

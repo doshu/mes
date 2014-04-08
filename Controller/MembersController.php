@@ -408,7 +408,7 @@ class MembersController extends AppController {
 	
 	
 	public function unsubscribe() {
-				
+		
 		App::uses('Url', 'Utility');
 		
 		if(
@@ -441,7 +441,6 @@ class MembersController extends AppController {
 				isset($recipient['Member']['id']) && !empty($recipient['Member']['id']) &&
 				isset($recipient['Sending']['id']) && !empty($recipient['Sending']['id']) && 
 				$recipient['Member']['email'] == $recipient['Recipient']['member_email']
-				
 			) {
 				
 				$mailinglists = (array)Hash::extract($recipient['Sending']['Mailinglist'], '{n}.id');

@@ -583,8 +583,8 @@ class Member extends AppModel {
 			
 				if(!empty($MailinglistsMember)) {
 			
-					$this->Member->MailinglistsMember->id = $MailinglistsMember['MailinglistsMember']['id'];
-					if($this->Member->MailinglistsMember->delete()) {
+					$this->MailinglistsMember->id = $MailinglistsMember['MailinglistsMember']['id'];
+					if($this->MailinglistsMember->delete()) {
 						$deleted[] = $mailinglist;
 					}
 					else

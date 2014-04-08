@@ -14,6 +14,10 @@
 	define('SERVICE_URL', 'http://www.powamail.tk/mes/open_me');
 	define('FAKE_IMAGE_URL', SERVICE_URL);
 	define('SENDING_POOL', dirname(dirname(__FILE__)).DS.'Var'.DS.'sending_pool');
-	define('UNSUSCRIBE_LINK', 'http://www.powamail.com/mes/unsubscribe?recipient=%s&key=%s&sending=%s&redirect=%s');
+	define('UNSUSCRIBE_LINK', 'http://www.powamail.tk/mes/unsubscribe?recipient=%s&key=%s&sending=%s&redirect=%s');
 	//define('FAKE_IMAGE_URL', 'http://127.0.0.1/mes/check_opened.jpg');
+	
+	define('OPEN_ME_LINK', 'http://www.powamail.tk/mes/open_me_link_%s_%s_%s');
+	define('OPEN_ME_IMAGE', 'http://www.powamail.tk/mes/open_me_image_%s_%s_%s_1.%s');
+	define('OPEN_ME_FAKE', 'http://www.powamail.tk/mes/open_me_%s_%s_.png');
 ?>
