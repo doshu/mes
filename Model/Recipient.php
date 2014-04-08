@@ -97,7 +97,7 @@ class Recipient extends AppModel {
 	public function getBrowserStats($user_id, $sending_id = null) {
 		
 		$this->Sending->Recipient->virtualFields['times'] = 'COUNT(browser)';
-		$conditions = array('browser <>' => null, 'browser <>' => '');
+		$conditions = array('browser <>' => null, 'browser <>' => '', 'opened' => 1);
 		if(!is_null($sending_id)) {
 			$conditions['sending_id'] = $sending_id;
 		} 
@@ -130,7 +130,7 @@ class Recipient extends AppModel {
 	public function getDeviceStats($user_id, $sending_id = null) {
 		
 		$this->Sending->Recipient->virtualFields['times'] = 'COUNT(device)';
-		$conditions = array('device <>' => null, 'device <>' => '');
+		$conditions = array('device <>' => null, 'device <>' => '', 'opened' => 1);
 		if(!is_null($sending_id)) {
 			$conditions['sending_id'] = $sending_id;
 		} 
@@ -163,7 +163,7 @@ class Recipient extends AppModel {
 	public function getOsStats($user_id, $sending_id = null) {
 		
 		$this->Sending->Recipient->virtualFields['times'] = 'COUNT(os)';
-		$conditions = array('os <>' => null, 'os <>' => '');
+		$conditions = array('os <>' => null, 'os <>' => '', 'opened' => 1);
 		if(!is_null($sending_id)) {
 			$conditions['sending_id'] = $sending_id;
 		} 

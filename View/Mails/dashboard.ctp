@@ -94,7 +94,7 @@
 								>
 									<td>
 										<?php if($sending['Sending']['errors']) : ?>
-											<i class="icon icon-warning-sign"></i>
+											<i class="fa fa-warning"></i>
 										<?php endif; ?>
 										<?php echo h($sending['Mail']['name']); ?>
 									</td>

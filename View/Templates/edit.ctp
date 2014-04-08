@@ -1,6 +1,7 @@
 <?php $this->element('js_variable_ckeditor'); ?>
 <?php $this->set('title_for_layout', __('Modifica Template')); ?>
 <?php $this->set('active', 'template'); ?>
+<?php $this->Html->script('textvars', false); ?>
 <?php $this->Html->script('attachment_upload_function', false); ?>
 <?php $this->Html->addCrumb('Template', '/templates/index'); ?>
 <?php $this->Html->addCrumb(h($this->request->data['Template']['name']), '/templates/view/'.$this->request->data['Template']['id']); ?>

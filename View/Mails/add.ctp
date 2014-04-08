@@ -2,6 +2,7 @@
 <?php $this->set('title_for_layout', __('Nuova email')); ?>
 <?php $this->set('active', 'email'); ?>
 <?php $this->Html->script('attachment_upload_function', false); ?>
+<?php $this->Html->script('textvars', false); ?>
 <?php $this->Html->addCrumb('Email', '/mails/index'); ?>
 <?php $this->Html->addCrumb('Nuova', '/mails/add'); ?>
 <div class="main-header clearfix">

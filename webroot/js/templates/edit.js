@@ -12,4 +12,6 @@ $(function() {
         filebrowserWindowWidth : '640',
     });
 	
+	$('#TemplateText').createVarsSelection();
+	
 });

@@ -105,20 +105,37 @@ class Sending extends AppModel {
 	public static $BOTH = 2;
 	
 	
-	public function saveNew($data) {
+	public function saveNew($data, $mail) {
+	
+		switch($data['Sending']['type']) {
+			case self::$HTML:
+				if(empty($mail['Mail']['html'])) {
+					$this->validationErrors['type'] = __('Per inviare questa Email in formato HTML, il campo HTML della Email non può essere vuoto.');
+					return false;
+				}
+			break;
+			case self::$TEXT:
+				if(empty($mail['Mail']['text'])) {
+					$this->validationErrors['type'] = __('Per inviare questa Email in formato Testo, il campo Testo della Email non può essere vuoto.');
+					return false;
+				}
+			break;
+			case self::$BOTH:
+				if(empty($mail['Mail']['html']) || empty($mail['Mail']['text'])) {
+					$this->validationErrors['type'] = __('Per inviare questa Email sia in formato HTML, sia in formato Testo, i campi HTML e Testo non possono essere vuoti.');
+					return false;
+				}
+			break;
+		}
+		
 		
 		if(empty($data['Mailinglist']['Mailinglist'])) {
-			$this->validationErrors['Mailinglist'] = __('Devi selezionare almeno una lista di destinatari');
+			$this->Mailinglist->validationErrors['Mailinglist'] = __('Devi selezionare almeno una lista di destinatari');
 			return false;
 		}
 		
-		
-		
-		if(!$this->Mail->exists($data['Sending']['mail_id'])) {
-			return false;
-		}
 		if(!$this->Smtp->exists($data['Sending']['smtp_id'])) {
-			$this->validationErrors['Sending']['smtp_id'] = __('Devi selezionare un indirizzo di invio');
+			$this->validationErrors['smtp_id'] = __('Devi selezionare un indirizzo di invio');
 			return false;
 		}
 		

@@ -71,6 +71,9 @@ class SendingsController extends AppController {
 
 
 	public function add($mail_id) {
+	
+		$this->Sending->Mail->recursive = -1;
+		$mail = $this->Sending->Mail->read(null, $mail_id);
 		
 		if ($this->request->is('post')) {
 			$this->Sending->getDataSource()->begin();
@@ -78,7 +81,7 @@ class SendingsController extends AppController {
 			
 			$mailinglist_ids = $this->request->data['Mailinglist']['Mailinglist'];
 		
-			if ($this->Sending->saveNew($this->request->data)) {
+			if ($this->Sending->saveNew($this->request->data, $mail)) {
 				if($this->Sending->saveAssociatedMailinglists($this->Sending->id, $mailinglist_ids)) {
 					$this->Sending->getDataSource()->commit();
 					$this->Session->setFlash(__("L'Invio è stato salvato"), 'default', array(), 'info');
@@ -128,8 +131,7 @@ class SendingsController extends AppController {
 		);
 		
 		$this->set('mail_id', $mail_id);
-		$this->set('mail', $this->Sending->Mail->read(null, $mail_id));
-		
+		$this->set('mail', $mail);
 	}
 
 
@@ -297,7 +299,10 @@ class SendingsController extends AppController {
 	protected function __securitySettings_add() {
 		$this->Xuser->checkPerm($this->Sending->Mail, isset($this->request->pass[0])?$this->request->pass[0]:null);
 		if($this->request->is('post')) {
-			$this->Xuser->checkPerm($this->Sending->Smtp, $this->request->data['Sending']['smtp_id']);
+			$this->Xuser->checkPerm($this->Sending->Mail, $this->request->data['Sending']['mail_id']);
+			if(isset($this->request->data['Sending']['smtp_id']) && !empty($this->request->data['Sending']['smtp_id'])) {
+				$this->Xuser->checkPerm($this->Sending->Smtp, $this->request->data['Sending']['smtp_id']);
+			}
 			if(is_array($this->request->data['Mailinglist']['Mailinglist'])) {
 				foreach($this->request->data['Mailinglist']['Mailinglist'] as $mailinglist) {
 					$this->Xuser->checkPerm(

@@ -16,9 +16,7 @@
 				'layout'
 			));
 		?>
-		<!--[if IE 7]>
-			<?php echo $this->Html->css('font-awesome-ie7.min'); ?>
-		<![endif]-->
+
 		<?php
 		
 			echo $this->Html->script(array(
@@ -38,9 +36,7 @@
 			echo $this->fetch('css');
 			echo $this->fetch('script');
 		?>
-		<!--[if lte IE 8]>
-			<?php echo $this->fetch('scriptLteIE8'); ?>
-		<![endif]-->
+		<?php echo $this->Html->script('respond'); ?>
 		<?php	
 			echo $this->element('ready');
 		?>
@@ -49,6 +45,9 @@
 			if($baseurl[strlen($baseurl)-1] != '/')
 				$baseurl .= '/';
 		?>
+		<!--[if lte IE 8]>
+			<?php echo $this->fetch('scriptLteIE8'); ?>
+		<![endif]-->
 		<script>var BASEURL = '<?php echo $baseurl;?>'; </script>
 	</head>
 	<body>

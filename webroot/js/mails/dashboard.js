@@ -50,7 +50,7 @@ function updateSending() {
 			
 			if(data.dashboard.sending[i].Sending.errors) {
 				row.addClass('error-message');
-				$(inner[0]).prepend('<i class="icon icon-warning-sign"></i> ');
+				$(inner[0]).prepend('<i class="fa fa-warning"></i> ');
 			}
 			row.append(inner);
 			$('#sendingTable tbody').append(row);

@@ -12,6 +12,8 @@ $(function() {
         filebrowserImageBrowseUrl : BASEURL+'file_manager/file_managers/browse',
         filebrowserWindowWidth : '640',
     });
+    
+    $('#MailText').createVarsSelection();
 	
 	$(document).on('click', '.upload-opener',  function() {
 		$(this).parents('.attachment-upload-el').find('input[type=file].attachment-upload-input').click();

@@ -9,4 +9,6 @@ $(function() {
     });
 	
 	
+	$('#TemplateText').createVarsSelection();
+	
 });

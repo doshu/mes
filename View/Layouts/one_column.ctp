@@ -18,9 +18,7 @@
 				'layout'
 			));
 		?>
-		<!--[if IE 7]>
-			<?php echo $this->Html->css('font-awesome-ie7.min.css'); ?>
-		<![endif]-->
+
 		<?php
 			echo $this->Html->script(array(
 				'jquery-1.9.1.min',
@@ -39,6 +37,7 @@
 		
 			echo $this->element('ready');
 		?>
+		<?php echo $this->Html->script('respond'); ?>
 		<?php 
 			$baseurl = dirname(dirname($_SERVER['PHP_SELF']));
 			if($baseurl[strlen($baseurl)-1] != '/')

@@ -214,8 +214,8 @@ class RecipientsController extends AppController {
 				$fields['opened'] = true;
 				$fields['opened_time'] = date('Y-m-d H:i:s');
 				$fields['device'] = $browserInfo->ismobiledevice?'Mobile':'Pc';
-				$fields['os'] = $browserInfo->platform;
-				$fields['browser'] = $browserInfo->browser;
+				$fields['os'] = strtolower($browserInfo->platform) == 'unknown'?'Sconosciuto':$browserInfo->platform;
+				$fields['browser'] = strtolower($browserInfo->browser) == 'Default Browser'?'Sconosciuto':$browserInfo->browser;
 				
 
 				$geoInfo = geoip_record_by_name(

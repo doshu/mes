@@ -2,6 +2,7 @@
 <?php $this->set('title_for_layout', __('Modifica email')); ?>
 <?php $this->set('active', 'email'); ?>
 <?php $this->Html->script('attachment_upload_function', false); ?>
+<?php $this->Html->script('textvars', false); ?>
 <?php $this->Html->addCrumb('Email', '/mails/index'); ?>
 <?php $this->Html->addCrumb(h($this->request->data['Mail']['name']), '/mails/view/'.$this->request->data['Mail']['id']); ?>
 <?php $this->Html->addCrumb('Modifica', '/mails/view/'.$this->request->data['Mail']['id']); ?>
@@ -109,7 +110,7 @@
 								array(
 									'label' => false,
 									'div' => false,
-									'class' => 'form-control'
+									'class' => 'form-control',
 								)
 							); 
 						?>

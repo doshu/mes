@@ -34,7 +34,7 @@
 		
 			echo $this->Html->link(
 				'<span class="shortcut-icon"><i class="fa fa-undo"></i></span><span class="text">'.__('Annulla').'</span>',
-				array('action' => 'index'), 
+				array('controller' => 'mails', 'action' => 'view', $mail['Mail']['id']), 
 				array(
 					'class' => 'shortcut-link',
 					'escape' => false,

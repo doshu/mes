@@ -94,44 +94,28 @@
 					
 					$mailer->Subject = $mail['subject'];
 					
-					//$secretPlaceholder = $this->MailParser->createPlaceholder($mail['html']);
-					//$recipientPlaceholder = $this->MailParser->createPlaceholder($mail['html']);
-					
-					switch($entity->data['type']) {
-						case Sending::$TEXT:
-							$mailer->IsHTML(false);
-						break;
-						case Sending::$HTML:
-							//$mailer->Body = $this->MailParser->parse($mail['html'], $secretPlaceholder, $recipientPlaceholder);
-							$mailer->IsHTML(true);
-						break;
-						case Sending::$BOTH:
-							//$mailer->Body = $this->MailParser->parse($mail['html'], $secretPlaceholder, $recipientPlaceholder);
-							$mailer->IsHTML(true);
-						break;
-						
-					}
 					
 					foreach($recipients as $recipient) {
 						$recipient = Factory::getInstance('Model/Recipient')->load($recipient['id']);
 						$mailer->resetAddresses();
 						try {
 							
-							if($entity->data['type'] == Sending::$HTML || $entity->data['type'] == Sending::$BOTH) {
-								
-								/*
-								$tmpBody = $this->MailParser->putRecipientInfo(
-									$recipient,
-									$recipientPlaceholder,
-									$secretPlaceholder,
-									$mailer->Body
-								);
-								*/
-								
-								$mailer->Body = $this->MailParser->replaceVariable($recipient, $entity, $mail['html']);
-								$mailer->AltBody = $this->MailParser->replaceVariable($recipient, $entity, $mail['text']);
-								
-								$mailer->Body = $this->MailParser->parse($mailer->Body, $recipient);
+							switch($entity->data['type']) {
+								case Sending::$HTML:
+									$mailer->IsHTML(true);
+									$mailer->Body = $this->MailParser->replaceVariable($recipient, $entity, $mail['html']);
+									$mailer->Body = $this->MailParser->parse($mailer->Body, $recipient);
+								break;
+								case Sending::$TEXT:
+									$mailer->IsHTML(false);
+									$mailer->Body = $this->MailParser->replaceVariable($recipient, $entity, $mail['text']);
+								break;
+								case Sending::$BOTH:
+									$mailer->IsHTML(true);
+									$mailer->Body = $this->MailParser->replaceVariable($recipient, $entity, $mail['html']);
+									$mailer->AltBody = $this->MailParser->replaceVariable($recipient, $entity, $mail['text']);
+									$mailer->Body = $this->MailParser->parse($mailer->Body, $recipient);
+								break;
 							}
 							
 							$mailer->AddAddress($recipient->data['member_email']);
@@ -192,7 +176,7 @@
 		}
 		
 		public function onStartChildFail($e) {
-			die($this->entityId.': '.$e->getMessage);
+			die($this->entityId.': '.$e->getMessage());
 		}
 		
 		

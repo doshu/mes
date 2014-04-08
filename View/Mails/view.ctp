@@ -460,7 +460,7 @@
 													$status = __('');
 											} 
 											if($sending['Sending']['errors'])
-												$status = sprintf('<span class="error-message"><i class="icon icon-warning-sign"></i>%s</span>', $status);
+												$status = sprintf('<span class="error-message"><i class="fa fa-warning"></i>%s</span>', $status);
 											echo $status;
 										?>
 									</td>

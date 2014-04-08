@@ -14,6 +14,22 @@ $(function() {
         filebrowserImageBrowseUrl : BASEURL+'file_manager/file_managers/browse',
         filebrowserWindowWidth : '640',
     });
+    
+    $('#MailText').createVarsSelection();
+    /*
+    CKEDITOR.replace( 'MailText', { 
+		extraPlugins : 'variables,unsubscribetext',
+		removePlugins: 'language,about,a11yhelp,dialogadvtab,basicstyles,bidi,blockquote,colorbutton,colordialog,templates,contextmenu,div,resize,elementspath,enterkey,filebrowser,find,flash,floatingspace,font,forms,format,htmlwriter,horizontalrule,iframe,image,indent,indentblock,indentlist,smiley,justify,link,list,liststyle,magicline,maximize,newpage,pagebreak,pastefromword,preview,print,removeformat,save,selectall,showblocks,showborders,sourcearea,specialchar,scayt,stylescombo,tab,table,tabletools,undo,wsc,panelbutton,floatpanel,panel,menu,popup,fakeobjects,richcombo,listblock,menubutton',
+		variables: variableDialogSelectData,
+        filebrowserImageBrowseUrl : BASEURL+'file_manager/file_managers/browse',
+        filebrowserWindowWidth : '640',
+        forcePasteAsPlainText: true,
+        autoParagraph: false,
+        basicEntities: false,
+        entities: false,
+        htmlEncodeOutput: true
+    });
+	*/
 	
 	$(document).on('click', '.upload-opener', function() {
 		$(this).parents('.attachment-upload-el').find('input[type=file].attachment-upload-input').click();

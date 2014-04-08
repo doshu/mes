@@ -59,6 +59,7 @@
   }
 }
 #top-nav .navbar-toggle {
+	padding:0;
   margin: 3px 0 0 0;
 }
 #top-nav .navbar-toggle .icon-bar {
@@ -72,6 +73,7 @@
   -webkit-border-radius: 1px;
 }
 #top-nav .navbar-toggle .icon-bar:last-child {
+	
   margin-bottom: 0;
 }
 #top-nav .nav-notification {

@@ -83,6 +83,32 @@ $.linkize = function(selector) {
 
 }
 
+
+function insertAtCursor(element, text) {
+	if(typeof(element) == 'string') {
+		element = $(element).get(0);
+	}
+	
+	//IE support
+	if (document.selection) {
+		element.focus();
+		sel = document.selection.createRange();
+		sel.text = text;
+	}
+	//MOZILLA and others
+	else if (element.selectionStart || element.selectionStart == '0') {
+		var startPos = element.selectionStart;
+		var endPos = element.selectionEnd;
+		
+		element.value = element.value.substring(0, startPos)
+			+ text
+			+ element.value.substring(endPos, element.value.length);
+	} else {
+		element.value += text;
+	}
+}
+	
+
 $(function() {
 
 	//$('.alert').delay(4000).fadeOut();

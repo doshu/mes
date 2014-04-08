@@ -1,6 +1,7 @@
 <?php $this->element('js_variable_ckeditor'); ?>
 <?php $this->set('title_for_layout', __('Nuovo Template')); ?>
 <?php $this->set('active', 'template'); ?>
+<?php $this->Html->script('textvars', false); ?>
 <?php $this->Html->addCrumb('Template', '/templates/index'); ?>
 <?php $this->Html->addCrumb('Nuovo', '/templates/add'); ?>
 <div class="main-header clearfix">
