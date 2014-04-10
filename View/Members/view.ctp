@@ -77,7 +77,7 @@
 				<div class="panel-heading">
 					<?php echo __('Dettagli Membro'); ?>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table class="table table-striped">
 						<tbody>
 							<tr>
@@ -152,7 +152,7 @@
 				<div class="panel-heading">
 					<h5><?php echo __('Liste di appartenenza'); ?></h5>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table class="table table-striped interactive table-hover">
 						<?php if(empty($member['Mailinglist'])) : ?>
 							<tr>

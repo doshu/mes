@@ -1,7 +1,4 @@
-var uploaderTemplate = '<div class="row"><div class="col-lg-12 attachment-upload-el"><input type="file" class="attachment-upload-input u-hide"><button class="btn btn-success btn-xs upload-opener u-hide" type="button">Seleziona</button></div></div>';
 
-var progressTemplate = '<div class="progress progress-spinner progress-striped active"><div class="bar" style="width: 0%;"></div></div>';
-var spinnerTemplate = '<span class="spinner progress-spinner"></span>';
 
 
 $(function() {

@@ -98,7 +98,7 @@
 							<?php echo $this->element('pager'); ?>
 						</div>
 					<?php endif; ?>
-					<?php echo $this->Form->create('Recipient', array('class' => 'form-inline')); ?>
+					<?php echo $this->Form->create('Recipient', array('class' => 'form-inline table-overflow')); ?>
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
 						<thead>
 							<tr class="search">

@@ -1,4 +1,4 @@
-var progressTemplate = '<div class="progress-el progress-spinner"><div class="file-name"></div><div class="progress progress-striped active"><div class="bar" style="width: 0%;"></div></div></div>';
+var progressTemplate = '<div class="progress-el progress-spinner"><div class="file-name"></div><div class="progress progress-striped active"><div class="progress-bar" role="progressbar" style="width: 0%;"></div></div></div>';
 var uploadInfoTemplate ='<div class="progress-el"><div class="file-name"></div><span class="spinner progress-spinner"></span></div>';
 var inputFileTemplate = '<input type="file" id="file" name="data[file]" class="u-hide"/>';
 
@@ -14,6 +14,8 @@ var currentImage = "";
 
 
 function upload() {
+	
+	$(this).off('change');
 	
 	var uploader = new doshuupload({
 		url:UPLOAD_URL,
@@ -42,7 +44,7 @@ function upload() {
 			
 			if (e.lengthComputable) {
 				var percentComplete = (e.loaded / e.total) * 100;
-				$(this.customData.progress).find('.bar').css('width', percentComplete+'%');
+				$(this.customData.progress).find('.progress .progress-bar').css('width', percentComplete+'%');
 			}
 		};
 		
@@ -60,7 +62,7 @@ function upload() {
 	
 	uploader.onLoad = function(response, customData) {
 	
-		var container = customData.progress;
+		var container = customData.progress.parents('#progressContainer');
 		if(response.response.status) {
 			$.ajax({
 				url:THUMB_TEMPLATE_URL+'\/'+base64_encode(response.response.file),
@@ -93,9 +95,9 @@ function upload() {
 	
 	uploader.start({'data[_Token][key]':$('#_TokenKey').clone()});
 	
-	var newUpload = $(inputFileTemplate);
-	$('#uploaderContainer span').prepend(newUpload);
-	newUpload.on('change', upload);
+	//var newUpload = $(inputFileTemplate);
+	//$('#uploaderContainer span').prepend(newUpload);
+	$('#file').val('');
 	if(!Modernizr.xhr2)
 		newUpload.removeClass('u-hide');
 }

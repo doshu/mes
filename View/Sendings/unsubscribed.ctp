@@ -63,7 +63,7 @@
 						echo $this->Form->end();
 					?>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
 						<?php if(empty($unsubscribeds)) : ?>
 							<tr>

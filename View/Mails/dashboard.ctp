@@ -70,7 +70,7 @@
 				<div class="panel-heading">
 					<?php echo __('Invii in corso'); ?>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table id="sendingTable" class="table table-striped table-bordered table-hover interactive table-centered">
 						<thead <?=empty($sendings)?'style="display:none"':''?>>
 							<tr>
@@ -121,7 +121,7 @@
 				<div class="panel-heading">
 					<?php echo __('In attesa'); ?>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table id="waitingTable" class="table table-striped table-bordered table-hover interactive table-centered">
 						<thead <?=empty($waitings)?'style="display:none"':''?>>
 							<tr>

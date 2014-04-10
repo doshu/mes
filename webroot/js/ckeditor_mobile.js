@@ -1,0 +1,1 @@
+CKEDITOR.env.isCompatible = true;

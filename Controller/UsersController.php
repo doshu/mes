@@ -145,9 +145,18 @@ class UsersController extends AppController {
 	
 	
 	protected function __securitySettings_checkCookie() {
-		$this->Auth->allow('checkCookie');
+		if($this->request->isPost()) {
+			Configure::write('no_check_cookie', true);
+		}
 	}
 	
+	
+	public function beforeFilter() {
+		$this->Auth->allow('checkCookie');
+		Configure::write('no_check_cookie', true);
+		parent::beforeFilter();
+		Configure::delete('no_check_cookie');
+	}	
 	
 	
 }

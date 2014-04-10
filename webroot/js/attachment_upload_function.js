@@ -1,3 +1,8 @@
+var uploaderTemplate = '<div class="row"><div class="col-lg-12 attachment-upload-el"><input type="file" class="attachment-upload-input u-hide"><button class="btn btn-success btn-xs upload-opener u-hide" type="button">Seleziona</button></div></div>';
+
+var progressTemplate = '<div class="progress progress-spinner progress-striped active"><div class="progress-bar" role="progressbar" style="width: 0%;"></div></div>';
+var spinnerTemplate = '<span class="spinner progress-spinner"></span>';
+
 
 function printError(response, customData) {
 	var parent = $(customData.that).parents('.attachment-upload-el');
@@ -38,7 +43,7 @@ function upload(e) {
 		uploader.onProgress = function(e) {
 			if (e.lengthComputable) {
 				var percentComplete = (e.loaded / e.total) * 100;
-				$(this.customData.that).parents('.attachment-upload-el').find('.progress .bar').css('width', percentComplete+'%');
+				$(this.customData.that).parents('.attachment-upload-el').find('.progress .progress-bar').css('width', percentComplete+'%');
 			}
 		};
 	}

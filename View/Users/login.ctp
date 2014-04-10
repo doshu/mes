@@ -7,9 +7,10 @@
 	<div class="text-center">
 		<h2 class="" style="font-weight:bold">
 			<?php echo $this->Html->image('mylogo.png', array('width' => 75)); ?>
-			
-			<strong>POWAMAIL</strong>
-			<span style="font-size:10px; line-height:10px;">Mail like a Pro!</span>
+			<div style="display:inline-block;">
+				<strong>POWAMAIL</strong>
+				<div style="font-size:10px; line-height:10px; text-align:left; margin-top:5px;">Mail like a Pro!</div>
+			</div>
 		</h2>
 	</div>
 	<div class="login-widget">

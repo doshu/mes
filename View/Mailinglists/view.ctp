@@ -59,7 +59,7 @@
 				<div class="panel-heading">
 					<?php echo __('Dettagli Lista'); ?>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table class="table table-striped">
 						<tbody>
 							<tr>

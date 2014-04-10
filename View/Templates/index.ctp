@@ -117,7 +117,7 @@
 							<?php echo $this->Form->end(); ?>
 						</div>
 					<?php endif; ?>
-					<?php echo $this->Form->create('Template', array('class' => 'form-inline')); ?>
+					<?php echo $this->Form->create('Template', array('class' => 'form-inline table-overflow')); ?>
 					<table id="TemplateGrid" class="table table-striped table-bordered table-hover interactive table-centered">
 						<thead>
 							<tr class="search">

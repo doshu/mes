@@ -27,6 +27,7 @@
 				'doshupie',
 				'layout',
 				'ckeditor/ckeditor.js',
+				'ckeditor_mobile',
 				'doshuupload',
 				'jquery.datetimepicker',
 				'datetime_locales/i18n'

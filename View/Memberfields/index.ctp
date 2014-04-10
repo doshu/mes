@@ -57,7 +57,7 @@
 					</span>
 				</div>
 				<div class="widget-content nopadding">
-					<?php echo $this->Form->create('Memberfield', array('class' => 'form-inline')); ?>
+					<?php echo $this->Form->create('Memberfield', array('class' => 'form-inline table-overflow')); ?>
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
 						<thead>
 							<tr class="search">

@@ -92,7 +92,7 @@
 				<div class="panel-heading">
 					<?php echo __('Nuovi aggiunti'); ?>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table class="table table-striped table-bordered table-hover interactive table-centered">
 						<thead>
 							<tr>
@@ -197,7 +197,7 @@
 						<?php echo $this->Form->end(); ?>
 					</div>
 					<?php endif; ?>
-					<?php echo $this->Form->create('Member', array('class' => 'form-inline')); ?>
+					<?php echo $this->Form->create('Member', array('class' => 'form-inline table-overflow')); ?>
 					<table id="MemberGrid" class="table table-striped table-bordered table-hover interactive table-centered">
 						<thead>
 							<tr class="search">

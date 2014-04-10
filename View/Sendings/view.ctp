@@ -134,7 +134,7 @@
 				<div class="panel-heading">
 					<h5><?php echo __('Dettagli Invio'); ?></h5>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow table-overflow">
 					<table class="table table-striped">
 						<tbody>
 							<tr>
@@ -268,7 +268,7 @@
 				<div class="panel-heading">
 					<h5><?php echo __("Link seguiti dalla Email"); ?></h5>
 				</div>
-				<div class="panel-body nopadding">
+				<div class="panel-body nopadding table-overflow">
 					<table class="table table-striped table-centered table-bordered">
 						<?php if(empty($links)) : ?>
 							<tbody>

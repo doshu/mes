@@ -50,7 +50,7 @@
 				<div class="panel-heading">
 					<?php echo __('Dettagli Template'); ?>
 				</div>
-				<div class="panel-body">
+				<div class="panel-body table-overflow">
 					<table class="table table-striped">
 						<tbody>
 							<tr>

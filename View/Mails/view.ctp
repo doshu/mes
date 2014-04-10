@@ -60,7 +60,7 @@
 				<div class="panel-heading">
 					<?php echo __('Dettagli Email'); ?>
 				</div>
-				<div class="panel-body">
+				<div class="panel-body table-overflow">
 					<table class="table table-striped">
 						<tbody>
 							<tr>
@@ -177,7 +177,7 @@
 				<div class="panel-heading">
 					<?php echo __('Allegati Email'); ?>
 				</div>
-				<div class="panel-body">
+				<div class="panel-body table-overflow">
 					<?php if(!empty($mail['Attachment'])) : ?>
 						<table class="table table-striped">
 							<tbody>
@@ -295,7 +295,7 @@
 							<?php echo $this->Form->end(); ?>
 						</div>
 					<?php endif; ?>
-					<?php echo $this->Form->create('Sending', array('class' => 'form-inline')); ?>
+					<?php echo $this->Form->create('Sending', array('class' => 'form-inline table-overflow')); ?>
 					<table id="SendingGrid" class="table table-striped interactive table-centered table-hover table-bordered">
 						<thead>
 							<tr class="search">

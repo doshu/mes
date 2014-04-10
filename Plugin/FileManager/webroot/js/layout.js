@@ -4,8 +4,7 @@ function human_filesize(bytes) {
     return (bytes / Math.pow(1024, factor)).toFixed(2)+size[factor];
 }
 
-var alertTemplate = '<div id="DoshuAlert" class="modal hide fade" tabindex="-1" role="dialog" aria-hidden="true"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button><h1>Attenzione!</h1></div><div class="modal-body"><p></p></div><div class="modal-footer"><button class="btn refuse" data-dismiss="modal" aria-hidden="true">No</button><button class="btn btn-primary accept">Sì</button></div></div>';
-
+var alertTemplate = '<div class="modal fade" id="DoshuAlert" role="dialog" style="display:none;"><div class="modal-dialog"><div class="modal-content"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button><h4 class="modal-title">Attenzione!</h4></div><div class="modal-body"><p></p></div><div class="modal-footer"><button type="button" class="btn btn-default refuse" data-dismiss="modal">No</button><button type="button" class="btn btn-primary accept">Sì</button></div></div></div></div>';
 
 function customConfirm(message, yes, no, data) {
 	var alertHtml = $(alertTemplate);
@@ -15,7 +14,10 @@ function customConfirm(message, yes, no, data) {
 	if(typeof(yes) == "function") {
 		alertHtml.find('button.accept').click(data, function(e) {
 			yes(e.data);
-			$('#DoshuAlert').modal('hide').remove();
+			$('#DoshuAlert').on('hidden.bs.modal', function() {
+				$(this).remove();
+			});
+			$('#DoshuAlert').modal('hide');
 		});
 	}
 	if(typeof(no) == "function") {
@@ -24,6 +26,8 @@ function customConfirm(message, yes, no, data) {
 		});
 	}
 }
+
+
 
 //funzione che trasforma un form in ajax
 //prende come this il selettore jquery ma opera solo sul primo

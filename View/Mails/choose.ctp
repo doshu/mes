@@ -11,7 +11,7 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-lg-12">
-			<div class="clearfix">
+			<div class="clearfix" style="margin-bottom:10px;">
 				<?php
 					echo $this->Html->link(
 						__('Continua Senza Template'),
@@ -30,7 +30,7 @@
 				</li>
 			</ul>
 			<div class="tab-content">
-				<div class="tab-pane active" id="personal_template">
+				<div class="tab-pane active table-overflow" id="personal_template">
 					<table class="table table-striped table-bordered table-hover table-centered">
 						<thead>
 							<th><?=__('Nome'); ?></th>
