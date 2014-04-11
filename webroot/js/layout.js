@@ -1,7 +1,7 @@
 
 
 function human_filesize(bytes) {
-    var size = ['B','kB','MB','GB','TB','PB','EB','ZB','YB'];
+    var size = ['B','KB','MB','GB','TB','PB','EB','ZB','YB'];
     var factor = Math.floor((bytes.toString().length - 1) / 3);
     return (bytes / Math.pow(1024, factor)).toFixed(2)+size[factor];
 }

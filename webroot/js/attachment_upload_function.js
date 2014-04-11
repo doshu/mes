@@ -58,6 +58,7 @@ function upload(e) {
 	
 		customData['upload-el-container'].last().append($(customData.that));
 		$('.attachment-upload-input').change(upload);
+		
 	
 		if(response.response.status) {
 			$(customData.that).parents('.attachment-upload-el').find('.progress-spinner').remove();
@@ -82,6 +83,8 @@ function upload(e) {
 	};
 	
 	uploader.onError = function(response, customData) {
+		customData['upload-el-container'].last().append($(customData.that));
+		$('.attachment-upload-input').change(upload);
 		printError(response, customData);
 	}
 	

@@ -141,7 +141,14 @@ class MailsController extends AppController {
 	public function add() {
 		
 		if ($this->request->is('post')) {
+			$datasource = $this->Mail->getDatasource();
+			$datasource->begin();
 			$this->Mail->create();
+			
+			if(isset($this->request->data['Attachment'])) {
+				$rawAttachmentData = $this->request->data['Attachment'];
+			}
+			
 			if(
 				(
 					!isset($this->request->data['Attachment']) ||
@@ -161,9 +168,18 @@ class MailsController extends AppController {
 					)
 				)
 			) {
+				$datasource->commit();
 				$this->Session->setFlash(__("L'Email è stata salvata"), 'default', array(), 'info');
 				$this->redirect(array('action' => 'index'));
 			} else {
+				$datasource->rollback();
+				if(isset($rawAttachmentData)) {
+					$this->request->data['Attachment']['path'] = $this->Mail->Attachment->reverseMoveAttachment(
+						$rawAttachmentData, 
+						$this->Auth->user('id')
+					);
+					
+				}
 				$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
 			}
 		}
@@ -195,6 +211,14 @@ class MailsController extends AppController {
 		}	
 		
 		if ($this->request->is('post') || $this->request->is('put')) {
+		
+			$datasource = $this->Mail->getDatasource();
+			$datasource->begin();
+			
+			if(isset($this->request->data['Attachment'])) {
+				$rawAttachmentData = $this->request->data['Attachment'];
+			}
+		
 			if(
 				(
 					!isset($this->request->data['Attachment']) ||
@@ -214,15 +238,32 @@ class MailsController extends AppController {
 					)
 				)
 			) {
+				$datasource->commit();
 				$this->Session->setFlash(__("L'Email è stata salvata"), 'default', array(), 'info');
 				$this->redirect(array('action' => 'view', $id));
 			} else {
+			
+				$datasource->rollback();
+				if(isset($rawAttachmentData)) {
+				
+					$reloadedData = $this->Mail->find('first', array('conditions' => array('Mail.id' => $id)));
+					$this->request->data['Attachment'] = $reloadedData['Attachment'];
+					
+					$this->request->data['Tempattachment']['path'] = $this->Mail->Attachment->reverseMoveAttachment(
+						$rawAttachmentData, 
+						$this->Auth->user('id')
+					);
+					
+				}
 				$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
 			}
-		} 
+		}
+		 
 		else {
 			$this->request->data = $this->Mail->find('first', array('conditions' => array('Mail.id' => $id)));
 		}
+		
+		
 		$this->set('member_custom_fields', $this->Mail->Sending->Recipient->Member->getModelFields());
 	}
 

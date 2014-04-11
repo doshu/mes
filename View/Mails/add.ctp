@@ -120,6 +120,17 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"><?php echo __('Aggiungi allegati'); ?></div>
 				<div class="panel-body attachment-upload-container">
+					<?php if(isset($this->request->data['Attachment']['path']) && is_array($this->request->data['Attachment']['path'])): ?>					
+						<?php foreach($this->request->data['Attachment']['path'] as $tempattachment) : ?>
+							<div class="row">
+								<div class="col-lg-12 attachment-upload-el">
+									<span class="filename"><?php echo $tempattachment['name'].' ('.$tempattachment['size'].')'; ?></span>
+									<input type="hidden" name="data[Attachment][path][]" value="<?php echo $tempattachment['id']; ?>">
+									<a class="upload-remove error-message pull-right" href="#"><?php echo __('Rimuovi'); ?></a>
+								</div>
+							</div>
+						<?php endforeach; ?>
+					<?php endif; ?>
 					<div class="row">
 						<div class="col-lg-12 attachment-upload-el">
 							<?php

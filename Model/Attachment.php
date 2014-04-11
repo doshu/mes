@@ -163,6 +163,42 @@ class Attachment extends AppModel {
 	}
 	
 	
+	public function reverseMoveAttachment($data, $user_id) {
+		
+		App::uses('Tempattachment', 'Model');
+		$Tempattachment = new Tempattachment();
+		
+		Configure::load('path');
+		$sandboxPath = Configure::read('Path.Sandbox');
+		$attachmentPath = Configure::read('Path.Attachment');
+		
+		$return = array();
+		
+		foreach($data['path'] as $attachment) {
+			$entry = $Tempattachment->read(null, $attachment);
+			if(!empty($entry)) {
+				if($entry['Tempattachment']['user_id'] == $user_id && $entry['Tempattachment']['validated']) {
+					if(
+						!file_exists($sandboxPath.$entry['Tempattachment']['tempname']) &&
+						file_exists($attachmentPath.$entry['Tempattachment']['tempname']) &&
+						rename($attachmentPath.$entry['Tempattachment']['tempname'], $sandboxPath.$entry['Tempattachment']['tempname'])
+					) {
+						$return[] = array(
+							'name' => $entry['Tempattachment']['realname'],
+							'size' => human_filesize(filesize($sandboxPath.$entry['Tempattachment']['tempname'])),
+							'id' => $entry['Tempattachment']['id']
+						);
+					}
+					else {
+						$Tempattachment->delete();
+					}
+				}
+			}
+		}
+		
+		return $return;
+	}
+	
 	public function beforeDelete($cascade = true) {
 		
 		$this->recursive = -1;

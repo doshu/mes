@@ -160,6 +160,13 @@ function timeToWords($seconds) {
 }
 
 
+function human_filesize($bytes) {
+    $size = array('B','KB','MB','GB','TB','PB','EB','ZB','YB');
+    $factor = floor((strlen($bytes) - 1) / 3);
+    return number_format(($bytes / pow(1024, $factor)), 2).' '.$size[$factor];
+}
+
+
 Configure::write('check_cookie_action', array('plugin' => null, 'controller' => 'users', 'action' => 'checkCookie'));
 
 define('SPAM_LIMIT_OK', 30);

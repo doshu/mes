@@ -6,13 +6,14 @@
 
 	class GarbageShell extends AppShell {
 	
+	
 		public $uses = array('Tempattachment', 'Attachment');
 		public $attachmentsDir;
 		public $sandboxDir;
 		public $sandboxTTL = 86400;//one day
 	
 		public function startup() {
-		
+			$this->sandboxTTL = isset($this->args[0]) && is_numeric($this->args[0])?intval($this->args[0]):$this->sandboxTTL;
 		}
 		
 		public function initialize() {
@@ -51,7 +52,7 @@
 		    }
 		    
 		    foreach($attachmentsFiles as $file) {
-		    	unlink($this->attachmentsDir.$file);
+		    	@unlink($this->attachmentsDir.$file);
 		    }
 		    
 		    //------------------------------------------------------------------------
@@ -77,7 +78,7 @@
 		    		$this->Tempattachment->id = null;
 		    	}
 		    	else {
-		    		unset($attachmentsFiles[$key]);
+		    		@unset($attachmentsFiles[$key]);
 		    	}
 		    }
 		    
