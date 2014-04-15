@@ -117,14 +117,13 @@ class Smtp extends AppModel {
 	
 	public function checkPerm($id, $params, $userId) {
 		
-		$data = $this->find('first',array(
+		$check = (bool)$this->find('count',array(
 			'recursive' => -1,
-			'conditions' => array('id' => $id),
-			'fields' => array('user_id')
+			'conditions' => array('id' => $id, 'user_id' => $userId),
 		));
 		
-		if(isset($data['Smtp']['user_id']) && !empty($data['Smtp']['user_id']))
-			return $data['Smtp']['user_id'] == $userId;
+		if($check)
+			return true;
 		throw new NotFoundException();
 	}
 

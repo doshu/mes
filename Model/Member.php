@@ -643,11 +643,13 @@ class Member extends AppModel {
 	
 	public function checkPerm($id, $params, $userId) {
 		$this->Behaviors->disable('Eav');
-		$this->recursive = -1;
-		$data = $this->read('user_id', $id);
+		$check = (bool)$this->find('count', array(
+			'recursive' => -1, 
+			'conditions' => array('id' => $id, 'user_id' => $userId)
+		);
 		$this->Behaviors->enable('Eav');
-		if(isset($data['Member']['user_id']) && !empty($data['Member']['user_id']))
-			return $data['Member']['user_id'] == $userId;
+		if($check)
+			return true;
 		throw new NotFoundException();
 	}
 	

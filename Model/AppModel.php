@@ -8,6 +8,7 @@ class AppModel extends Model {
 	
 	public $actsAs = array('Containable');	
 	
+	public $cacheQueries = true;
 	
 	public function exists($id = null) {
 		if ($id === null) {

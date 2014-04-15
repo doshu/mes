@@ -197,7 +197,7 @@ class Sending extends AppModel {
 						array(
 							'table' => 'mailinglists_members',
         					'alias' => 'MailinglistsMember',
-        					'type' => 'LEFT',
+        					'type' => 'INNER',
         					'conditions' => array(
             					'Member.id = MailinglistsMember.member_id',
         					)
@@ -206,16 +206,16 @@ class Sending extends AppModel {
 					'conditions' => array(
 						'MailinglistsMember.mailinglist_id' => $mailinglists
 					),
-					'fields' => array_map(
-						function($el) {
-							return 'Member.'.$el;
-						},
-						array_merge(
-							array(
-								'id',
-								'email',
-								'secret',
-							),
+					'fields' => array_merge(
+						array(
+							'DISTINCT Member.id',
+							'Member.email',
+							'Member.secret',
+						),
+						array_map(
+							function($el) {
+								return 'Member.'.$el;
+							},
 							$customFields
 						)
 					)
@@ -229,6 +229,7 @@ class Sending extends AppModel {
 					'member_email' => $recipient['Member']['email'],
 					'member_secret' => $recipient['Member']['secret'],
 					'member_data' => json_encode($recipient['Member']),
+					'user_id' => AuthComponent::user('id')
 				);			
 			}
 			

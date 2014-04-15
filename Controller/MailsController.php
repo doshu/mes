@@ -27,7 +27,8 @@ class MailsController extends AppController {
 			$this->Mail->Sending->find(
 				'count', 
 				array(
-					'conditions' => array('Mail.user_id' => $this->Auth->user('id'))
+					'conditions' => array('Mail.user_id' => $this->Auth->user('id')),
+					'contain' => array('Mail')
 				)
 			)
 		);
