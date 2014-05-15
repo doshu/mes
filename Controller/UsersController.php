@@ -75,9 +75,6 @@ class UsersController extends AppController {
 			return $this->redirect($this->Auth->loginRedirect);
 	}
 	
-	public function __securitySettings_login() {
-		$this->Security->csrfCheck = false;
-	}
 	
 	
 	public function logout() {
@@ -142,21 +139,22 @@ class UsersController extends AppController {
 		}
 		
 	}
-	
+
+
+	protected function __securitySettings_login() {
+		Configure::write('no_check_cookie', true);
+		$this->Auth->allow('login');
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = false;
+	}
 	
 	protected function __securitySettings_checkCookie() {
+		$this->Auth->allow('checkCookie');
 		if($this->request->isPost()) {
 			Configure::write('no_check_cookie', true);
 		}
 	}
-	
-	
-	public function beforeFilter() {
-		$this->Auth->allow('checkCookie');
-		Configure::write('no_check_cookie', true);
-		parent::beforeFilter();
-		Configure::delete('no_check_cookie');
-	}	
+		
 	
 	
 }

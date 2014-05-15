@@ -95,6 +95,9 @@
 										'd/m/Y'
 									); 
 								}
+								
+								$valueField = $fieldType == 'boolean'?'checked':'value';
+								
 				
 								echo $this->Form->input(
 									'Memberfieldvalue.'.$addFieldCount.'.id', 
@@ -112,7 +115,7 @@
 										'div' => false,
 										'type' => $inputType,
 										'class' => 'form-control custom-field-'.$fieldType,
-										'value' => $cfValue
+										$valueField => $cfValue
 									)
 								);
 				

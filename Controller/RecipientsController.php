@@ -397,14 +397,10 @@ class RecipientsController extends AppController {
 	}
 	
 
-	public function beforeFilter() {
-		
-		$this->Auth->allow('openMe');
+	protected function __securitySettings_openMe() {
 		Configure::write('no_check_cookie', true);
-		parent::beforeFilter();
-		Configure::delete('no_check_cookie');
-	}	
-
+		$this->Auth->allow('openMe');
+	}
 	
 	protected function __securitySettings_showSended() {
 		$this->Xuser->checkPerm($this->Recipient->Sending, isset($this->request->pass[0])?$this->request->pass[0]:null);

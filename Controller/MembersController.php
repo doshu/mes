@@ -109,7 +109,7 @@ class MembersController extends AppController {
 			$this->Member->getDataSource()->begin();
 			
 			$this->request->data['Member']['secret'] = $this->Member->__generateNewSecret($this->data['Member']['email'].time());
-		
+			$this->request->data['MailinglistsMember']['created'] = '2014-05-05';
 			if (
 				$this->Member->validateOnCreate($this->request->data) && 
 				$this->Member->saveAssociated(
@@ -117,7 +117,7 @@ class MembersController extends AppController {
 					array(
 						'fieldList' => array(
 							'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist', 'secret'),
-							'MailinglistsMember' => array('mailinglist_id', 'member_id'),
+							'MailinglistsMember' => array('mailinglist_id', 'member_id', 'created'),
 							'Memberfieldvalue' => array(
 								'id', 
 								'memberfield_id', 
@@ -613,7 +613,9 @@ class MembersController extends AppController {
 		//$this->Security->unlockField('id.');
 	}
 	
+	
 	protected function __securitySettings_unsubscribe() {
+		Configure::write('no_check_cookie', true);
 		$this->Auth->allow('unsubscribe');
 	}
 	

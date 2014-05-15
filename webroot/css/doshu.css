@@ -1955,7 +1955,7 @@ footer {
   -moz-transition: all 0.5s ease;
   -ms-transition: all 0.5s ease;
   -o-transition: all 0.5s ease;
-  padding-right:194px;
+  /*padding-right:194px;*/
 }
 footer.dark {
   background: #1a1a1a;

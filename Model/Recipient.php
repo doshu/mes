@@ -287,4 +287,6 @@ class Recipient extends AppModel {
 		return $recipients;
 		
 	}
+	
+	
 }

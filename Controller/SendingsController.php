@@ -71,7 +71,8 @@ class SendingsController extends AppController {
 
 
 	public function add($mail_id) {
-	
+		
+		$this->disableCache();
 		$this->Sending->Mail->recursive = -1;
 		$mail = $this->Sending->Mail->read(null, $mail_id);
 		
@@ -80,20 +81,29 @@ class SendingsController extends AppController {
 			$this->Sending->create();
 			
 			$mailinglist_ids = $this->request->data['Mailinglist']['Mailinglist'];
-		
-			if ($this->Sending->saveNew($this->request->data, $mail)) {
-				if($this->Sending->saveAssociatedMailinglists($this->Sending->id, $mailinglist_ids)) {
-					$this->Sending->getDataSource()->commit();
-					$this->Session->setFlash(__("L'Invio è stato salvato"), 'default', array(), 'info');
-					$this->redirect(array('controller' => 'mails', 'action' => 'view', $this->request->data['Sending']['mail_id']));
-				}
-				else {
+			if(
+				!$this->data['Sending']['enable_conditions'] ||
+				$this->Sending->validateFilterConditions(isset($this->data['conditions'])?$this->data['conditions']:false)) {
+				
+				if ($this->Sending->saveNew($this->request->data, $mail)) {
+					if($this->Sending->saveAssociatedMailinglists($this->Sending->id, $mailinglist_ids)) {
+						$this->Sending->getDataSource()->commit();
+						$this->Session->setFlash(__("L'Invio è stato salvato"), 'default', array(), 'info');
+						$this->redirect(
+							array('controller' => 'mails', 'action' => 'view', $this->request->data['Sending']['mail_id'])
+						);
+					}
+					else {
+						$this->Sending->getDataSource()->rollback();
+						$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
+					}
+				} else {
 					$this->Sending->getDataSource()->rollback();
 					$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
 				}
-			} else {
-				$this->Sending->getDataSource()->rollback();
-				$this->Session->setFlash(__('Errore durante il salvataggio. Riprovare'), 'default', array(), 'error');
+			}
+			else {
+				$this->Session->setFlash(__('Errore nella compilazione dei filtri. Assicurarsi di aver completato tutti i campi correttamente.'), 'default', array(), 'error');
 			}
 		}
 		
@@ -134,6 +144,32 @@ class SendingsController extends AppController {
 		$this->set('mail', $mail);
 	}
 
+	
+	public function testConditions() {
+		if(!$this->request->is('json') || !$this->request->is('post')) {
+			throw new MethodNotAllowedException();
+		}
+		if(isset($this->data['conditions']) && $this->Sending->validateFilterConditions($this->data['conditions'])) {
+			$this->set(
+				'result', 
+				array(
+					'status' => 1, 
+					'recipients' => $this->Sending->testConditions($this->data)
+				)
+			);
+		}
+		else {
+			$this->set(
+				'result', 
+				array(
+					'status' => 0, 
+					'error' => __('Errore nella compilazione dei filtri. Assicurarsi di aver completato tutti i campi correttamente.')
+				)
+			);
+		}
+		$this->set('_serialize' , array('result'));
+	}	
+	
 
 	public function checkSendingStatus($id) {
 		if(!$this->request->is('json')) {
@@ -296,8 +332,24 @@ class SendingsController extends AppController {
 		$this->Xuser->checkPerm($this->Sending, isset($this->request->pass[0])?$this->request->pass[0]:null);
 	}
 	
+	protected function __securitySettings_testConditions() {
+		$this->Security->validatePost = false;
+		$this->Security->csrfCheck = false;
+		if($this->request->is('post')) {
+			if(is_array($this->request->data['Mailinglist']['Mailinglist'])) {
+				foreach($this->request->data['Mailinglist']['Mailinglist'] as $mailinglist) {
+					$this->Xuser->checkPerm(
+						$this->Sending->Recipient->Member->Mailinglist, 
+						$mailinglist
+					);
+				}
+			}
+		}
+	}
+	
 	protected function __securitySettings_add() {
 		$this->Xuser->checkPerm($this->Sending->Mail, isset($this->request->pass[0])?$this->request->pass[0]:null);
+		$this->Security->validatePost = false;
 		if($this->request->is('post')) {
 			$this->Xuser->checkPerm($this->Sending->Mail, $this->request->data['Sending']['mail_id']);
 			if(isset($this->request->data['Sending']['smtp_id']) && !empty($this->request->data['Sending']['smtp_id'])) {

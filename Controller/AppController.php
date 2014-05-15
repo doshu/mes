@@ -28,7 +28,7 @@ class AppController extends Controller {
 	public $paginate;
 
 	public function beforeFilter() {
-	
+
 		$this->Auth->loginAction = array('plugin' => false, 'controller' => 'users', 'action' => 'login');
 		$this->Auth->loginRedirect = array('plugin' => false, 'controller' => 'mails', 'action' => 'dashboard');
 		$this->Auth->unauthorizedRedirect = array('plugin' => false, 'controller' => 'mails', 'action' => 'dashboard');
@@ -74,8 +74,8 @@ class AppController extends Controller {
 	public function implementedEvents() {
 		$events = parent::implementedEvents();
 		$initializeEvent = array();
-		$initializeEvent[] = array('callable' => $events['Controller.initialize']);
-		$initializeEvent[] = array('callable' => '_securitySettings');
+		$initializeEvent[] = array('callable' => $events['Controller.initialize'], 'priority' => 100);
+		$initializeEvent[] = array('callable' => '_securitySettings', 'priority' => 99);
         $events['Controller.initialize'] = $initializeEvent;
         
         return $events;

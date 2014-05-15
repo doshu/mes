@@ -23,8 +23,7 @@
 		} 
 		
 		public function beforeFind(Model $Model, $query) {
-		
-			
+					
 			$fields  = $this->getModelFields($Model);
 			App::uses($Model->eavSettings['fieldValueModel'], 'Model');
 			$fieldValueModel = new $Model->eavSettings['fieldValueModel'];

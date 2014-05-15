@@ -12,7 +12,8 @@ class Member extends AppModel {
 			'fieldValueModel' => 'Memberfieldvalue',
 			'fieldValueForeignKey' => 'member_id',
 			'fieldForeignKey' => 'memberfield_id'
-		)
+		),
+		'HabtmCreated'
 	);	
 	
 	const isValid = 1;
@@ -107,7 +108,8 @@ class Member extends AppModel {
 			'offset' => '',
 			'finderQuery' => '',
 			'deleteQuery' => '',
-			'insertQuery' => ''
+			'insertQuery' => '',
+			'with' => 'MailinglistsMember'
 		)
 	);
 	
@@ -646,7 +648,7 @@ class Member extends AppModel {
 		$check = (bool)$this->find('count', array(
 			'recursive' => -1, 
 			'conditions' => array('id' => $id, 'user_id' => $userId)
-		);
+		));
 		$this->Behaviors->enable('Eav');
 		if($check)
 			return true;
@@ -654,5 +656,144 @@ class Member extends AppModel {
 	}
 	
 	
+	public function filterMemberSince($recipients, $mailinglists, $min, $max) {
+		$conditions = array();
+		$conditions['member_id'] = $recipients;
+		$conditions['mailinglist_id'] = $mailinglists;
+		if($min !== false)
+			$conditions['created >='] = $min;
+		if($max !== false)
+			$conditions['created <='] = $max;
+		$result = $this->MailinglistsMember->find('list', array(
+			'recursive' => -1,
+			'fields' => array('id', 'id'),
+			'conditions' => $conditions
+		));
+		return array_values($result);
+	}
+	
+	
+	public function filterUnsubscribing($recipients, $mailinglists, $min, $max, $from, $to) {
+		$conditions = array();
+		$conditions['Unsubscription.member_id'] = $recipients;
+		$conditions['MailinglistsSending.mailinglist_id'] = $mailinglists;
+		if($from)
+			$conditions['Unsubscription.created >='] = $from;
+		if($to)
+			$conditions['Unsubscription.created <='] = $to;
+		
+		$this->Unsubscription->virtualFields['times'] = 'COUNT(*)';
+		$result = $this->Unsubscription->find('list', array(
+			'recursive' => -1,
+			'fields' => array('member_id', 'times'),
+			'conditions' => $conditions,
+			'joins' => array(
+				array(
+					'table' => 'sendings',
+					'alias' => 'Sending',
+					'conditions' => array('Unsubscription.sending_id = Sending.id'),
+					'type' => 'INNER'
+				),
+				array(
+					'table' => 'mailinglists_sendings',
+					'alias' => 'MailinglistsSending',
+					'conditions' => array('Sending.id = MailinglistsSending.sending_id'),
+					'type' => 'INNER'
+				)
+			),
+			'group' => array('member_id')
+		));
+		
+		unset($this->Unsubscription->virtualFields['times']);
+		
+		foreach($result as $recipient => $times) {
+			if(($min !== false && $times < $min) || ($max !== false && $times >  $max))
+				unset($result[$recipient]);
+		}
+		
+		return array_keys($result);
+	}
+	
+	
+	
+	public function filterSendings($recipients, $min, $max, $from, $to) {
+		$conditions = array();
+		$conditions['member_id'] = $recipients;
+		if($from)
+			$conditions['sended_time >='] = strtotime($from);
+		if($to)
+			$conditions['sended_time <='] = strtotime($to);
+		
+		$this->Recipient->virtualFields['times'] = 'COUNT(*)';
+		$result = $this->Recipient->find('list', array(
+			'recursive' => -1,
+			'fields' => array('member_id', 'times'),
+			'conditions' => $conditions,
+			'group' => array('member_id')
+		));
+		
+		unset($this->Recipient->virtualFields['times']);
+		
+		foreach($result as $recipient => $times) {
+			if(($min !== false && $times < $min) || ($max !== false && $times >  $max))
+				unset($result[$recipient]);
+		}
+		
+		return array_keys($result);
+	}
+	
+	
+	
+	public function filterOpened($recipients, $min, $max, $from, $to, $type) {
+		$conditions = array();
+		$conditions['member_id'] = $recipients;
+		if($from)
+			$conditions['sended_time >='] = strtotime($from);
+		if($to)
+			$conditions['sended_time <='] = strtotime($to);
+		
+		if($type == 'perc') {
+			$this->Recipient->virtualFields['opened_times'] = 'COUNT(opened_time)';
+			$this->Recipient->virtualFields['all_times'] = 'COUNT(*)';
+			$result = array();
+			$tmpResult = $this->Recipient->find('all', array(
+				'recursive' => -1,
+				'fields' => array('member_id', 'opened_times', 'all_times'),
+				'conditions' => $conditions,
+				'group' => array('member_id')
+			));
+			
+			
+			unset($this->Recipient->virtualFields['opened_times']);
+			unset($this->Recipient->virtualFields['all_times']);
+			
+			foreach($tmpResult as $recipient) {
+				if(
+					($min == false || $recipient['Recipient']['opened_times'] >= $recipient['Recipient']['all_times']/100*$min) &&
+					($max == false || $recipient['Recipient']['opened_times'] <= $recipient['Recipient']['all_times']/100*$max)
+				) {
+					$result[$recipient['Recipient']['member_id']] = true;
+				}
+			}
+		}
+		else {
+			$this->Recipient->virtualFields['times'] = 'COUNT(*)';
+			$result = $this->Recipient->find('list', array(
+				'recursive' => -1,
+				'fields' => array('member_id', 'times'),
+				'conditions' => $conditions,
+				'group' => array('member_id')
+			));
+		
+			unset($this->Recipient->virtualFields['times']);
+		
+			foreach($result as $recipient => $times) {
+				if(($min !== false && $times < $min) || ($max !== false && $times >  $max))
+					unset($result[$recipient]);
+			}
+		}
+		
+		return array_keys($result);
+	}
 	
 }

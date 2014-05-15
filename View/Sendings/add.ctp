@@ -1,11 +1,15 @@
 <?php
 	App::uses('Sending', 'Model');
+	
+	
 	$typeOptions = array(
 		Sending::$HTML => __('HTML'),
 		Sending::$TEXT => __('Testo'),
 		Sending::$BOTH => __('Entrambi'), 
 	);
 ?>
+
+
 
 <?php $this->set('title_for_layout', __('Invia Email').' '.h($mail['Mail']['name'])); ?>
 <?php $this->Html->addCrumb('Email', '/mails/index'); ?>
@@ -18,7 +22,7 @@
 		<span class="line"></span>
 	</div>
 </div>
-<?php echo $this->Form->create('Sending', array('method' => 'post')); ?>
+<?php echo $this->Form->create('Sending', array('method' => 'post', 'inputDefaults' => array('autocomplete' => 'off'))); ?>
 	<div class="grey-container shortcut-wrapper">
 		<?php
 			echo $this->Html->link(
@@ -59,79 +63,124 @@
 				?>
 				<div class="form-group">
 					<label class="control-label" for="SendingMailinglist"><?php echo __('Liste Destinatari'); ?></label>
-					<div>
 						<?php 
 							echo $this->Form->input(
 								'Mailinglist', 
 								array(
 									'label' => false,
-									'div' => false,
 									'options' => $Mailinglist,
 									'multiple' => true
 								)
 							); 
 						?>
-					</div>
 				</div>
 				<div class="form-group">
+					<label class="control-label" for="SendingSmtp"><?php echo __('Abilita Condizioni'); ?></label>
+					<?php 
+						echo $this->Form->input(
+							'enable_conditions', 
+							array(
+								'label' => false,
+								'type' => 'checkbox',
+								'value' => 1
+							)
+						); 
+					?>
+				</div>
+			</div>
+		</div>	
+		<div id="filterContainer">
+			<div><label><?php echo __('Filtro destinatari'); ?></label><span class="adder" id="top-adder"><i class="fa fa-plus"></i></span></div>
+			<ul id="conditions" class="list-unstyled">
+				<li>
+					<ul id="startingConditionsList">
+						<li class="conditions-el undeletable">
+							<?php 
+								$conditionsTemplate =  $this->Form->input(
+									'conditions.0.value', 
+									array(
+										'label' => false,
+										'options' => array(
+											__('Operatori') => array(
+												'and' => __('Se tutte le condizioni sono soddisfatte'),
+												'or' => __('Se una delle condizioni è soddisfatta'),
+											),
+											__('Controlli') => array(
+												'member_sice' => __('Iscritto alla lista da/a'),
+												'unsubscribing' => __('Numero di disiscrizioni da/a'),
+												'sendings' => __('Numero di email inviate da/a'),
+												'opened' => __('Numero di email lette da/a')
+											)
+										),
+										'empty' => __('Seleziona un opzione'),
+										'data-code' => 0,
+										'data-name-template' => 'data[conditions][__code__][value]',
+										'class' => 'conditions-el-select'
+									)
+								); 
+						
+								echo $conditionsTemplate;
+							?>
+						</li>
+					</ul>
+				</li>	
+			</ul>
+			<p>
+				<?php $testUrl = $this->Html->url(array('action' => 'testConditions', 'ext' => 'json')); ?>
+				<a href="Javascript:void(0);" id="testFilter" class="label label-primary" data-url="<?php echo $testUrl; ?>">
+					<i class="fa fa-filter"></i> <?php echo __('Test filtro'); ?>
+				</a>
+			</p>
+		</div>
+		<div class="row">
+			<div class="col-lg-8">
+				<div class="form-group">
 					<label class="control-label" for="SendingSmtp"><?php echo __('Invia da'); ?></label>
-					<div>
 						<?php 
 							echo $this->Form->input(
 								'smtp_id', 
 								array(
 									'label' => false,
-									'div' => false,
 								)
 							); 
 						?>
-					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="SendingSmtp"><?php echo __('Nome Mittente'); ?></label>
-					<div>
 						<?php 
 							echo $this->Form->input(
 								'sender_name', 
 								array(
 									'label' => false,
-									'div' => false,
 									'class' => 'form-control'
 								)
 							); 
 						?>
-					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="SendingType"><?php echo __('Invia Come'); ?></label>
-					<div>
 						<?php 
 							echo $this->Form->input(
 								'type', 
 								array(
 									'label' => false,
-									'div' => false,
 									'options' => $typeOptions
 								)
 							); 
 						?>
-					</div>
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="SendingTime"><?php echo __('Invio programmato'); ?></label>
-					<div>
 						<?php 
 							echo $this->Form->input(
 								'enableTime', 
 								array(
 									'label' => false,
-									'div' => false,
 									'type' => 'checkbox',
 									'class' => 'form-control'
 								)
 							); 
 						?>
-					</div>
 					<div id="timeControls" style="display:none">
 						<?php 
 							echo $this->Form->input(
@@ -151,20 +200,23 @@
 				</div>
 				<div class="form-group">
 					<label class="control-label" for="SendingNote"><?php echo __('Note di invio'); ?></label>
-					<div>
 						<?php 
 							echo $this->Form->input(
 								'note', 
 								array(
 									'label' => false,
-									'div' => false,
 									'class' => 'form-control'
 								)
 							); 
 						?>
-					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 <?php echo $this->Form->end(); ?>
+<?php 
+	echo $this->Javascript->setGlobal(array(
+		'conditionsElementTemplate' => $conditionsTemplate,
+		'mailinglist' => $Mailinglist
+	)); 
+?>

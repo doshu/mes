@@ -1,0 +1,110 @@
+#conditions .conditions-el div.input {
+	width:50%;
+}
+
+#conditions .conditions-el div.input .select2-container .select2-choice {
+	font-size:10px;
+	line-height:26px;
+	height:auto;
+}
+
+#conditions div.input {
+	margin-bottom:10px;
+}
+
+
+#conditions,
+#conditions ul {
+  list-style:none;
+  margin:0;
+  padding:0;
+  min-width:650px;
+}
+
+#conditions ul {
+  margin-left:20px; /* indentation */
+  position:relative;
+}
+
+#conditions ul:before {
+  content:"";
+  display:block;
+  width:0;
+  position:absolute;
+  top:0;
+  bottom:0;
+  left:0;
+  border-left:1px dotted;
+}
+
+#conditions li {
+  margin:0;
+  padding:0 22px; /* indentation + 2 */
+  font-size:14px;
+  line-height:20px; /* default list item `line-height` */
+  color:#000;
+  font-weight:bold;
+  position:relative;
+}
+
+#conditions ul li:before {
+  content:"";
+  display:block;
+  width:20px; /* same with indentation */
+  height:0;
+  border-top:1px dotted;
+  position:absolute;
+  top:10px;
+  left:0;
+}
+
+#conditions ul li:last-child:before {
+  background:#f9f9f9; /* same with body background */
+  height:auto;
+  top:10px; /* (line-height/2) */
+  bottom:0;
+}
+
+.deleter, .adder {
+	margin-left:10px;
+	color:#666;
+}
+
+#conditions .select2-container {
+	width:80%;
+}
+
+#conditions .deleter, #conditions .adder, #top-adder {
+	cursor:pointer;
+}
+
+
+.args-container {
+	margin-top:10px;
+	display:inline-block;
+	margin-left:20px;
+}
+
+.args-container input, .args-container select {
+	display:inline-block;
+	margin-right:5px;
+	width:100px;
+}
+
+#filterContainer {
+	display: none;
+}
+
+#testResult{
+	margin-left: 10px;
+}
+
+@media (max-width: 480px) {
+	#conditions li {
+		padding:0 5px;
+	}
+	
+	#conditions ul {
+		margin-left:5px;
+	}
+}

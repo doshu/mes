@@ -166,6 +166,14 @@ function human_filesize($bytes) {
     return number_format(($bytes / pow(1024, $factor)), 2).' '.$size[$factor];
 }
 
+function is_between($n, $min, $max, $limit = true) {
+	if($limit) {
+		return ($n >= $min && $n <= $max);
+	}
+	else {
+		return ($n > $min && $n < $max);
+	}
+}
 
 Configure::write('check_cookie_action', array('plugin' => null, 'controller' => 'users', 'action' => 'checkCookie'));
 

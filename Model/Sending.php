@@ -153,7 +153,18 @@ class Sending extends AppModel {
 			unset($data['Sending']['time']);
 		}
 		
-		$data['Recipient'] = $this->__extractRecipients($data['Mailinglist']['Mailinglist']);
+		$data['Recipient'] = $this->__extractRecipients(
+			$data['Mailinglist']['Mailinglist'], 
+			isset($data['conditions']) && $data['Sending']['enable_conditions']?$data['conditions']:false,
+			$data
+		);
+		unset($data['conditions']);
+		
+		if(empty($data['Recipient'])) {
+			$this->Mailinglist->validationErrors['Mailinglist'] = __('Nessun destinatario trovato');
+			return false;
+		}
+		
 		$data['Sending']['recipient_count'] = count($data['Recipient']);
 		unset($data['Mailinglist']['Mailinglist']);
 		
@@ -161,6 +172,19 @@ class Sending extends AppModel {
 		$data['Sending']['status'] = 0;
 		
 		return $this->saveAssociated($data);
+	}
+	
+	
+	public function testConditions($data) {
+	
+		$recipients = $this->__extractRecipients(
+			$data['Mailinglist']['Mailinglist'], 
+			isset($data['conditions'])?$data['conditions']:false,
+			$data
+		);
+		
+		return count($recipients);
+		
 	}
 	
 	
@@ -180,10 +204,15 @@ class Sending extends AppModel {
 	}	
 	
 	
-	private function __extractRecipients($mailinglists) {
+	private function __extractRecipients($mailinglists, $filter, $data) {
 		$recipients = array();
 		$return = array();
 		if(!empty($mailinglists)) {
+		
+			if($filter) {
+				$filter = $this->__prettifyFilter($filter);
+			}
+			
 			$this->virtualFields['member_id'] = 'DISTINCT Member.id';
 			
 			$customFields = $this->Recipient->Member->getModelFields();
@@ -222,15 +251,23 @@ class Sending extends AppModel {
 				)
 			);
 			
+			if(!empty($recipients)) {
+				$recipientsToFilter = Hash::extract($recipients, '{n}.Member.id');
+				if($filter !== false) {
+					$recipientsToFilter = $this->__filterRecipients($recipientsToFilter, $filter, $data);
+				}
+			}
 			
 			foreach($recipients as $recipient) {
-				$return[] = array(
-					'member_id' => $recipient['Member']['id'],
-					'member_email' => $recipient['Member']['email'],
-					'member_secret' => $recipient['Member']['secret'],
-					'member_data' => json_encode($recipient['Member']),
-					'user_id' => AuthComponent::user('id')
-				);			
+				if(in_array($recipient['Member']['id'], $recipientsToFilter)) {
+					$return[] = array(
+						'member_id' => $recipient['Member']['id'],
+						'member_email' => $recipient['Member']['email'],
+						'member_secret' => $recipient['Member']['secret'],
+						'member_data' => json_encode($recipient['Member']),
+						'user_id' => AuthComponent::user('id')
+					);
+				}			
 			}
 			
 		}
@@ -238,6 +275,230 @@ class Sending extends AppModel {
 		return $return;
 	}
 	
+	
+	private function __filterRecipients($recipients, $filter, $data, $op = 'and') {
+		
+		foreach($filter as $key => &$val) {
+			if(in_array($key, array('and', 'or'))) {
+				foreach($val as $subkey => &$condition) {
+					if(isset($condition['value'])) {
+						// ogni funzione ritorna un array di id
+						switch($condition['value']) {
+							case 'member_sice':
+								if(!empty($condition['args']['from'])) {
+									$from = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['from'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$from->setTime(0, 0, 0);
+									$from->setTimezone(new DateTimeZone('UTC'));
+									$from = $from->format('Y-m-d H:i:s');
+								}
+								else
+									$from = false;
+									
+								if(!empty($condition['args']['to'])) {
+									$to = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['to'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$to->setTime(23, 59, 59);
+									$to->setTimezone(new DateTimeZone('UTC'));
+									$to = $to->format('Y-m-d H:i:s');
+								}
+								else
+									$to = false;
+									
+								$condition = $this->Recipient->Member->filterMemberSince(
+									$recipients, 
+									$condition['args']['list'], 
+									$from, 
+									$to
+								);
+								
+							break;
+							case 'unsubscribing':
+									
+								$from = !empty($condition['args']['from'])?$condition['args']['from']:false;
+								$to = !empty($condition['args']['to'])?$condition['args']['to']:false;
+								
+								if(!empty($condition['args']['from_date'])) {
+									$from_date = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['from_date'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$from_date->setTime(0, 0, 0);
+									$from_date->setTimezone(new DateTimeZone('UTC'));
+									$from_date = $from_date->format('Y-m-d H:i:s');
+								}
+								else
+									$from_date = false;
+									
+								if(!empty($condition['args']['to_date'])) {
+									$to_date = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['to_date'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$to_date->setTime(23, 59, 59);
+									$to_date->setTimezone(new DateTimeZone('UTC'));
+									$to_date = $to_date->format('Y-m-d H:i:s');
+								}
+								else
+									$to_date = false;
+								
+								$condition = $this->Recipient->Member->filterUnsubscribing(
+									$recipients, 
+									$condition['args']['list'], 
+									$from, 
+									$to,
+									$from_date,
+									$to_date
+								);
+								
+							break;
+							case 'sendings':
+							
+								$from = !empty($condition['args']['from'])?$condition['args']['from']:false;
+								$to = !empty($condition['args']['to'])?$condition['args']['to']:false;
+								
+								if(!empty($condition['args']['from_date'])) {
+									$from_date = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['from_date'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$from_date->setTime(0, 0, 0);
+									$from_date->setTimezone(new DateTimeZone('UTC'));
+									$from_date = $from_date->format('Y-m-d H:i:s');
+								}
+								else
+									$from_date = false;
+									
+								if(!empty($condition['args']['to_date'])) {
+									$to_date = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['to_date'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$to_date->setTime(23, 59, 59);
+									$to_date->setTimezone(new DateTimeZone('UTC'));
+									$to_date = $to_date->format('Y-m-d H:i:s');
+								}
+								else
+									$to_date = false;
+								
+								$condition = $this->Recipient->Member->filterSendings(
+									$recipients, 
+									$from, 
+									$to,
+									$from_date,
+									$to_date
+								);
+								
+							break;
+							case 'opened':
+							
+								$from = !empty($condition['args']['from'])?$condition['args']['from']:false;
+								$to = !empty($condition['args']['to'])?$condition['args']['to']:false;
+								
+								$type = $condition['args']['type'];
+								
+								if(!empty($condition['args']['from_date'])) {
+									$from_date = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['from_date'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$from_date->setTime(0, 0, 0);
+									$from_date->setTimezone(new DateTimeZone('UTC'));
+									$from_date = $from_date->format('Y-m-d H:i:s');
+								}
+								else
+									$from_date = false;
+									
+								if(!empty($condition['args']['to_date'])) {
+									$to_date = DateTime::createFromFormat(
+										'd/m/Y', 
+										$condition['args']['to_date'], 
+										new DateTimeZone(AuthComponent::user('timezone'))
+									);
+								
+									$to_date->setTime(23, 59, 59);
+									$to_date->setTimezone(new DateTimeZone('UTC'));
+									$to_date = $to_date->format('Y-m-d H:i:s');
+								}
+								else
+									$to_date = false;
+								
+								$condition = $this->Recipient->Member->filterOpened(
+									$recipients, 
+									$from, 
+									$to,
+									$from_date,
+									$to_date,
+									$type
+								);
+								
+							break;
+							default:
+								if($op == 'and') {
+									$condition = $recipients;	
+								}
+								else {
+									unset($val[$subkey]);
+								}
+						}
+					}
+					else {
+						if(!empty($condition)) {
+							list($subkey, $subval) = each($condition);
+							if(in_array($subkey, array('and', 'or'))) {
+								$condition = $this->__filterRecipients($recipients, $condition, $data, $subkey);
+							}
+						}
+					}
+					
+				}
+			}
+		}
+		//prima di ritornare se l'operatore è or faccio un merge di tutti gli array altrimenti un intersect
+		
+		if($op == 'and') {
+			$filter = count($filter[$op])>1?
+				call_user_func_array('array_intersect', $filter[$op]):isset($filter[$op][0])?$filter[$op][0]:array();
+		}
+		else {
+			$filter = count($filter[$op])>1?
+				call_user_func_array('array_merge', $filter[$op]):isset($filter[$op][0])?$filter[$op][0]:array();
+		}
+		
+		return $filter;
+	}
+	
+	private function __prettifyFilter($filter, $operator = 'and') {
+		$slices = array();
+		foreach($filter as $condition) {
+			if(in_array($condition['value'], array('and', 'or'))) {
+				$slices[] = $this->__prettifyFilter($condition['subconditions'], $condition['value']);
+			}
+			else {
+				$slices[] = $condition;
+			}
+		}
+		return array($operator => $slices);
+		
+	}
 	
 	public function countRecipients($id) {
 		return $this->Recipient->find(
@@ -424,7 +685,7 @@ class Sending extends AppModel {
 		}
 		return ($data instanceof DateTime);
 	}
-	
+
 	
 	public function resend($id) {
 		
@@ -513,5 +774,287 @@ class Sending extends AppModel {
 	}
 	
 	
+	public function validateFilterConditions($conditions) {
+	
+		App::uses('Validation', 'Utility');
+	
+		if(is_array($conditions)) {
+			foreach($conditions as &$condition) {
+				if(isset($condition['value']) && !empty($condition['value'])) {
+					if(in_array(strtolower($condition['value']), array('and', 'or'))) {
+						if(isset($condition['subconditions']) && is_array($condition['subconditions'])) {
+							if(!$this->validateFilterConditions($condition['subconditions'])) {
+								return false;
+							}
+						}
+						else {
+							return false;
+						}
+					}
+					else {
+						switch(strtolower($condition['value'])) {
+							case 'member_sice':
+								if(
+									isset($condition['args']['list']) && 
+									(isset($condition['args']['from']) || isset($condition['args']['to']))
+								) {
+									if(!empty($condition['args']['list'])) {
+										try{
+											if(!$this->Mailinglist->checkPerm($condition['args']['list'], null, AuthComponent::user('id')))
+												return false;
+										}
+										catch(Exception $e) {
+											return false;
+										}
+									}
+									else {
+										return false;
+									}
+
+									if(!empty($condition['args']['from'])) {
+										$from = DateTime::createFromFormat('d/m/Y', $condition['args']['from']);
+										if(!$from instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$from = false;
+									}
+									if(!empty($condition['args']['to'])) {
+										$to = DateTime::createFromFormat('d/m/Y', $condition['args']['to']);
+										if(!$to instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$to = false;
+									}
+									if(($from == false && $to == false) || ($from != false && $to != false && $from > $to)) {
+										return false;
+									} 
+								}
+								else {
+									return false;
+								}
+							break;
+							case 'unsubscribing':
+								if(
+									isset($condition['args']['list']) && 
+									(isset($condition['args']['from']) || isset($condition['args']['to'])) &&
+									(isset($condition['args']['from_date']) || isset($condition['args']['to_date']))
+								) {
+								
+									if(!empty($condition['args']['list'])) {
+										try{
+											if(!$this->Mailinglist->checkPerm($condition['args']['list'], null, AuthComponent::user('id')))
+												return false;
+										}
+										catch(Exception $e) {
+											return false;
+										}
+									}
+									else {
+										return false;
+									}
+								
+									if(
+										!empty($condition['args']['from']) && 
+										(!Validation::naturalNumber($condition['args']['from'], true) || $condition['args']['from'] < 0)
+									) {
+										return false;
+									}
+									
+									if(
+										!empty($condition['args']['to']) && 
+										(!Validation::naturalNumber($condition['args']['to']) || $condition['args']['to'] < 0)
+									) {
+										return false;
+									}
+									
+									if(
+										(empty($condition['args']['from']) && empty($condition['args']['to'])) || 
+										(
+											!empty($condition['args']['from']) && 
+											!empty($condition['args']['to']) && 
+											$condition['args']['from'] > $condition['args']['to']
+										)
+									) {
+										return false;
+									} 
+									
+									
+									if(!empty($condition['args']['from_date'])) {
+										$from_date = DateTime::createFromFormat('d/m/Y', $condition['args']['from_date']);
+										if(!$from_date instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$from_date = false;
+									}
+									
+									if(!empty($condition['args']['to_date'])) {
+										$to_date = DateTime::createFromFormat('d/m/Y', $condition['args']['to_date']);
+										if(!$to_date instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$to_date = false;
+									}
+									
+									if(
+										($from_date == false && $to_date == false) ||
+										($from_date != false && $to_date != false && $from_date > $to_date)
+									) {
+										return false;
+									}
+									 
+								}
+								else {
+									return false;
+								}
+							break;
+							case 'sendings':
+								if(
+									(isset($condition['args']['from']) || isset($condition['args']['to'])) &&
+									(isset($condition['args']['from_date']) || isset($condition['args']['to_date']))
+								) {
+								
+									if(
+										!empty($condition['args']['from']) && 
+										(!Validation::naturalNumber($condition['args']['from'], true) || $condition['args']['from'] < 0)
+									) {
+										return false;
+									}
+									
+									if(
+										!empty($condition['args']['to']) && 
+										(!Validation::naturalNumber($condition['args']['to']) || $condition['args']['to'] < 0)
+									) {
+										return false;
+									}
+									
+									if(
+										(empty($condition['args']['from']) && empty($condition['args']['to'])) || 
+										(
+											!empty($condition['args']['from']) && 
+											!empty($condition['args']['to']) && 
+											$condition['args']['from'] > $condition['args']['to']
+										)
+									) {
+										return false;
+									}
+									
+									
+									if(!empty($condition['args']['from_date'])) {
+										$from_date = DateTime::createFromFormat('d/m/Y', $condition['args']['from_date']);
+										if(!$from_date instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$from_date = false;
+									}
+									
+									if(!empty($condition['args']['to_date'])) {
+										$to_date = DateTime::createFromFormat('d/m/Y', $condition['args']['to_date']);
+										if(!$to_date instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$to_date = false;
+									}
+									
+									if(
+										($from_date == false && $to_date == false) ||
+										($from_date != false && $to_date != false && $from_date > $to_date)
+									) {
+										return false;
+									}
+									
+									 
+								}
+								else {
+									return false;
+								}
+							break;
+							case 'opened':
+								if(
+									isset($condition['args']['type']) && 
+									(isset($condition['args']['from']) || isset($condition['args']['to'])) && 
+									(isset($condition['args']['from_date']) || isset($condition['args']['to_date']))
+								) {
+									if(!empty($condition['args']['from'])) {
+									 	if(
+									 		!Validation::naturalNumber($condition['args']['from']) || 
+									 		($condition['args']['type'] == 'perc' && !is_between($condition['args']['from'], 0, 100)) ||
+									 		($condition['args']['type'] != 'perc' && $condition['args']['from'] < 0)
+									 	) {
+											return false;
+										}
+									}
+									
+									if(!empty($condition['args']['to'])) {
+									 	if(
+									 		!Validation::naturalNumber($condition['args']['to']) || 
+									 		($condition['args']['type'] == 'perc' && !is_between($condition['args']['to'], 0, 100)) ||
+									 		($condition['args']['type'] != 'perc' && $condition['args']['to'] < 0)
+									 	) {
+											return false;
+										}
+									}
+									
+									if(
+										(empty($condition['args']['from']) && empty($condition['args']['to'])) || 
+										(
+											!empty($condition['args']['from']) && 
+											!empty($condition['args']['to']) && 
+											$condition['args']['from'] > $condition['args']['to']
+										)
+									) {
+										return false;
+									}
+									
+									
+									if(!empty($condition['args']['from_date'])) {
+										$from_date = DateTime::createFromFormat('d/m/Y', $condition['args']['from_date']);
+										if(!$from_date instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$from_date = false;
+									}
+									
+									if(!empty($condition['args']['to_date'])) {
+										$to_date = DateTime::createFromFormat('d/m/Y', $condition['args']['to_date']);
+										if(!$to_date instanceof DateTime) {
+											return false;
+										}
+									}
+									else {
+										$to_date = false;
+									}
+									
+									if(
+										($from_date == false && $to_date == false) ||
+										($from_date != false && $to_date != false && $from_date > $to_date)
+									) {
+										return false;
+									}
+								}
+								else {
+									return false;
+								}
+							break;
+						}
+					}
+				}
+			}
+		}
+		return true;
+	}
 
 }

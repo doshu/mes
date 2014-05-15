@@ -396,6 +396,16 @@
 					else {
 						if(is_numeric($key) && is_array($val)) {
 							list($key, $val) = each($val);
+							$key = trim($key);
+							//cosi dovrebbe gestire anche operatori dentro a array e non come chiave 
+							if(in_array($key, $this->__conditionsOperators)) {
+								if($key == 'NOT') {
+									$conditionsQuery[] = $this->__buildConditionsQuery($val, 'AND', true);
+								}
+								else {
+									$conditionsQuery[] = $this->__buildConditionsQuery($val, $key);
+								}
+							}
 						}
 						list($parsedConditionFlield, $val) = $this->__parseConditionField($key, $val);
 						$this->__pushToPrepareFields($val);
