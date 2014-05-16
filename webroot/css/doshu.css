@@ -991,27 +991,7 @@ a.list-group-item {
   background-color: #504f63;
   color: #fff;
 }
-.alert {
-  color: #8B6420;
-  background: #ffe5ab;
-  border: 1px solid #ffc545;
-  padding: 10px;
-}
-.alert.alert-info {
-  color: #0f5d84;
-  background: #b2ecfe;
-  border: 1px solid #4dd4fd;
-}
-.alert.alert-success {
-  color: #1b601c;
-  background: #cfe9b7;
-  border: 1px solid #9ad268;
-}
-.alert.alert-danger {
-  color: #691715;
-  background: #fe9b91;
-  border: 1px solid #fe402b;
-}
+
 #theme-setting {
   position: fixed;
   top: 120px;

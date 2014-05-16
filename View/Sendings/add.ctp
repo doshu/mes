@@ -62,7 +62,7 @@
 					); 
 				?>
 				<div class="form-group">
-					<label class="control-label" for="SendingMailinglist"><?php echo __('Liste Destinatari'); ?></label>
+					<label class="control-label required" for="SendingMailinglist"><?php echo __('Liste Destinatari'); ?></label>
 						<?php 
 							echo $this->Form->input(
 								'Mailinglist', 
@@ -135,7 +135,7 @@
 		<div class="row">
 			<div class="col-lg-8">
 				<div class="form-group">
-					<label class="control-label" for="SendingSmtp"><?php echo __('Invia da'); ?></label>
+					<label class="control-label required" for="SendingSmtp"><?php echo __('Invia da'); ?></label>
 						<?php 
 							echo $this->Form->input(
 								'smtp_id', 
@@ -158,7 +158,7 @@
 						?>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SendingType"><?php echo __('Invia Come'); ?></label>
+					<label class="control-label required" for="SendingType"><?php echo __('Invia Come'); ?></label>
 						<?php 
 							echo $this->Form->input(
 								'type', 

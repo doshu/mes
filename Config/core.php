@@ -197,7 +197,10 @@
  */
 	Configure::write('Session', array(
 		'defaults' => 'php',
-		'checkAgent' => true
+		'checkAgent' => true,
+        'timeout' => 10200,
+        'cookieTimeout' => 10200,
+        'checkAgent' => true,
 	));
 
 /**

@@ -42,7 +42,7 @@
 			<div class="col-lg-8">
 				<?php echo $this->Form->input('Template.id'); ?>
 				<div class="form-group">
-					<label class="control-label" for="TemplateName"><?php echo __('Titolo'); ?></label>
+					<label class="control-label required" for="TemplateName"><?php echo __('Titolo'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(

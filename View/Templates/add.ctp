@@ -40,7 +40,7 @@
 	<div class="row">
 		<div class="col-lg-8">
 			<div class="form-group">
-				<label for="TemplateName" class="control-label"><?php echo __('Titolo'); ?></label>
+				<label for="TemplateName" class="control-label required"><?php echo __('Titolo'); ?></label>
 				<div>
 					<?php 
 						echo $this->Form->input(

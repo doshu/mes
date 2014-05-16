@@ -41,7 +41,7 @@
 		<div class="row">
 			<div class="col-lg-8">
 				<div class="form-group">
-					<label class="control-label" for="MailinglistName"><?php echo __('Nome'); ?></label>
+					<label class="control-label required" for="MailinglistName"><?php echo __('Nome'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(

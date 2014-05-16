@@ -38,7 +38,7 @@
 		<div class="row">
 			<div class="col-lg-8">
 				<div class="form-group">
-					<label class="control-label" for="SmtpEmail"><?php echo __('Email'); ?></label>
+					<label class="control-label required" for="SmtpEmail"><?php echo __('Email'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -53,7 +53,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SmtpName"><?php echo __('Nome'); ?></label>
+					<label class="control-label required" for="SmtpName"><?php echo __('Nome'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -68,7 +68,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SmtpHost"><?php echo __('Host'); ?></label>
+					<label class="control-label required" for="SmtpHost"><?php echo __('Host'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -83,7 +83,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SmtpPort"><?php echo __('Porta'); ?></label>
+					<label class="control-label required" for="SmtpPort"><?php echo __('Porta'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -98,7 +98,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SmtpUsername"><?php echo __('Username'); ?></label>
+					<label class="control-label required" for="SmtpUsername"><?php echo __('Username'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -113,7 +113,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SmtpPassword"><?php echo __('Password'); ?></label>
+					<label class="control-label required" for="SmtpPassword"><?php echo __('Password'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -128,7 +128,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SmtpEnctype"><?php echo __('Metodo Autenticazione'); ?></label>
+					<label class="control-label required" for="SmtpEnctype"><?php echo __('Metodo Autenticazione'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -148,7 +148,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="SmtpEnctype"><?php echo __('Cifratura'); ?></label>
+					<label class="control-label required" for="SmtpEnctype"><?php echo __('Cifratura'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(

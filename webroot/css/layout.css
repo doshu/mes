@@ -390,3 +390,13 @@ a, a:active, a:hover, a:focus {
 .table-overflow {
 	overflow-x:auto;
 }
+
+#settingsNav {
+	margin-left: 5px;
+	margin-bottom: 10px;
+}
+
+label.required:after {
+	color:#AA0000;
+	content: '*';
+}

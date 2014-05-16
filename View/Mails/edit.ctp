@@ -42,7 +42,7 @@
 			<div class="col-lg-8">
 				<?php echo $this->Form->input('Mail.id'); ?>
 				<div class="form-group">
-					<label class="control-label" for="MailName"><?php echo __('Titolo'); ?></label>
+					<label class="control-label required" for="MailName"><?php echo __('Titolo'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -72,7 +72,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="MailSubject"><?php echo __('Oggetto'); ?></label>
+					<label class="control-label required" for="MailSubject"><?php echo __('Oggetto'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(

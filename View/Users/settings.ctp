@@ -7,6 +7,13 @@
 		<span class="line"></span>
 	</div>
 </div>
+<div class="row">
+	<div class="col-lg-12">
+		<ul class="nav nav-tabs" id="settingsNav">
+		  <li class="active"><?php echo $this->Html->link(__('Gestione utente'), array('action' => 'settings')); ?></li>
+		</ul>
+	</div>
+</div>
 <?php echo $this->Form->create('User'); ?>
 	<div class="grey-container shortcut-wrapper">
 		<?php

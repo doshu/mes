@@ -36,7 +36,7 @@
 		<div class="row">
 			<div class="col-lg-8">
 				<div class="form-group">
-					<label class="control-label" for="MemberfieldName"><?php echo __('Nome'); ?></label>
+					<label class="control-label required" for="MemberfieldName"><?php echo __('Nome'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -51,7 +51,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="MemberfieldCode"><?php echo __('Codice'); ?></label>
+					<label class="control-label required" for="MemberfieldCode"><?php echo __('Codice'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
@@ -66,7 +66,7 @@
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="control-label" for="MemberfieldType"><?php echo __('Tipo'); ?></label>
+					<label class="control-label required" for="MemberfieldType"><?php echo __('Tipo'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(

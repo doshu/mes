@@ -41,7 +41,7 @@
 	<div class="row">
 		<div class="col-lg-8">
 			<div class="form-group">
-				<label for="MailName" class="control-label"><?php echo __('Titolo'); ?></label>
+				<label for="MailName" class="control-label required"><?php echo __('Titolo'); ?></label>
 				<div>
 					<?php 
 						echo $this->Form->input(
@@ -71,7 +71,7 @@
 				</div>
 			</div>
 			<div class="form-group">
-				<label class="control-label" for="MailSubject"><?php echo __('Oggetto'); ?></label>
+				<label class="control-label required" for="MailSubject"><?php echo __('Oggetto'); ?></label>
 				<div>
 					<?php 
 						echo $this->Form->input(

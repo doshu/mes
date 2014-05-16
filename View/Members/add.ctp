@@ -39,7 +39,7 @@
 		<div class="row">
 			<div class="col-lg-8">
 				<div class="form-group	">
-					<label class="control-label" for="MemberEmail"><?php echo __('Email'); ?></label>
+					<label class="control-label required" for="MemberEmail"><?php echo __('Email'); ?></label>
 					<div>
 						<?php 
 							echo $this->Form->input(
