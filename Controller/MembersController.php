@@ -389,6 +389,7 @@ class MembersController extends AppController {
 
 				if($import['status']) {
 					$this->Member->getDataSource()->commit();
+					$this->Session->setFlash(__("Importazione avvenuta con successo"), 'default', array(), 'info');
 					$this->redirect(array('controller' => 'members', 'action' => 'index'));
 				}
 				else {
@@ -562,6 +563,7 @@ class MembersController extends AppController {
 			$this->set('status', $status);
 		}
 		else {
+			debug($this->Member->validationErrors); exit;
 			throw new InternalErrorException('Cannot Save');
 		}
 	}

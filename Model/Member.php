@@ -279,9 +279,11 @@ class Member extends AppModel {
 						}
 					}
 					
+					$secret = $this->__generateNewSecret($data['email'].time());
+
 					$save = $this->saveAssociated(
 						array(
-							'Member' => array('email' => $data['email']),
+							'Member' => array('email' => $data['email'], 'secret' => $secret),
 							'Mailinglist' => array(
 								'Mailinglist' => $mailinglists
 							),

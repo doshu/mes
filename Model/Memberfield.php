@@ -118,7 +118,7 @@ class Memberfield extends AppModel {
 			'conditions' => array('id' => $id, 'user_id' => $userId),
 		));
 		
-		if($check)
+		if($data)
 			return true;
 		throw new NotFoundException();
 	}

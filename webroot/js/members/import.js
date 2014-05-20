@@ -116,7 +116,9 @@ $(function() {
 	});
 	
 	$('#MemberFile').on('change', function() {
-		if(isValidCsv(this.files[0])) { 
+		
+		if(isValidCsv(this.files[0])) {
+			
 			$('#selected-filename').html('<span class="success-message">'+this.files[0].name+'</span>');
 			$('#upload-file').show();
 			if(window.FileReader) {

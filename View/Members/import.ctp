@@ -47,7 +47,7 @@
 					<?php
 						echo $this->Form->button(
 							__('Importa'), 
-							array('type' => 'submit', 'class' => 'btn btn-small btn-primary hide pull-right', 'id' => 'upload-file')
+							array('type' => 'submit', 'class' => 'btn btn-small btn-primary pull-right', 'id' => 'upload-file', 'style' => 'display:none')
 						);
 					?>
 					<label for="MemberImportExists" style="margin-top:10px;">
@@ -67,7 +67,7 @@
 					<?php
 						echo $this->Form->end(); 
 					?>
-					<div id="preview" class="hide">
+					<div id="preview" style="display:none;">
 						<div style="margin-top:20px;"><h4><?php echo __('Anteprima'); ?></h4></div>
 					</div>
 					<?php if(isset($errors)) : ?>
