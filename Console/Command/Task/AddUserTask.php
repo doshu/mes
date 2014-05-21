@@ -17,7 +17,7 @@
 			$timezone = $this->in('Insert the timezone', null, 'Europe/Rome');
 			$filemanager_quota = $this->in('Insert the file manager quota MB', null, 500);
 			$active = strtolower($this->in('User is Active?', array('y', 'n'), 'y'));
-			$active = $active == '?'?1:0;
+			$active = $active == 'y'?1:0;
 			
 			$newUser = compact('name', 'surname', 'username', 'password', 'timezone', 'filemanager_quota', 'active');
 			
