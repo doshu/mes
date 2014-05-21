@@ -1,6 +1,6 @@
 <?php
 App::uses('AppModel', 'Model');
-
+App::uses('Member', 'Model');
 
 class Sending extends AppModel {
 
@@ -284,6 +284,14 @@ class Sending extends AppModel {
 					if(isset($condition['value'])) {
 						// ogni funzione ritorna un array di id
 						switch($condition['value']) {
+							case 'valid':
+									
+								$condition = $this->Recipient->Member->filterMemberValid(
+									$recipients, 
+									$condition['args']['addressStatus']
+								);
+								
+							break;
 							case 'member_sice':
 								if(!empty($condition['args']['from'])) {
 									$from = DateTime::createFromFormat(
@@ -793,6 +801,19 @@ class Sending extends AppModel {
 					}
 					else {
 						switch(strtolower($condition['value'])) {
+							case 'valid':
+								if(isset($condition['args']['addressStatus'])) {
+									if(
+										$condition['args']['addressStatus'] == '' ||
+										!in_array(
+											$condition['args']['addressStatus'],
+											array(Member::isValid, Member::isNotValid, Member::cannotValidate)
+										)
+									) {
+										return false;
+									}
+								}
+							break;
 							case 'member_sice':
 								if(
 									isset($condition['args']['list']) && 

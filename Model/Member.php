@@ -798,4 +798,20 @@ class Member extends AppModel {
 		return array_keys($result);
 	}
 	
+	
+	
+	public function filterMemberValid($recipients, $status) {
+		$conditions = array();
+		$this->Behaviors->disable('Eav');
+		$conditions['id'] = $recipients;
+		$conditions['valid'] = $status;
+		$result = $this->find('list', array(
+			'recursive' => -1,
+			'fields' => array('id', 'id'),
+			'conditions' => $conditions
+		));
+		$this->Behaviors->enable('Eav');
+		return array_values($result);
+	}
+	
 }

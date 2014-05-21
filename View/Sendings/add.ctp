@@ -1,6 +1,6 @@
 <?php
 	App::uses('Sending', 'Model');
-	
+	App::uses('Member', 'Model');
 	
 	$typeOptions = array(
 		Sending::$HTML => __('HTML'),
@@ -88,7 +88,7 @@
 					?>
 				</div>
 			</div>
-		</div>	
+		</div>
 		<div id="filterContainer">
 			<div><label><?php echo __('Filtro destinatari'); ?></label><span class="adder" id="top-adder"><i class="fa fa-plus"></i></span></div>
 			<ul id="conditions" class="list-unstyled">
@@ -106,6 +106,7 @@
 												'or' => __('Se una delle condizioni è soddisfatta'),
 											),
 											__('Controlli') => array(
+												'valid' => __('Stato validità indirizzo'),
 												'member_sice' => __('Iscritto alla lista da/a'),
 												'unsubscribing' => __('Numero di disiscrizioni da/a'),
 												'sendings' => __('Numero di email inviate da/a'),
@@ -217,6 +218,11 @@
 <?php 
 	echo $this->Javascript->setGlobal(array(
 		'conditionsElementTemplate' => $conditionsTemplate,
-		'mailinglist' => $Mailinglist
+		'mailinglist' => $Mailinglist,
+		'addressStaus' => array(
+			Member::isValid => __('Verificato'),
+			Member::isNotValid => __('Non Esiste'),
+			Member::cannotValidate => __('Impossibile Verificare')
+		)
 	)); 
 ?>

@@ -1,4 +1,7 @@
 var functionArgsTemplate = {
+	valid: [
+		{name:'addressStatus', type:'select', options:addressStaus},
+	],
 	member_sice: [
 		{name:'list', type:'select', options:mailinglist}, 
 		{name:'from', type:'text', extra:'date'}, 
