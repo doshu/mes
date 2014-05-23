@@ -22,7 +22,7 @@
 		);
 		
 		echo $this->Html->link(
-			'<span class="shortcut-icon"><i class="fa fa-upload"></i></span><span class="text">'.__('Importa Membro').'</span>',
+			'<span class="shortcut-icon"><i class="fa fa-upload"></i></span><span class="text">'.__('Importa Membri').'</span>',
 			array('action' => 'import'),
 			array(
 				'class' => 'shortcut-link',
