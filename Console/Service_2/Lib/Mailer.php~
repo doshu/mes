@@ -5,7 +5,7 @@
 	class Mailer extends PHPMailer {
 	
 		public function __construct($exceptions = false) {
-			$this->CharSet = 'UTF-8';
+			$this->Charset = 'UTF-8';
    			parent::__construct($exceptions);
   		}
 	

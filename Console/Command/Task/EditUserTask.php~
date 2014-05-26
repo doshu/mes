@@ -24,9 +24,9 @@
 			$surname = ucfirst($this->in('Insert the surname', null, $user['User']['surname']));
 			$password = $this->in('Insert the password (leave empty to not change)', null, null);
 			$timezone = $this->in('Insert the timezone', null, $user['User']['timezone']);
-			$filemanager_quota = $this->in('Insert the file manager quota B', null, $user['User']['filemanager_quota']);
+			$filemanager_quota = $this->in('Insert the file manager quota MB', null, $user['User']['filemanager_quota']);
 			$active = strtolower($this->in('User is Active?', array('y', 'n'), 'y'));
-			$active = $active == '1'?1:0;
+			$active = $active == '?'?1:0;
 			
 			$newUser = compact('name', 'surname', 'timezone', 'filemanager_quota', 'active');
 			$newUser['id'] = $user['User']['id'];

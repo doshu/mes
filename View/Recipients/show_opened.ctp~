@@ -33,7 +33,7 @@
 		<divl class="col-lg-12">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<?php echo __('Email Lette'); ?>
+					<?php echo __('Email con errori'); ?>
 				</div>
 				<div class="panel-body" style="">
 					<span class="pull-right">

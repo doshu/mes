@@ -251,7 +251,7 @@ class RecipientsController extends AppController {
 			if(!empty($uri))  {
 			 	if(Url::isAbsolute($uri)) {
 			 	
-				 	if(is_null($fromimage) || $fromimage == false) {
+				 	if(is_null($fromimage)) {
 				 		if(!$this->Recipient->Link->find('count', array(
 				 			'recursive' => -1,
 				 			'conditions' => array(

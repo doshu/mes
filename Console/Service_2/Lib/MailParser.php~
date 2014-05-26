@@ -13,8 +13,6 @@
 			$code = $this->replaceLinkIn('a', 'href', $code, $recipient);
 			$code = $this->replaceLinkIn('img', 'src', $code, $recipient);
 			$code = $this->pushFakeImage($code, $recipient);
-			//insert the code in html page structure
-			$code = '<!DOCTYPE html><html><head></head><body>'.$code.'</body></html>';
 			return $code;
 		}
 		
