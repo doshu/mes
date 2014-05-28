@@ -181,9 +181,9 @@ define('SPAM_LIMIT_OK', 30);
 define('SPAM_LIMIT_WARNING', 60);
 
 
-define('SERVICE_URL', 'http://www.powamail.tk/open_me');
+define('SERVICE_URL', 'http://devel.powamail.tk/mes/open_me');
 define('FAKE_IMAGE_URL', SERVICE_URL);
-define('UNSUSCRIBE_LINK', 'http://www.powamail.tk/unsubscribe?recipient=%s&key=%s&sending=%s&redirect=%s');
-define('OPEN_ME_LINK', 'http://www.powamail.tk/open_me_link_%s_%s_%s');
-define('OPEN_ME_IMAGE', 'http://www.powamail.tk/open_me_image_%s_%s_%s_1.%s');
-define('OPEN_ME_FAKE', 'http://www.powamail.tk/open_me_%s_%s_.png');
+define('UNSUSCRIBE_LINK', 'http://devel.powamail.tk/mes/unsubscribe?recipient=%s&key=%s&sending=%s&redirect=%s');
+define('OPEN_ME_LINK', 'http://devel.powamail.tk/mes/open_me_link_%s_%s_%s');
+define('OPEN_ME_IMAGE', 'http://devel.powamail.tk/mes/open_me_image_%s_%s_%s_1.%s');
+define('OPEN_ME_FAKE', 'http://devel.powamail.tk/mes/open_me_%s_%s_.png');
