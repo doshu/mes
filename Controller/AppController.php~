@@ -40,7 +40,7 @@ class AppController extends Controller {
 		
 		$this->Auth->authorize = array('Controller');
 		
-		$this->Security->csrfExpires = '+3 hour';
+		$this->Security->csrfExpires = '+1 hour';
 		$this->Security->csrfUseOnce = false;
 		$this->Security->blackHoleCallback = 'blackhole';
 		
