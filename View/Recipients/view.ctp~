@@ -168,14 +168,6 @@
 									</tr>
 									<tr>
 										<td>
-											<span class="custom-label"><?php echo __('Città'); ?></span>
-										</td>
-										<td>
-											<?php echo h($recipient['Recipient']['city']); ?>
-										</td>
-									</tr>
-									<tr>
-										<td>
 											<span class="custom-label"><?php echo __('Coordinate'); ?></span>
 										</td>
 										<td>

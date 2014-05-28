@@ -257,7 +257,7 @@ class Recipient extends AppModel {
 	public function getGeoStatsBySending($sending_id) {
 		
 		return $this->find('all', array(
-			'fields' => array('lat', 'lon', 'country', 'region', 'city'),
+			'fields' => array('lat', 'lon', 'country', 'region'),
 			'recursive' => -1,
 			'conditions' => array(
 				'opened' => 1,
@@ -273,7 +273,7 @@ class Recipient extends AppModel {
 	public function getGeoStatsByUser($user_id) {
 		
 		$recipients = $this->find('all', array(
-			'fields' => array('lat', 'lon', 'country', 'region', 'city'),
+			'fields' => array('lat', 'lon', 'country', 'region'),
 			'recursive' => -1,
 			'conditions' => array(
 				'opened' => 1,

@@ -230,6 +230,9 @@ class RecipientsController extends AppController {
 							$region = geoip_region_name_by_code($geoInfo['country_code'], $geoInfo['region']);
 							if($region) {
 								$fields['region'] = $region;
+								if(isset($geoInfo['city']) && !empty($geoInfo['city'])) {
+									$fields['city'] = $geoInfo['city'];
+								}
 							}
 						}
 					}
