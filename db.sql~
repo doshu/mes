@@ -334,7 +334,7 @@ CREATE TABLE `recipients` (
   `member_data` longtext NOT NULL,
   `member_email` varchar(255) NOT NULL,
   `member_secret` varchar(255) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `user_id` varchar(255) NOT NULL,
   PRIMARY KEY (`id`,`sending_id`),
   KEY `recipients_sending_id` (`sending_id`),
   KEY `recipients_member_secret` (`member_secret`),

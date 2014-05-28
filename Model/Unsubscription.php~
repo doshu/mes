@@ -50,7 +50,7 @@ class Unsubscription extends AppModel {
 	
 	public function checkPerm($id, $params, $userId) {
 		
-		$data = $this->find('first',array(
+		$data = $this->find('	first',array(
 			'recursive' => -1,
 			'conditions' => array('Unsubscription.id' => $id),
 			'fields' => array('Member.user_id'),

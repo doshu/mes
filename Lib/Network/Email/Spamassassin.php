@@ -2,13 +2,14 @@
 
 	class Spamassassin {
 	
-		private $bin = 'spamc -c';
+		private $pointBin = 'spamc -c';
+		private $detailsBin = 'spamc -y';
 		
 		public function getSpamPoint($text) {
 			if(!empty($text)) {
-				$cmd = 'echo '.escapeshellarg("\n\n".$text).' | '.($this->bin); //added \n\n as end of headers and start of body
+				$cmd = 'echo '.escapeshellarg("\n\n".$text).' | '.($this->pointBin); //added \n\n as end of headers and start of body
 				$result = trim(shell_exec($cmd));
-				
+
 				if($result != null && !empty($result)) {
 					$toParse = $result;
 				}
@@ -28,6 +29,24 @@
 				throw new InternalErrorException(__('Errore durante il controllo Antispam'));
 			}
 		}
+		
+		
+		public function getSpamDetails($text) {
+			if(!empty($text)) {
+				$cmd = 'echo '.escapeshellarg("\n\n".$text).' | '.($this->detailsBin); //added \n\n as end of headers and start of body
+				$result = trim(shell_exec($cmd));
+				if($result != null && !empty($result)) {
+					return $result;
+				}
+				else {
+					throw new InternalErrorException(__('Errore durante il controllo Antispam'));
+				}
+			}
+			else {
+				return '';
+			}
+		}
+		
 		
 		private function __parseResult($result) {
 			$parts = explode('/', $result);

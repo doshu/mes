@@ -163,7 +163,7 @@ class MailsController extends AppController {
 					$this->request->data, 
 					array(
 						'fieldList' => array(
-							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject', 'html_spam_point', 'text_spam_point', 'html_spam_details', 'text_spam_details'),
+							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject', 'html_spam_point', 'text_spam_point'),
 							'Attachment' => array('realname', 'path', 'mail_id')
 						)
 					)
@@ -233,7 +233,7 @@ class MailsController extends AppController {
 					$this->request->data, 
 					array(
 						'fieldList' => array(
-							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject', 'html_spam_point', 'text_spam_point', 'html_spam_details', 'text_spam_details'),
+							'Mail' => array('name', 'description', 'html', 'text', 'created', 'modified', 'user_id', 'subject', 'html_spam_point', 'text_spam_point'),
 							'Attachment' => array('realname', 'path', 'mail_id')
 						)
 					)

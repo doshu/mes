@@ -98,6 +98,9 @@ class Mail extends AppModel {
 			
 			$this->data['Mail']['html_spam_point'] = 100*$html_spam_point['point']/$html_spam_point['limit'];
 			$this->data['Mail']['text_spam_point'] = 100*$text_spam_point['point']/$text_spam_point['limit'];
+			
+			$this->data['Mail']['html_spam_details'] = $Spamassassin->getSpamDetails($toCheckHtml);
+			$this->data['Mail']['text_spam_details'] = $Spamassassin->getSpamDetails($this->data['Mail']['text']);
 		}
 		catch(Exception $e) {
 			$this->validationErrors['html'] = $this->validationErrors['text'] = $e->getMessage();

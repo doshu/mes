@@ -1,13 +1,13 @@
-<?php $this->set('title_for_layout', __("Email inviate dell'invio #%s di %s", $sending['Sending']['id'], h($sending['Mail']['name']))); ?>
+<?php $this->set('title_for_layout', __("Email con errori dell'invio #%s di %s", $sending['Sending']['id'], h($sending['Mail']['name']))); ?>
 <?php $this->set('active', 'email'); ?>
 <?php $this->Html->addCrumb('Email', '/mails/index'); ?>
 <?php $this->Html->addCrumb(h($sending['Mail']['name']), '/mails/view/'.$sending['Mail']['id']); ?>
 <?php $this->Html->addCrumb('Invio #'.$sending['Sending']['id'], '/sendings/view/'.$sending['Sending']['id']); ?>
-<?php $this->Html->addCrumb('Email Inviate', '/recipients/showSended/'.$sending['Sending']['id']); ?>
+<?php $this->Html->addCrumb('Email con Errori', '/recipients/showErrors/'.$sending['Sending']['id']); ?>
 <div class="main-header clearfix">
 	<div class="headline">
 		<h3 class="no-margin">
-			<?php echo __("Email inviate dell'invio #%s di %s", $sending['Sending']['id'], h($sending['Mail']['name'])); ?>
+			<?php echo __("Email con errori dell'invio #%s di %s", $sending['Sending']['id'], h($sending['Mail']['name'])); ?>
 		</h3>
 		<span class="line"></span>
 	</div>
@@ -15,24 +15,37 @@
 <div class="grey-container shortcut-wrapper">
 	<?php
 	
-		echo $this->Html->link(
-			'<span class="shortcut-icon"><i class="fa fa-bug"></i></span><span class="text">'.__('Mostra invii con errori').'</span>',
-			array('action' => 'showErrors', $sending['Sending']['id']),
+		echo $this->Form->postLink(
+			'<span class="shortcut-icon"><i class="fa fa-bug"></i></span><span class="text">'.__('Mostra invii senza errori').'</span>',
+			array('action' => 'showSended', $sending['Sending']['id']),
 			array(
 				'escape' => false,
-				'title' => __('Mostra invii con errori'),
+				'title' => __('Mostra invii senza errori'),
 				'class' => 'shortcut-link', 
 			)
 		);
+		
+		echo $this->Form->postLink(
+			'<span class="shortcut-icon"><i class="fa fa-refresh"></i></span><span class="text">'.__('Ripeti invio per email NON Inviate').'</span>',
+			array('controller' => 'sendings', 'action' => 'resend', $sending['Sending']['id']),
+			array(
+				'data-to-confirm' => __("Sei sicuro di voler tentare il reinvio delle email?"),
+				'escape' => false,
+				'title' => __('Ripeti invio per email NON Inviate'),
+				'class' => 'shortcut-link', 
+			)
+		);
+		
+		
 	?>
 </div>
 <div class="container-fluid"> 
 	<div id="mailStat" class="site-stats clearfix">
 		<div class="col-lg-3">
 			<div class="panel-stat3 bg-success">
-				<h2 class="m-top-none"><?=$sendedCount;?></h2>
-				<h5><?php echo __('Email inviate'); ?></h5>
-				<div class="stat-icon"><i class="fa fa-plane"></i></div>
+				<h2 class="m-top-none"><?=$sendedErrorCount;?></h2>
+				<h5><?php echo __('Email con errori'); ?></h5>
+				<div class="stat-icon"><i class="fa fa-bug"></i></div>
 			</div>
 		</div>
 		<div class="col-lg-3">
@@ -44,10 +57,10 @@
 		</div>
 	</div>
 	<div class="row">
-		<div class="col-lg-12">
+		<divl class="col-lg-12">
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<?php echo __('Email inviate'); ?>
+					<?php echo __('Email con errori'); ?>
 				</div>
 				<div class="panel-body" style="">
 					<span class="pull-right">
@@ -60,7 +73,7 @@
 										'div' => false, 
 										'class' => 'btn btn-primary btn-sm',
 										'type' => 'button',
-										'onclick' => "$('#RecipientShowSendedForm').submit()"
+										'onclick' => "$('#RecipientShowErrorsForm').submit()"
 									)
 								);
 							?>
@@ -80,7 +93,7 @@
 					</span>
 				</div>
 				<div class="panel-body nopadding">
-					<?php if(!empty($sended)) : ?>
+					<?php if(!empty($sendedError)) : ?>
 						<div class="grid-toolbar">
 							<?php echo $this->element('pager'); ?>
 						</div>
@@ -102,37 +115,18 @@
 										);
 									?>
 								</th>
-								<th>
-									<?php
-										echo $this->Form->input(
-											'opened', 
-											array(
-												'label' => false, 
-												'div' => false, 
-												'class' => 'form-control input-sm',
-												'options' => array(
-													'1' => __('Sì'),
-													'0' => __('No'), 
-												),
-												'empty' => __('Cerca per apertura')
-											)
-										);
-									?>
-								</th>
 							</tr>
-							<?php if(!empty($sended)) : ?>
+							<?php if(!empty($sendedError)) : ?>
 							<tr>
 								<th><?php echo $this->Paginator->sort('member_email', __('Email')); ?></th>
-								<th><?php echo $this->Paginator->sort('opened', __('Letta')); ?></th>
 							</tr>
 							<?php endif; ?>
 						</thead>
-						<?php if(!empty($sended)) : ?>
+						<?php if(!empty($sendedError)) : ?>
 							<tbody>
-							<?php foreach ($sended as $recipient): ?>
+							<?php foreach ($sendedError as $recipient): ?>
 								<tr data-url="<?=$this->Html->url(array('action' => 'view', $recipient['Recipient']['id'], 'sending' =>$sending['Sending']['id'], 'from' => 'sended'));?>">
 									<td><?php echo h($recipient['Recipient']['member_email']); ?></td>
-									<td><?php echo $recipient['Recipient']['opened']?__('Sì'):__('No'); ?></td>
 								</tr>
 							<?php endforeach; ?>
 							</tbody>
@@ -140,7 +134,7 @@
 					</table>
 					<?php echo $this->Form->end(); ?>
 					<?php if(empty($sended)) : ?>
-						<div><h4 style="text-align:center;"><?php echo __('Nessuna email inviata'); ?></h4></div>
+						<div><h4 style="text-align:center;"><?php echo __('Nessuna email con errori'); ?></h4></div>
 					<?php else: ?>
 						<?php echo $this->element('pagination'); ?>
 					<?php endif; ?>
@@ -149,6 +143,5 @@
 		</div>
 	</div>
 </div>
-
 
 

@@ -1,5 +1,6 @@
 <?php
 App::uses('AppModel', 'Model');
+App::uses('MailParser', 'Console/Service_2/Lib');
 
 class Mail extends AppModel {
 
@@ -75,8 +76,20 @@ class Mail extends AppModel {
 		App::uses('Spamassassin', 'Network/Email');
 		$Spamassassin = new Spamassassin();
 		
+		$mailParser = new MailParser(); //the class used by the sender
+		//la mail viene parsata per simulare la dimensione del messaggio quando verrà inviata.
+		//la dimensione del messaggio può cambiare notevolmente il risultato dell'antispam
+		
 		try {
-			$toCheckHtml = '<!DOCTYPE html><html><head></head><body>'.$this->data['Mail']['html'].'</body></html>';
+			
+			$fakeRecipient = new StdClass();
+			$fakeRecipient->data = array(
+				'id' => 1,
+				'member_secret' => str_pad('', 50, 'A'),
+			);
+			
+			$toCheckHtml = $mailParser->parse($this->data['Mail']['html'], $fakeRecipient);
+			//$toCheckHtml = '<!DOCTYPE html><html><head></head><body>'.$this->data['Mail']['html'].'</body></html>';
 			$html_spam_point = $Spamassassin->getSpamPoint($toCheckHtml);
 			$text_spam_point = $Spamassassin->getSpamPoint($this->data['Mail']['text']);
 			
