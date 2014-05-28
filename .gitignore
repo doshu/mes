@@ -3,3 +3,4 @@ tmp/session/*
 tmp/logs/*
 tmp/tests/*
 Console/Service_2/Var/Fifo/*
+!Console/Service_2/Var/Fifo/empty
