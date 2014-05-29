@@ -224,8 +224,8 @@ class Recipient extends AppModel {
 		$followed = $this->Sending->Recipient->find('count', array(
 			'recursive' => -1,
 			'fields' => 'DISTINCT Recipient.id',
-			/*
 			'joins' => array(
+				/*
 				array(
 					'table' => 'sendings',
 					'alias' => 'Sending',
@@ -238,6 +238,7 @@ class Recipient extends AppModel {
 					'conditions' => array('mail_id = Mail.id', 'Mail.user_id' => $user_id),
 					'type' => 'INNER'
 				),
+				*/
 				array(
 					'table' => 'links',
 					'alias' => 'Link',
@@ -245,7 +246,6 @@ class Recipient extends AppModel {
 					'type' => 'INNER'
 				)
 			),
-			*/
 			'conditions' => array('sended' => 1, 'opened' => 1, 'user_id' => $user_id)
 		));
 		
