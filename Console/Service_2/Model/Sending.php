@@ -18,11 +18,24 @@
 			
 			return $this->find('count', array(
 				'where' => array(
-					'status' => self::$WAITING,
 					'OR' => array(
-						array('time' => null),
-						'UNIX_TIMESTAMP() >= time'
-					)
+						array(
+							'AND' => array(
+								'status' => self::$WAITING,
+								'OR' => array(
+									array('time' => null),
+									'UNIX_TIMESTAMP() >= time'
+								)
+							),
+						),
+						array(
+							'AND' => array(
+								'status' => self::$SENDING,
+								'stopped' => 1,
+								'UNIX_TIMESTAMP() >= stopped_until'
+							)
+						)
+					)	
 				),
 				//'for_update' => true
 			));
@@ -33,13 +46,26 @@
 			$ret =  $this->find('first', array(
 				'fields' => array('id'),
 				'where' => array(
-					'status' => self::$WAITING,
 					'OR' => array(
-						array('time' => null),
-						'UNIX_TIMESTAMP() >= time'
+						array(
+							'AND' => array(
+								'status' => self::$WAITING,
+								'OR' => array(
+									array('time' => null),
+									'UNIX_TIMESTAMP() >= time'
+								)
+							),
+						),
+						array(
+							'AND' => array(
+								'status' => self::$SENDING,
+								'stopped' => 1,
+								'UNIX_TIMESTAMP() >= stopped_until'
+							)
+						)
 					)
 				),
-				'order' => array('id' => 'DESC'),
+				'order' => array('id' => 'ASC'),
 				'for_update' => true
 			));
 			$this->getDataSource()->commit();

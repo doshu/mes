@@ -48,10 +48,17 @@
 			$entity = Factory::getInstance('Model/Sending')->load($this->entityId); //reload the entity after parent changes
 			
 			if($isToSend) {
+			
 				$recipients = $RecipientModel->getRecipientBySending($this->entityId);
-				
+				$lastCall = true;
 				
 				if(count($recipients)) {
+				
+					$toGet = RECIPIENT_PER_TIME(count($recipients));
+					if($toGet > count($recipients)) {
+						$lastCall = false;
+					}
+					$recipients = array_slice($recipients, 0, $toGet);
 					
 					$entity->data['started'] = time();
 					
@@ -140,12 +147,30 @@
 						}
 					}
 				}
-				$entity->data['status'] = Sending::$COMPLETED;
-				$entity->data['ended'] = time();
-				$entity->save();
 				
-				$this->log("Ended ".$this->entityId, 'info');
-				$this->removeFromPool($this->entityId);
+				if($lastCall) {
+					$entity->data['status'] = Sending::$COMPLETED;
+					$entity->data['ended'] = time();
+				}
+				else {
+					$entity->data['stopped'] = 1;
+					$entity->data['stopped_until'] = time() + STOPPING_TIME; 
+				}
+				
+				try {
+					$entity->save();
+					if($lastCall) {
+						$this->log("Ended ".$this->entityId, 'info');
+					}
+					else {
+						$this->log("Stopped ".$this->entityId." until ".date('d/m/Y H:i:s', $entity->data['stopped_until']), 'info');
+					}
+					$this->removeFromPool($this->entityId);
+				}
+				catch(Exception $e) {
+					$this->log($e->getMessage(), 'error');
+				}
+				
 				$this->finish = true;
 			}
 			

@@ -90,6 +90,7 @@ Cache::config('default', array('engine' => 'File'));
  */
 
 CakePlugin::load(array('FileManager' => array('bootstrap' => true)));
+CakePlugin::load('DebugKit');
  
 Configure::write('Dispatcher.filters', array(
 	//'HelloWorldFilter',

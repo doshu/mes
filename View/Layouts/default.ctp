@@ -195,7 +195,7 @@
 					<?php echo $this->Html->getCrumbList(array('class' => 'breadcrumb'), 'Home'); ?>
 				</div>
 				<?php echo $this->fetch('content'); ?>
-				<?php echo $this->element('sql_dump'); ?>
+				<?php //echo $this->element('sql_dump'); ?>
 			</div>
 			<footer id="footer">
 				<?php echo __('MES è stato creato da Thomas Schiavello'); ?>

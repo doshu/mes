@@ -403,13 +403,16 @@
 									$conditionsQuery[] = $this->__buildConditionsQuery($val, 'AND', true);
 								}
 								else {
+									
 									$conditionsQuery[] = $this->__buildConditionsQuery($val, $key);
 								}
 							}
 						}
-						list($parsedConditionFlield, $val) = $this->__parseConditionField($key, $val);
-						$this->__pushToPrepareFields($val);
-						$conditionsQuery[] = $parsedConditionFlield;
+						else {
+							list($parsedConditionFlield, $val) = $this->__parseConditionField($key, $val);
+							$this->__pushToPrepareFields($val);
+							$conditionsQuery[] = $parsedConditionFlield;
+						}
 					}
 				}
 			}
