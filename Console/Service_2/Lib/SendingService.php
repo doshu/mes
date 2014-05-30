@@ -32,11 +32,11 @@
 		private function __run() {
 
 			while(true) {
-				
 				if($this->countToSend()) {
+					
 					$next = $this->getNextToSend();
 					
-					if($next['id']) {
+					if(isset($next['id']) && $next['id']) {
 						try {
 							$nextActivity = new SendingActivity($next['id']);
 							$nextActivity->mutex = $this->mutex;
@@ -46,7 +46,8 @@
 							$nextActivity->start();
 							$nextActivity->wait();
 							
-							Factory::getInstance('Model/Sending')->setSendingStatus($next['id'], Sending::$SENDING);
+							Factory::getInstance('Model/Sending')->setParamsInSendings($next['id']);
+							
 							$this->pushToPool($next['id']);
 							$nextActivity->notify();
 							

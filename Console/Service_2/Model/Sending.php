@@ -23,7 +23,7 @@
 							'AND' => array(
 								'status' => self::$WAITING,
 								'OR' => array(
-									array('time' => null),
+									'time' => null,
 									'UNIX_TIMESTAMP() >= time'
 								)
 							),
@@ -51,7 +51,7 @@
 							'AND' => array(
 								'status' => self::$WAITING,
 								'OR' => array(
-									array('time' => null),
+									'time' => null,
 									'UNIX_TIMESTAMP() >= time'
 								)
 							),
@@ -74,11 +74,18 @@
 		
 		
 		public function isToSend() {
-			return ($this->data['status'] == self::$WAITING && (is_null($this->data['time']) || time() >= $this->data['time']));
+			return (
+				($this->data['status'] == self::$WAITING && (is_null($this->data['time']) || time() >= $this->data['time'])) ||
+				($this->data['status'] == self::$SENDING && $this->data['stopped'] == 1 && time() >= $this->data['stopped_until'])
+			);
 		}
 		
 		public function setSendingStatus($id, $status) {
 			return $this->save(array('id' => $id, 'status' => $status));
+		}
+		
+		public function setParamsInSendings($id) {
+			return $this->save(array('id' => $id, 'status' => self::$SENDING, 'stopped' => 0, 'stopped_until' => null));
 		}
 	}
 

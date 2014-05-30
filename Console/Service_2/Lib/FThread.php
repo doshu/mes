@@ -18,7 +18,7 @@
 			if(!$this->__fifoFp) {
 				throw new Exception('Cannot create socket server');
 			}
-			$this->__fifoFp = stream_socket_accept($this->__fifoFp, 20);
+			$this->__fifoFp = stream_socket_accept($this->__fifoFp, 5);
 			if(!$this->__fifoFp) {
 				throw new Exception('Cannot accept socket connection');
 			}

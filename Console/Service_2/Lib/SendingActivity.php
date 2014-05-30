@@ -55,7 +55,8 @@
 				if(count($recipients)) {
 				
 					$toGet = RECIPIENT_PER_TIME(count($recipients));
-					if($toGet > count($recipients)) {
+					
+					if($toGet < count($recipients)) {
 						$lastCall = false;
 					}
 					$recipients = array_slice($recipients, 0, $toGet);
@@ -127,7 +128,7 @@
 							
 							$mailer->AddAddress($recipient->data['member_email']);
 							
-							if($mailer->Send()) {
+							if(true || $mailer->Send()) {
 								$this->log($recipient->data['member_email']." Sended Succesfully",'info');
 								$recipient->data['sended'] = 1;
 								$recipient->data['sended_time'] = time();
@@ -163,7 +164,7 @@
 						$this->log("Ended ".$this->entityId, 'info');
 					}
 					else {
-						$this->log("Stopped ".$this->entityId." until ".date('d/m/Y H:i:s', $entity->data['stopped_until']), 'info');
+						$this->log("Stopped ".$this->entityId." until UTC ".date('d/m/Y H:i:s', $entity->data['stopped_until']), 'info');
 					}
 					$this->removeFromPool($this->entityId);
 				}
