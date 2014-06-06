@@ -11,6 +11,7 @@
 	<div class="col-lg-12">
 		<ul class="nav nav-tabs" id="settingsNav">
 		  <li class="active"><?php echo $this->Html->link(__('Gestione utente'), array('action' => 'settings')); ?></li>
+		  <li><?php echo $this->Html->link(__('Gestione API'), array('controller' => 'apis', 'action' => 'index')); ?></li>
 		</ul>
 	</div>
 </div>
@@ -50,7 +51,7 @@
 						<div class="form-group">
 							<label class="control-label" for="UserOldpwd"><?php echo __('Vecchia Password'); ?></label>
 							<div>
-								<?
+								<?php
 									echo $this->Form->input(
 										'oldpwd', 
 										array('label' => false, 'type' => 'password', 'required' => true, 'class' => 'form-control')
@@ -61,7 +62,7 @@
 						<div class="form-group">
 							<label class="control-label" for="UserNewpwd"><?php echo __('Nuova Password'); ?></label>
 							<div>
-								<?
+								<?php
 									echo $this->Form->input(
 										'newpwd', 
 										array('label' => false, 'type' => 'password', 'required' => true, 'class' => 'form-control')
@@ -72,7 +73,7 @@
 						<div class="form-group">
 							<label class="control-label" for="UserNewpwd2"><?php echo __('Ripeti Password'); ?></label>
 							<div>
-								<?
+								<?php
 									echo $this->Form->input(
 										'newpwd2', 
 										array('label' => false, 'type' => 'password', 'required' => true, 'class' => 'form-control')

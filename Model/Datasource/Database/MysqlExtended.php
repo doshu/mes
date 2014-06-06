@@ -4,9 +4,9 @@
 
 	class MysqlExtended extends Mysql {
 	
-		public function lockTableRW() {
-			$this->lockTable('READ');
-			$this->lockTable('WRITE');
+		public function lockTableRW($tables) {
+			$this->lockTable($tables, 'READ');
+			$this->lockTable($tables, 'WRITE');
 	  	}
 	  	
 	  	public function lockTable($tables, $type = 'READ') {
@@ -19,7 +19,7 @@
 	  				$parsedTables[] = $table.' AS '.$alias;
 	  			}
 	  		}
-			$this->execute('LOCK TABLES '.implode(', ', $parsedTables).' '.$type);
+			$this->execute('LOCK TABLES '.implode(' '.$type.', ', $parsedTables).' '.$type);
 	  	}
 	  	
 	  	public function unlockTables() {;
