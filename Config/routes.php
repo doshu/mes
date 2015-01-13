@@ -48,7 +48,7 @@
 		)
 	);		
 	
-	Router::parseExtensions('json');
+	Router::parseExtensions('json','xml');
 	
 /**
  * Load all plugin routes. See the CakePlugin documentation on

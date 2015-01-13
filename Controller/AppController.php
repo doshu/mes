@@ -53,6 +53,14 @@ class AppController extends Controller {
 			)
 		);
 		
+		$this->request->addDetector(
+			'xml', 
+			array('callback' => function ($request) {
+					return isset($request->params['ext']) && $request->params['ext'] == 'xml';
+				}
+			)
+		);
+		
 		if(!Configure::check('no_check_cookie')) {
 			if(!$this->Session->check('mes_cookie_enabled') && !$this->isCheckCookieAction()) {
 				setcookie('mes_cookie_check', 1, 0, '/', $_SERVER['HTTP_HOST'], false, true);

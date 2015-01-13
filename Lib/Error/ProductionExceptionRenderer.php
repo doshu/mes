@@ -7,7 +7,8 @@
 		private $__redirectProduction = null;
 		private $__ajax = array(
 			'ajax',
-			'json'
+			'json',
+			'xml'
 		);
 		
 		

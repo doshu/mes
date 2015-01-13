@@ -1,0 +1,9 @@
+<?php
+	
+	
+	define('API_MEMBER_ALREADY_EXISTS', 1);
+	define('API_MAILINGLIST_NOT_EXISTS', 2);
+	define('API_ERROR_DURING_MEMBER_SAVING', 3);
+	define('API_MEMBER_NOT_EXISTS', 4);
+	define('API_ERROR_DURING_MEMBER_DELETING', 5);
+?>

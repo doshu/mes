@@ -127,13 +127,6 @@ class Member extends AppModel {
 	
 	public function validateOnCreate($data) {
 		
-		/*
-		if(empty($data['Mailinglist']['Mailinglist'])) {
-			$this->Mailinglist->validationErrors['Mailinglist'] = __('Inserisci almeno una lista di appartenenza');
-			return false;
-		}
-		*/
-		
 		$member = $this->getByEmailForCurrentUser($data['Member']['email']);
 		if(!empty($member['Member']['id'])) {
 			$this->validationErrors['email'] = __('Questo indirizzo è già utilizzato da un altro membro');
@@ -157,13 +150,6 @@ class Member extends AppModel {
 	
 	public function validateOnEdit($data) {
 		
-		/*
-		if(empty($data['Mailinglist']['Mailinglist'])) {
-			$this->Mailinglist->validationErrors['Mailinglist'] = __('Inserisci almeno una lista di appartenenza');
-			return false;
-		}		
-		*/
-		
 		$member = $this->getByEmailForCurrentUser($data['Member']['email']);
 		if(!empty($member['Member']['id']) && $member['Member']['id'] != $data['Member']['id']) {
 			$this->validationErrors['email'] = __('Questo indirizzo è già utilizzato da un altro membro');
@@ -185,11 +171,6 @@ class Member extends AppModel {
 	}
 	
 	
-	public function beforeSave($options = array()) {
-		
-		$this->data['Member']['user_id'] = AuthComponent::user('id');
-		return true;
-	}
 	
 	public function __generateNewSecret($data) {
 		Security::setHash('blowfish');
@@ -283,7 +264,7 @@ class Member extends AppModel {
 
 					$save = $this->saveAssociated(
 						array(
-							'Member' => array('email' => $data['email'], 'secret' => $secret),
+							'Member' => array('email' => $data['email'], 'secret' => $secret, 'user_id' => AuthComponent::user('id')),
 							'Mailinglist' => array(
 								'Mailinglist' => $mailinglists
 							),
@@ -463,19 +444,23 @@ class Member extends AppModel {
 		);
 	}
 	
-	public function getByEmailForCurrentUser($email, $fields = array(), $recursive = -1) {
+	public function getByEmailForUser($email, $fields = array(), $recursive = -1, $user_id) {
 		return $this->find(
 			'first',
 			array(
 				'recursive' => $recursive,
 				'conditions' => array(
 					'email' => $email,
-					'user_id' => AuthComponent::user('id')
+					'user_id' => $user_id
 				),
 				'fields' => $fields,
-				'extra' => 'FOR UPDATE'
+				//'extra' => 'FOR UPDATE'
 			)
 		);
+	}
+	
+	public function getByEmailForCurrentUser($email, $fields = array(), $recursive = -1) {
+		return $this->getByEmailForUser($email, $fields, $recursive, AuthComponent::user('id'));
 	}
 	
 	

@@ -21,6 +21,7 @@
 			$this->mutex = sem_get(ftok(__FILE__, 'm'));
 			$this->Logger = new Logger(LOGFILE);
 			$this->Output = new Output();
+			$this->Sending = Factory::getInstance('Model/Sending');
 		}
 		
 		
@@ -115,11 +116,11 @@
 		}
 		
 		public function countToSend() {
-			return Factory::getInstance('Model/Sending')->countToSend();
+			return $this->Sending->countToSend();
 		}
 		
 		public function getNextToSend() {
-			return Factory::getInstance('Model/Sending')->getNextToSend();	
+			return $this->Sending->getNextToSend();	
 		}
 		
 	}

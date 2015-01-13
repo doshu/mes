@@ -120,4 +120,14 @@ class Api extends AppModel {
 			return true;
 		throw new NotFoundException();
 	}
+	
+	
+	public function getByClientKey($clientkey) {
+		return $this->find('first', array(
+			'recursive' => -1,
+			'conditions' => array(
+				'clientkey' => $clientkey
+			)
+		));
+	}
 }

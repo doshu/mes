@@ -109,7 +109,8 @@ class MembersController extends AppController {
 			$this->Member->getDataSource()->begin();
 			
 			$this->request->data['Member']['secret'] = $this->Member->__generateNewSecret($this->data['Member']['email'].time());
-			$this->request->data['MailinglistsMember']['created'] = '2014-05-05';
+			$this->request->data['Member']['user_id'] = AuthComponent::user('id');
+
 			if (
 				$this->Member->validateOnCreate($this->request->data) && 
 				$this->Member->saveAssociated(
@@ -127,7 +128,7 @@ class MembersController extends AppController {
 								'value_date'
 							)
 						),
-						'validate' => false
+						//'validate' => false
 					)
 				)
 			) {
@@ -153,6 +154,7 @@ class MembersController extends AppController {
 		if($this->request->is('json') && $this->request->isPost()) {
 			$this->Member->getDataSource()->begin();
 			$this->request->data['Member']['secret'] = $this->Member->__generateNewSecret($this->data['Member']['email'].time());
+			$this->request->data['Member']['user_id'] = AuthComponent::user('id');
 			if($this->Member->validateOnCreate($this->request->data)) {
 				if(
 					$this->Member->save($this->request->data, true, 
@@ -193,6 +195,7 @@ class MembersController extends AppController {
 	public function edit($id = null) {
 
 		if ($this->request->is('post') || $this->request->is('put')) {
+			$this->request->data['Member']['user_id'] = AuthComponent::user('id'); //prevent user_id tampering
 			$this->Member->getDataSource()->begin();
 			if (
 				$this->Member->validateOnEdit($this->request->data) && 
@@ -201,7 +204,7 @@ class MembersController extends AppController {
 					array(
 						'fieldList' => array(
 							'Member' => array('email', 'created', 'modified', 'user_id', 'Mailinglist', 'secret'),
-							'MailinglistsMember' => array('mailinglist_id'),
+							'MailinglistsMember' => array('mailinglist_id', 'member_id'),
 							'Memberfieldvalue' => array(
 								'id', 
 								'memberfield_id', 
@@ -211,7 +214,7 @@ class MembersController extends AppController {
 								'value_date'
 							)
 						),
-						'validate' => false
+						//'validate' => false
 					)
 				)
 				
